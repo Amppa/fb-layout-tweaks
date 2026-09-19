@@ -27,7 +27,7 @@ const DEFAULT_SETTINGS = {
   hideLeftOrdersPayments: true,
   // Section: Top Navigation
   hideTopReels: false,
-  hideTopMarketplace: false,
+  hideTopMarketplace: true,
   hideTopGroups: false,
   hideTopGaming: true
 };

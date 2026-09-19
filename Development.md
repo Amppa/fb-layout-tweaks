@@ -1,18 +1,18 @@
 # Development & Architecture Documentation: FB Trim
 
-This document details the internal design, architecture, performance strategies, and development guidelines for **FB Trim — Minimal Sidebar**.
+This document details the internal design, architecture, performance strategies, styling system, and development guidelines for **FB Trim — Minimal Sidebar & Top Navigation**.
 
 ---
 
 ## 1. Project Overview
 
-**FB Trim** is a lightweight, high-performance Google Chrome extension (Manifest V3) designed to remove clutter, distractions, and unwanted navigational elements from Facebook's desktop web interface (specifically the left sidebar and top navigation bar).
+**FB Trim** is a lightweight, high-performance Google Chrome extension (Manifest V3) designed to eliminate visual clutter, unwanted algorithmic feeds, and distraction items from Facebook's desktop web interface (specifically the top navigation header and left sidebar).
 
 ### Core Goals
-- **Zero Layout Shift (Zero-FOUC)**: Web pages should never flash unstyled or unwanted content before hiding them.
-- **Maximum Performance**: Minimal CPU and memory overhead; CSS rules drive hiding rather than heavy JavaScript DOM manipulation.
-- **Granular Control**: Independent toggles for every navigation item, paired with curated one-click defaults.
-- **Resilience**: Adaptive selectors handling Facebook's dynamic class obfuscations and periodic DOM shifts.
+- **Zero Layout Shift (Zero-FOUC)**: Target elements are suppressed prior to the browser's first paint so unwanted sections never flicker on page load.
+- **Pure CSS Execution**: Suppressions run via declarative CSS rules rather than continuous JavaScript element deletion, preserving CPU and memory.
+- **Granular Control with Safe Anchors**: Critical navigation hubs (Home, Profile, Feeds, Messenger) remain permanently anchored, while all optional tabs provide independent switches.
+- **Resilience**: Adaptive attribute and URL-based selectors resilient against Facebook's minified, dynamically generated class names.
 
 ---
 
@@ -55,13 +55,13 @@ fb-trim/
     │   ├── content.css        # Scoped CSS hiding rules keyed by root classes
     │   └── content.js         # Early root class applicator & dynamic item scanner
     ├── options/
-    │   ├── options.html       # Granular settings dashboard
-    │   ├── options.css        # Options UI styling (modern dark glassmorphism)
-    │   └── options.js         # Settings manager & batch actions logic
+    │   ├── options.html       # Granular settings dashboard (Top Nav first, Left Sidebar second)
+    │   ├── options.css        # Options UI styling (dark frosted theme)
+    │   └── options.js         # Settings manager & section-level action handlers
     └── popup/
         ├── popup.html         # Compact extension toolbar popup
-        ├── popup.css          # Popup dark mode theme & custom switch styles
-        └── popup.js           # Master enable/disable toggle & options opener
+        ├── popup.css          # Dark frosted theme & header toggle switch
+        └── popup.js           # Master enable/disable toggle & options launcher
 ```
 
 ---
@@ -112,30 +112,30 @@ All state is stored within `chrome.storage.local` under the `settings` key.
 interface Settings {
   enabled: boolean;                      // Master switch
 
-  // Left Sidebar items (Profile, Feeds, and Messenger are always shown / fixed)
-  hideLeftFriends: boolean;
-  hideLeftGroups: boolean;
-  hideLeftMarketplace: boolean;
-  hideLeftReels: boolean;
-  hideLeftMemories: boolean;
-  hideLeftSaved: boolean;
-  hideLeftPages: boolean;
-  hideLeftEvents: boolean;
-  hideLeftGaming: boolean;               // default: true
-  hideLeftMetaAI: boolean;               // default: true
-  hideLeftAdsManager: boolean;           // default: true
-  hideLeftRecentAdActivity: boolean;     // default: true
-  hideLeftProfessionalDashboard: boolean;// default: true
-  hideLeftMessengerKids: boolean;        // default: true
-  hideLeftMetaQuest: boolean;            // default: true
-  hideLeftFundraisers: boolean;          // default: true
-  hideLeftOrdersPayments: boolean;       // default: true
-
   // Top Navigation items (Home is always shown / fixed)
-  hideTopReels: boolean;
-  hideTopMarketplace: boolean;
-  hideTopGroups: boolean;
-  hideTopGaming: boolean;                // default: true
+  hideTopReels: boolean;                 // default: false
+  hideTopMarketplace: boolean;           // default: true (hidden)
+  hideTopGroups: boolean;                // default: false
+  hideTopGaming: boolean;                // default: true (hidden)
+
+  // Left Sidebar items (Profile, Feeds, and Messenger are always shown / fixed)
+  hideLeftFriends: boolean;              // default: false
+  hideLeftGroups: boolean;               // default: false
+  hideLeftMarketplace: boolean;          // default: false
+  hideLeftReels: boolean;                // default: false
+  hideLeftMemories: boolean;             // default: false
+  hideLeftSaved: boolean;                // default: false
+  hideLeftPages: boolean;                // default: false
+  hideLeftEvents: boolean;               // default: false
+  hideLeftGaming: boolean;               // default: true (hidden)
+  hideLeftMetaAI: boolean;               // default: true (hidden)
+  hideLeftAdsManager: boolean;           // default: true (hidden)
+  hideLeftRecentAdActivity: boolean;     // default: true (hidden)
+  hideLeftProfessionalDashboard: boolean;// default: true (hidden)
+  hideLeftMessengerKids: boolean;        // default: true (hidden)
+  hideLeftMetaQuest: boolean;            // default: true (hidden)
+  hideLeftFundraisers: boolean;          // default: true (hidden)
+  hideLeftOrdersPayments: boolean;       // default: true (hidden)
 }
 ```
 
@@ -153,21 +153,37 @@ interface Settings {
 
 ---
 
-## 5. UI Components
+## 5. UI/UX Design System
 
-### 5.1 Popup (`src/popup/`)
-- Minimal footprint (`width: 250px`).
-- Displays branding, a clean **Enabled / Disabled master toggle** integrated into the right side of the header, and a direct link to open the full Options page.
-- Status indicator text/dots are omitted to maintain an ultra-clean, modern aesthetic.
+### 5.1 Palette Alignment (Frosted Theme)
 
-### 5.2 Options Page (`src/options/`)
-- Full dashboard providing individual controls for 21 toggleable features.
-- Essential core items (Left: **Profile**, **Feeds**, **Messenger**; Top: **Home**) are marked with an **Always Shown** badge without toggles.
-- Grouped into **Left Sidebar** and **Top Navigation**.
-- **Quick Action Bar**:
-  - `Recommended`: Reverts to curated clean defaults.
-  - `Hide All`: Enables all hide rules for maximum minimalism.
-  - `Show All`: Disables all hide rules.
+FB Trim shares its design palette with companion extensions (`frosted-feed`):
+
+| Variable | Value | Purpose |
+| :--- | :--- | :--- |
+| `--bg-primary` | `#0e0e10` | Page backdrop |
+| `--bg-card` | `#18181c` | Feature cards and panels |
+| `--bg-card-hover` | `#222228` | Interactive card hover state |
+| `--text-primary` | `#f0f0f2` | Primary headings and item titles |
+| `--text-secondary`| `#909099` | Subtitles, status labels, and badge borders |
+| `--divider` | `rgba(255, 255, 255, 0.08)` | Frosted glass borders |
+| `--accent-color` | `#0ea5e9` | Action highlights, active switches |
+
+### 5.2 Popup (`src/popup/`)
+- Compact footprint (`width: 250px`).
+- Master Enable/Disable switch integrated directly into the header opposite the branding.
+- Omission of separate status dots/labels maintains an ultra-clean, minimal aesthetic.
+- One-click launcher button leading directly to Options.
+
+### 5.3 Options Page (`src/options/`)
+- Structured in priority order:
+  1. **Top Navigation** (Header bar tabs): Home (Fixed), Reels, Marketplace, Groups, Gaming.
+  2. **Left Sidebar** (Navigation rail): Profile, Feeds, Messenger (Fixed) + 17 toggleable items.
+- **Section-Level Quick Actions**:
+  - Rather than a global banner, each section header contains right-aligned buttons: `Recommended`, `Hide All`, and `Show All`.
+  - Clicking a section action only updates switches belonging to that specific group (`topKeys` vs. `leftKeys`).
+- **Core Fixed Navigation**:
+  - `Home`, `Profile`, `Feeds`, and `Messenger` are rendered with an `Always Shown` badge without toggles, preventing users from inadvertently breaking essential Facebook navigation.
 - Master toggle in header disables all feature switches simultaneously with visual opacity feedback.
 
 ---

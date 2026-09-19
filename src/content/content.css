@@ -22,7 +22,7 @@ html.fb-diet-hide-left-marketplace :is([data-pagelet="LeftRail"], div[role="navi
   display: none !important;
 }
 
-/* Reels / Video */
+/* Reels */
 html.fb-diet-hide-left-reels :is([data-pagelet="LeftRail"], div[role="navigation"]:not(header *):not([role="banner"] *):not([data-pagelet="Header"] *)) :is(li, div[role="listitem"]):has(a[href*="/reel"], a[href*="/watch"], a[href*="/videos"]) {
   display: none !important;
 }
@@ -76,11 +76,9 @@ html.fb-diet-hide-left-ads-manager .fb-diet-hide-left-ads-manager-node {
 }
 
 /* Recent Ad Activity (你的廣告動態) */
-html.fb-diet-hide-left-recent-ad-activity :is([data-pagelet="LeftRail"], div[role="navigation"]:not(header *):not([role="banner"] *):not([data-pagelet="Header"] *)) :is(li, div[role="listitem"], div[role="button"]):has(
-  a[href*="ads/activity"],
+html.fb-diet-hide-left-recent-ad-activity :is([data-pagelet="LeftRail"], div[role="navigation"]:not(header *):not([role="banner"] *):not([data-pagelet="Header"] *)) :is(li, div[role="listitem"], div[role="button"]):has(a[href*="ads/activity"],
   a[aria-label*="廣告動態"],
-  a[aria-label*="Ad Activity" i]
-) {
+  a[aria-label*="Ad Activity" i]) {
   display: none !important;
 }
 

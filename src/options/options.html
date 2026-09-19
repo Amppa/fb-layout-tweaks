@@ -28,21 +28,85 @@
       </div>
     </header>
 
-    <!-- Quick Action Bar -->
-    <div class="action-bar">
-      <div class="action-desc">Quickly configure all trim settings:</div>
-      <div class="action-buttons">
-        <button class="btn-action" id="btnReset" title="Restore curated clean defaults">Recommended</button>
-        <button class="btn-action" id="btnHideAll" title="Check all items to hide everything">Hide All</button>
-        <button class="btn-action" id="btnShowAll" title="Uncheck all items to show everything">Show All</button>
-      </div>
-    </div>
-
     <!-- UI Trim List -->
     <div class="features-list" id="uiCleanList">
 
+      <!-- Group: Top Navigation -->
+      <div class="group-header">
+        <div class="group-title">Top Navigation</div>
+        <div class="group-actions">
+          <button class="btn-action" id="btnTopReset" title="Restore recommended top navigation defaults">Recommended</button>
+          <button class="btn-action" id="btnTopHideAll" title="Hide all top navigation items">Hide All</button>
+          <button class="btn-action" id="btnTopShowAll" title="Show all top navigation items">Show All</button>
+        </div>
+      </div>
+
+      <!-- Top Home (Fixed) -->
+      <div class="feature-item">
+        <div class="feature-meta">
+          <span class="feature-icon">🏠</span>
+          <div class="feature-title">Home (首頁)</div>
+        </div>
+        <span class="badge-fixed">Always Shown</span>
+      </div>
+
+      <!-- Top Reels -->
+      <div class="feature-item">
+        <div class="feature-meta">
+          <span class="feature-icon">🎬</span>
+          <div class="feature-title">Reels</div>
+        </div>
+        <label class="switch">
+          <input type="checkbox" id="hideTopReels">
+          <span class="slider round"></span>
+        </label>
+      </div>
+
+      <!-- Top Marketplace -->
+      <div class="feature-item">
+        <div class="feature-meta">
+          <span class="feature-icon">🛒</span>
+          <div class="feature-title">Marketplace</div>
+        </div>
+        <label class="switch">
+          <input type="checkbox" id="hideTopMarketplace">
+          <span class="slider round"></span>
+        </label>
+      </div>
+
+      <!-- Top Groups -->
+      <div class="feature-item">
+        <div class="feature-meta">
+          <span class="feature-icon">👥</span>
+          <div class="feature-title">Groups (社團)</div>
+        </div>
+        <label class="switch">
+          <input type="checkbox" id="hideTopGroups">
+          <span class="slider round"></span>
+        </label>
+      </div>
+
+      <!-- Top Gaming -->
+      <div class="feature-item">
+        <div class="feature-meta">
+          <span class="feature-icon">🎮</span>
+          <div class="feature-title">Gaming</div>
+        </div>
+        <label class="switch">
+          <input type="checkbox" id="hideTopGaming">
+          <span class="slider round"></span>
+        </label>
+      </div>
+
       <!-- Group: Left Sidebar -->
-      <div class="group-title">Left Sidebar</div>
+      <div class="group-header">
+        <div class="group-title">Left Sidebar</div>
+        <div class="group-actions">
+          <button class="btn-action" id="btnLeftReset" title="Restore recommended left sidebar defaults">Recommended</button>
+          <button class="btn-action" id="btnLeftHideAll" title="Hide all left sidebar items">Hide All</button>
+          <button class="btn-action" id="btnLeftShowAll" title="Show all left sidebar items">Show All</button>
+        </div>
+      </div>
 
       <!-- Left Profile (Fixed) -->
       <div class="feature-item">
@@ -254,7 +318,7 @@
       <!-- Left Fundraisers -->
       <div class="feature-item">
         <div class="feature-meta">
-          <span class="feature-icon">💖</span>
+          <span class="feature-icon">🎗️</span>
           <div class="feature-title">Fundraisers (募款活動)</div>
         </div>
         <label class="switch">
@@ -271,66 +335,6 @@
         </div>
         <label class="switch">
           <input type="checkbox" id="hideLeftOrdersPayments">
-          <span class="slider round"></span>
-        </label>
-      </div>
-
-      <!-- Group: Top Navigation -->
-      <div class="group-title">Top Navigation</div>
-
-      <!-- Top Home (Fixed) -->
-      <div class="feature-item">
-        <div class="feature-meta">
-          <span class="feature-icon">🏠</span>
-          <div class="feature-title">Home (首頁)</div>
-        </div>
-        <span class="badge-fixed">Always Shown</span>
-      </div>
-
-      <!-- Top Reels -->
-      <div class="feature-item">
-        <div class="feature-meta">
-          <span class="feature-icon">🎬</span>
-          <div class="feature-title">Reels</div>
-        </div>
-        <label class="switch">
-          <input type="checkbox" id="hideTopReels">
-          <span class="slider round"></span>
-        </label>
-      </div>
-
-      <!-- Top Marketplace -->
-      <div class="feature-item">
-        <div class="feature-meta">
-          <span class="feature-icon">🛒</span>
-          <div class="feature-title">Marketplace</div>
-        </div>
-        <label class="switch">
-          <input type="checkbox" id="hideTopMarketplace">
-          <span class="slider round"></span>
-        </label>
-      </div>
-
-      <!-- Top Groups -->
-      <div class="feature-item">
-        <div class="feature-meta">
-          <span class="feature-icon">👥</span>
-          <div class="feature-title">Groups (社團)</div>
-        </div>
-        <label class="switch">
-          <input type="checkbox" id="hideTopGroups">
-          <span class="slider round"></span>
-        </label>
-      </div>
-
-      <!-- Top Gaming -->
-      <div class="feature-item">
-        <div class="feature-meta">
-          <span class="feature-icon">🎮</span>
-          <div class="feature-title">Gaming</div>
-        </div>
-        <label class="switch">
-          <input type="checkbox" id="hideTopGaming">
           <span class="slider round"></span>
         </label>
       </div>

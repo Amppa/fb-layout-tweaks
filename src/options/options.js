@@ -7,9 +7,13 @@ document.addEventListener('DOMContentLoaded', async () => {
   const masterStatus = document.getElementById('masterStatus');
   const uiCleanList = document.getElementById('uiCleanList');
 
-  const btnReset = document.getElementById('btnReset');
-  const btnHideAll = document.getElementById('btnHideAll');
-  const btnShowAll = document.getElementById('btnShowAll');
+  const btnTopReset = document.getElementById('btnTopReset');
+  const btnTopHideAll = document.getElementById('btnTopHideAll');
+  const btnTopShowAll = document.getElementById('btnTopShowAll');
+
+  const btnLeftReset = document.getElementById('btnLeftReset');
+  const btnLeftHideAll = document.getElementById('btnLeftHideAll');
+  const btnLeftShowAll = document.getElementById('btnLeftShowAll');
 
   // Curated clean defaults
   const DEFAULTS = {
@@ -34,7 +38,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     hideLeftFundraisers: true,
     hideLeftOrdersPayments: true,
     hideTopReels: false,
-    hideTopMarketplace: false,
+    hideTopMarketplace: true,
     hideTopGroups: false,
     hideTopGaming: true
   };
@@ -92,44 +96,81 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   }
 
-  // Quick Action: Restore Recommended Defaults
-  if (btnReset) {
-    btnReset.addEventListener('click', async () => {
+  const topKeys = ['hideTopReels', 'hideTopMarketplace', 'hideTopGroups', 'hideTopGaming'];
+  const leftKeys = Object.keys(switches).filter(k => k.startsWith('hideLeft'));
+
+  // Top Navigation Actions
+  if (btnTopReset) {
+    btnTopReset.addEventListener('click', async () => {
       const { settings: current } = await chrome.storage.local.get('settings');
-      const updated = { ...current, ...DEFAULTS, enabled: masterToggle ? masterToggle.checked : true };
-      for (const [key, checkbox] of Object.entries(switches)) {
-        if (checkbox) checkbox.checked = Boolean(DEFAULTS[key]);
-      }
+      const updated = { ...current };
+      topKeys.forEach(key => {
+        const defVal = Boolean(DEFAULTS[key]);
+        if (switches[key]) switches[key].checked = defVal;
+        updated[key] = defVal;
+      });
       await chrome.storage.local.set({ settings: updated });
     });
   }
 
-  // Quick Action: Hide All
-  if (btnHideAll) {
-    btnHideAll.addEventListener('click', async () => {
+  if (btnTopHideAll) {
+    btnTopHideAll.addEventListener('click', async () => {
       const { settings: current } = await chrome.storage.local.get('settings');
       const updated = { ...current };
-      for (const [key, checkbox] of Object.entries(switches)) {
-        if (checkbox) {
-          checkbox.checked = true;
-          updated[key] = true;
-        }
-      }
+      topKeys.forEach(key => {
+        if (switches[key]) switches[key].checked = true;
+        updated[key] = true;
+      });
       await chrome.storage.local.set({ settings: updated });
     });
   }
 
-  // Quick Action: Show All
-  if (btnShowAll) {
-    btnShowAll.addEventListener('click', async () => {
+  if (btnTopShowAll) {
+    btnTopShowAll.addEventListener('click', async () => {
       const { settings: current } = await chrome.storage.local.get('settings');
       const updated = { ...current };
-      for (const [key, checkbox] of Object.entries(switches)) {
-        if (checkbox) {
-          checkbox.checked = false;
-          updated[key] = false;
-        }
-      }
+      topKeys.forEach(key => {
+        if (switches[key]) switches[key].checked = false;
+        updated[key] = false;
+      });
+      await chrome.storage.local.set({ settings: updated });
+    });
+  }
+
+  // Left Sidebar Actions
+  if (btnLeftReset) {
+    btnLeftReset.addEventListener('click', async () => {
+      const { settings: current } = await chrome.storage.local.get('settings');
+      const updated = { ...current };
+      leftKeys.forEach(key => {
+        const defVal = Boolean(DEFAULTS[key]);
+        if (switches[key]) switches[key].checked = defVal;
+        updated[key] = defVal;
+      });
+      await chrome.storage.local.set({ settings: updated });
+    });
+  }
+
+  if (btnLeftHideAll) {
+    btnLeftHideAll.addEventListener('click', async () => {
+      const { settings: current } = await chrome.storage.local.get('settings');
+      const updated = { ...current };
+      leftKeys.forEach(key => {
+        if (switches[key]) switches[key].checked = true;
+        updated[key] = true;
+      });
+      await chrome.storage.local.set({ settings: updated });
+    });
+  }
+
+  if (btnLeftShowAll) {
+    btnLeftShowAll.addEventListener('click', async () => {
+      const { settings: current } = await chrome.storage.local.get('settings');
+      const updated = { ...current };
+      leftKeys.forEach(key => {
+        if (switches[key]) switches[key].checked = false;
+        updated[key] = false;
+      });
       await chrome.storage.local.set({ settings: updated });
     });
   }
