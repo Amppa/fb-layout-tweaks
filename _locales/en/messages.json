@@ -135,5 +135,11 @@
   },
   "itemOrdersPayments": {
     "message": "Orders & Payments"
+  },
+  "hintHidden": {
+    "message": "Hidden"
+  },
+  "hintVisible": {
+    "message": "Visible"
   }
 }

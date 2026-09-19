@@ -127,6 +127,15 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   });
 
+  function updateStatusIcon(checkbox) {
+    if (!checkbox || !checkbox.id) return;
+    const iconEl = document.getElementById(`status_${checkbox.id}`);
+    if (iconEl) {
+      iconEl.textContent = checkbox.checked ? '🙈' : '🐵';
+      iconEl.title = checkbox.checked ? (getMsg('hintHidden') || '已隱藏') : (getMsg('hintVisible') || '正常顯示');
+    }
+  }
+
   // Load initial settings
   const data = await chrome.storage.local.get('settings');
   const settings = data.settings || {};
@@ -137,6 +146,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (checkbox) {
       const defaultValue = DEFAULTS[key] !== undefined ? DEFAULTS[key] : false;
       checkbox.checked = settings[key] !== undefined ? settings[key] : defaultValue;
+      updateStatusIcon(checkbox);
     }
   }
 
@@ -155,6 +165,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   for (const [key, checkbox] of Object.entries(switches)) {
     if (checkbox) {
       checkbox.addEventListener('change', async () => {
+        updateStatusIcon(checkbox);
         const { settings: current } = await chrome.storage.local.get('settings');
         const updated = { ...current, [key]: checkbox.checked };
         await chrome.storage.local.set({ settings: updated });
@@ -172,7 +183,10 @@ document.addEventListener('DOMContentLoaded', async () => {
       const updated = { ...current };
       topKeys.forEach(key => {
         const defVal = Boolean(DEFAULTS[key]);
-        if (switches[key]) switches[key].checked = defVal;
+        if (switches[key]) {
+          switches[key].checked = defVal;
+          updateStatusIcon(switches[key]);
+        }
         updated[key] = defVal;
       });
       await chrome.storage.local.set({ settings: updated });
@@ -184,7 +198,10 @@ document.addEventListener('DOMContentLoaded', async () => {
       const { settings: current } = await chrome.storage.local.get('settings');
       const updated = { ...current };
       topKeys.forEach(key => {
-        if (switches[key]) switches[key].checked = true;
+        if (switches[key]) {
+          switches[key].checked = true;
+          updateStatusIcon(switches[key]);
+        }
         updated[key] = true;
       });
       await chrome.storage.local.set({ settings: updated });
@@ -196,7 +213,10 @@ document.addEventListener('DOMContentLoaded', async () => {
       const { settings: current } = await chrome.storage.local.get('settings');
       const updated = { ...current };
       topKeys.forEach(key => {
-        if (switches[key]) switches[key].checked = false;
+        if (switches[key]) {
+          switches[key].checked = false;
+          updateStatusIcon(switches[key]);
+        }
         updated[key] = false;
       });
       await chrome.storage.local.set({ settings: updated });
@@ -210,7 +230,10 @@ document.addEventListener('DOMContentLoaded', async () => {
       const updated = { ...current };
       leftKeys.forEach(key => {
         const defVal = Boolean(DEFAULTS[key]);
-        if (switches[key]) switches[key].checked = defVal;
+        if (switches[key]) {
+          switches[key].checked = defVal;
+          updateStatusIcon(switches[key]);
+        }
         updated[key] = defVal;
       });
       await chrome.storage.local.set({ settings: updated });
@@ -222,7 +245,10 @@ document.addEventListener('DOMContentLoaded', async () => {
       const { settings: current } = await chrome.storage.local.get('settings');
       const updated = { ...current };
       leftKeys.forEach(key => {
-        if (switches[key]) switches[key].checked = true;
+        if (switches[key]) {
+          switches[key].checked = true;
+          updateStatusIcon(switches[key]);
+        }
         updated[key] = true;
       });
       await chrome.storage.local.set({ settings: updated });
@@ -234,7 +260,10 @@ document.addEventListener('DOMContentLoaded', async () => {
       const { settings: current } = await chrome.storage.local.get('settings');
       const updated = { ...current };
       leftKeys.forEach(key => {
-        if (switches[key]) switches[key].checked = false;
+        if (switches[key]) {
+          switches[key].checked = false;
+          updateStatusIcon(switches[key]);
+        }
         updated[key] = false;
       });
       await chrome.storage.local.set({ settings: updated });

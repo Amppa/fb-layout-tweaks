@@ -135,5 +135,11 @@
   },
   "itemOrdersPayments": {
     "message": "訂單與付款"
+  },
+  "hintHidden": {
+    "message": "已隱藏 (遮眼)"
+  },
+  "hintVisible": {
+    "message": "正常顯示"
   }
 }

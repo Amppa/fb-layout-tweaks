@@ -147,7 +147,7 @@ body {
   padding: 0 2px;
 }
 
-.features-list > .group-header:first-child {
+.features-list>.group-header:first-child {
   margin-top: 4px;
 }
 
@@ -219,16 +219,27 @@ body {
   color: var(--text-primary);
 }
 
-.badge-fixed {
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--text-secondary);
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid var(--divider);
-  padding: 4px 9px;
-  border-radius: 6px;
-  letter-spacing: 0.3px;
+.feature-action {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.action-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 22px;
+  font-size: 16px;
+  line-height: 1;
   user-select: none;
+  transition: transform 0.15s ease;
+}
+
+.action-icon-locked {
+  font-size: 14px;
+  opacity: 0.8;
 }
 
 /* Switch Styles */
@@ -238,6 +249,19 @@ body {
   width: 40px;
   height: 22px;
   flex-shrink: 0;
+}
+
+.switch-locked {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.switch-locked input {
+  cursor: not-allowed;
+}
+
+.switch-locked .slider {
+  cursor: not-allowed;
 }
 
 .switch input {
@@ -277,11 +301,11 @@ body {
   border-radius: 50%;
 }
 
-input:checked + .slider {
+input:checked+.slider {
   background: var(--accent-color);
 }
 
-input:checked + .slider:before {
+input:checked+.slider:before {
   transform: translateX(18px);
 }
 
@@ -296,6 +320,6 @@ input:checked + .slider:before {
   width: 20px;
 }
 
-.main-toggle input:checked + .slider:before {
+.main-toggle input:checked+.slider:before {
   transform: translateX(22px);
 }
