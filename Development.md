@@ -112,10 +112,8 @@ All state is stored within `chrome.storage.local` under the `settings` key.
 interface Settings {
   enabled: boolean;                      // Master switch
 
-  // Left Sidebar items
-  hideLeftProfile: boolean;
+  // Left Sidebar items (Profile, Feeds, and Messenger are always shown / fixed)
   hideLeftFriends: boolean;
-  hideLeftFeeds: boolean;
   hideLeftGroups: boolean;
   hideLeftMarketplace: boolean;
   hideLeftReels: boolean;
@@ -157,15 +155,16 @@ interface Settings {
 ## 5. UI Components
 
 ### 5.1 Popup (`src/popup/`)
-- Minimal footprint (`width: 230px`).
-- Displays branding, a clean **Enabled / Disabled master toggle**, and a direct link to open the full Options page.
+- Minimal footprint (`width: 250px`).
+- Displays branding, a clean **Enabled / Disabled master toggle** integrated into the right side of the header, and a direct link to open the full Options page.
 - Status indicator text/dots are omitted to maintain an ultra-clean, modern aesthetic.
 
 ### 5.2 Options Page (`src/options/`)
-- Full dashboard providing individual controls for all 22 toggleable features.
+- Full dashboard providing individual controls for 20 toggleable features.
+- Essential core items (**Profile**, **Feeds**, **Messenger**) are marked with an **Always Shown** badge without toggles.
 - Grouped into **Left Sidebar** and **Top Navigation**.
 - **Quick Action Bar**:
-  - `Restore Recommended`: Reverts to curated clean defaults.
+  - `Recommended`: Reverts to curated clean defaults.
   - `Hide All`: Enables all hide rules for maximum minimalism.
   - `Show All`: Disables all hide rules.
 - Master toggle in header disables all feature switches simultaneously with visual opacity feedback.

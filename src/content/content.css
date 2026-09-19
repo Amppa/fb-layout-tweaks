@@ -7,18 +7,8 @@
    Left Sidebar Trim Rules
    ========================================================================== */
 
-/* Profile */
-html.fb-diet-hide-left-profile :is([data-pagelet="LeftRail"], div[role="navigation"]:not(header *):not([role="banner"] *):not([data-pagelet="Header"] *)) :is(li, div[role="listitem"]):has(a[href*="/me/"], a[href*="/profile.php"], a[aria-label*="Profile" i], a[aria-label*="個人檔案"]) {
-  display: none !important;
-}
-
 /* Friends */
 html.fb-diet-hide-left-friends :is([data-pagelet="LeftRail"], div[role="navigation"]:not(header *):not([role="banner"] *):not([data-pagelet="Header"] *)) :is(li, div[role="listitem"]):has(a[href*="/friends"]) {
-  display: none !important;
-}
-
-/* Feeds */
-html.fb-diet-hide-left-feeds :is([data-pagelet="LeftRail"], div[role="navigation"]:not(header *):not([role="banner"] *):not([data-pagelet="Header"] *)) :is(li, div[role="listitem"]):has(a[href*="/feeds"], a[href*="/feed/"]) {
   display: none !important;
 }
 
