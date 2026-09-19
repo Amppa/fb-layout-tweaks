@@ -1,0 +1,50 @@
+{
+  "manifest_version": 3,
+  "name": "FB Trim — Minimal Sidebar",
+  "version": "1.0.0",
+  "description": "Declutter Facebook by trimming unwanted left sidebar icons and navigation buttons.",
+  "permissions": [
+    "storage"
+  ],
+  "host_permissions": [
+    "*://*.facebook.com/*"
+  ],
+  "action": {
+    "default_title": "FB Trim",
+    "default_popup": "src/popup/popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "32": "icons/icon32.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "options_ui": {
+    "page": "src/options/options.html",
+    "open_in_tab": true
+  },
+  "background": {
+    "service_worker": "src/background/background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "*://*.facebook.com/*"
+      ],
+      "css": [
+        "src/content/content.css"
+      ],
+      "js": [
+        "src/content/content.js"
+      ],
+      "run_at": "document_start",
+      "all_frames": false
+    }
+  ],
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  }
+}
