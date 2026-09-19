@@ -136,6 +136,12 @@
   "itemOrdersPayments": {
     "message": "訂單與付款"
   },
+  "itemBirthdays": {
+    "message": "生日"
+  },
+  "itemGamingVideo": {
+    "message": "電玩遊戲影片"
+  },
   "hintHidden": {
     "message": "已隱藏 (遮眼)"
   },

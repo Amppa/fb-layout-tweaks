@@ -136,6 +136,12 @@
   "itemOrdersPayments": {
     "message": "Orders & Payments"
   },
+  "itemBirthdays": {
+    "message": "Birthdays"
+  },
+  "itemGamingVideo": {
+    "message": "Gaming Video"
+  },
   "hintHidden": {
     "message": "Hidden"
   },
