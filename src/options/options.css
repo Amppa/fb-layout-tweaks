@@ -1,12 +1,12 @@
 :root {
-  --bg-primary: #0f172a;
-  --bg-card: #1e293b;
-  --bg-card-hover: #334155;
+  --bg-primary: #0e0e10;
+  --bg-card: #18181c;
+  --bg-card-hover: #222228;
   --accent-color: #0ea5e9;
   --accent-hover: #38bdf8;
   --accent-gradient: linear-gradient(135deg, #0ea5e9 0%, #38bdf8 100%);
-  --text-primary: #f8fafc;
-  --text-secondary: #94a3b8;
+  --text-primary: #f0f0f2;
+  --text-secondary: #909099;
   --divider: rgba(255, 255, 255, 0.08);
 }
 
@@ -36,6 +36,8 @@ body {
   align-items: center;
   justify-content: space-between;
   margin-bottom: 24px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--divider);
 }
 
 .brand {
@@ -79,7 +81,7 @@ body {
 .master-status-label {
   font-size: 13px;
   font-weight: 600;
-  color: var(--accent-color);
+  color: var(--text-secondary);
 }
 
 /* Action Bar */

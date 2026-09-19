@@ -47,7 +47,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (masterToggle) masterToggle.checked = isEnabled;
     if (masterStatus) {
       masterStatus.textContent = isEnabled ? 'Active' : 'Disabled';
-      masterStatus.style.color = isEnabled ? 'var(--accent-color)' : 'var(--text-secondary)';
+      masterStatus.style.color = 'var(--text-secondary)';
     }
     if (isEnabled) {
       if (uiCleanList) uiCleanList.classList.remove('disabled');
