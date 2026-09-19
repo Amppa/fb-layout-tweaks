@@ -1,0 +1,136 @@
+{
+  "extName": {
+    "message": "FB Trim — 極簡側邊欄與頂部導覽",
+    "description": "套件名稱"
+  },
+  "extDescription": {
+    "message": "整理 Facebook 介面，隱藏不需要的側邊欄圖示與頂部導覽標籤，零版面閃爍跳動。",
+    "description": "套件描述"
+  },
+  "popupTitle": {
+    "message": "FB Trim"
+  },
+  "popupSubtitle": {
+    "message": "極簡 Facebook 導覽"
+  },
+  "popupToggleTitle": {
+    "message": "開關套件功能"
+  },
+  "popupOpenSettings": {
+    "message": "開啟設定"
+  },
+  "optionsTitle": {
+    "message": "FB Trim 設定"
+  },
+  "optionsSubtitle": {
+    "message": "整理並自訂 Facebook 導覽項目"
+  },
+  "masterToggleTitle": {
+    "message": "總開關"
+  },
+  "statusActive": {
+    "message": "運作中"
+  },
+  "statusDisabled": {
+    "message": "已停用"
+  },
+  "groupTopNav": {
+    "message": "頂部導覽列"
+  },
+  "groupLeftSidebar": {
+    "message": "左側邊欄"
+  },
+  "badgeAlwaysShown": {
+    "message": "固定顯示"
+  },
+  "btnRecommended": {
+    "message": "推薦預設"
+  },
+  "btnHideAll": {
+    "message": "全部隱藏"
+  },
+  "btnShowAll": {
+    "message": "全部顯示"
+  },
+  "btnTopResetTitle": {
+    "message": "還原頂部導覽推薦預設值"
+  },
+  "btnTopHideAllTitle": {
+    "message": "隱藏所有頂部導覽項目"
+  },
+  "btnTopShowAllTitle": {
+    "message": "顯示所有頂部導覽項目"
+  },
+  "btnLeftResetTitle": {
+    "message": "還原左側邊欄推薦預設值"
+  },
+  "btnLeftHideAllTitle": {
+    "message": "隱藏所有左側邊欄項目"
+  },
+  "btnLeftShowAllTitle": {
+    "message": "顯示所有左側邊欄項目"
+  },
+  "itemHome": {
+    "message": "首頁"
+  },
+  "itemReels": {
+    "message": "Reels"
+  },
+  "itemMarketplace": {
+    "message": "Marketplace"
+  },
+  "itemGroups": {
+    "message": "社團"
+  },
+  "itemGaming": {
+    "message": "遊戲"
+  },
+  "itemProfile": {
+    "message": "個人檔案"
+  },
+  "itemFeeds": {
+    "message": "動態消息"
+  },
+  "itemMessenger": {
+    "message": "Messenger"
+  },
+  "itemFriends": {
+    "message": "朋友"
+  },
+  "itemMemories": {
+    "message": "動態回顧"
+  },
+  "itemSaved": {
+    "message": "我的珍藏"
+  },
+  "itemPages": {
+    "message": "粉絲專頁"
+  },
+  "itemEvents": {
+    "message": "活動"
+  },
+  "itemMetaAI": {
+    "message": "Meta AI"
+  },
+  "itemAdsManager": {
+    "message": "廣告管理員"
+  },
+  "itemRecentAdActivity": {
+    "message": "你的廣告動態"
+  },
+  "itemProfessionalDashboard": {
+    "message": "專業主控板"
+  },
+  "itemMessengerKids": {
+    "message": "Messenger Kids"
+  },
+  "itemMetaQuest": {
+    "message": "Meta Quest"
+  },
+  "itemFundraisers": {
+    "message": "募款活動"
+  },
+  "itemOrdersPayments": {
+    "message": "訂單與付款"
+  }
+}

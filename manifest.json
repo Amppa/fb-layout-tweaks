@@ -1,8 +1,9 @@
 {
   "manifest_version": 3,
-  "name": "FB Trim — Minimal Sidebar",
+  "name": "__MSG_extName__",
   "version": "1.0.0",
-  "description": "Declutter Facebook by trimming unwanted left sidebar icons and navigation buttons.",
+  "description": "__MSG_extDescription__",
+  "default_locale": "en",
   "permissions": [
     "storage"
   ],

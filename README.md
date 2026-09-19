@@ -17,6 +17,7 @@ Designed with a modern dark frosted aesthetic, FB Trim gives you complete granul
   - **17 Granular Toggles**: Friends, Groups, Marketplace, Reels, Memories, Saved, Pages, Events, Gaming, Meta AI, Ads Manager, Recent Ad Activity, Professional Dashboard, Messenger Kids, Meta Quest, Fundraisers, and Orders & Payments.
 - **Independent Section-Level Actions**: Each navigation section features its own dedicated `Recommended`, `Hide All`, and `Show All` action buttons directly aligned to section headers.
 - **Sleek Minimal Popup**: A compact toolbar popup with a built-in master enable/disable switch and quick access to the Options page.
+- **Multi-Language Support (i18n)**: Fully localized in English and Traditional Chinese (繁體中文), matching native Facebook terminology.
 - **Real-Time Synchronization**: All toggle changes apply instantly across open Facebook tabs without requiring page reloads.
 
 ---

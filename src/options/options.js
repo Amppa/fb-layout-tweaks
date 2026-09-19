@@ -1,8 +1,40 @@
-/**
- * FB Trim - Options Page Controller
- */
+let currentLocale = 'en';
+let localeMessages = null;
+
+async function loadLocaleMessages(locale) {
+  try {
+    const res = await fetch(chrome.runtime.getURL(`_locales/${locale}/messages.json`));
+    localeMessages = await res.json();
+    currentLocale = locale;
+  } catch (e) {
+    localeMessages = null;
+  }
+}
+
+function getMsg(key) {
+  if (localeMessages && localeMessages[key]?.message) {
+    return localeMessages[key].message;
+  }
+  return chrome.i18n.getMessage(key) || '';
+}
+
+function applyI18n() {
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    const msg = getMsg(key);
+    if (msg) el.textContent = msg;
+  });
+  document.querySelectorAll('[data-i18n-title]').forEach(el => {
+    const key = el.getAttribute('data-i18n-title');
+    const msg = getMsg(key);
+    if (msg) el.title = msg;
+  });
+}
 
 document.addEventListener('DOMContentLoaded', async () => {
+  const btnToggleLang = document.getElementById('btnToggleLang');
+  const langLabel = document.getElementById('langLabel');
+
   const masterToggle = document.getElementById('enabled');
   const masterStatus = document.getElementById('masterStatus');
   const uiCleanList = document.getElementById('uiCleanList');
@@ -51,7 +83,9 @@ document.addEventListener('DOMContentLoaded', async () => {
   function updateMasterUI(isEnabled) {
     if (masterToggle) masterToggle.checked = isEnabled;
     if (masterStatus) {
-      masterStatus.textContent = isEnabled ? 'Active' : 'Disabled';
+      const activeText = getMsg('statusActive') || 'Active';
+      const disabledText = getMsg('statusDisabled') || 'Disabled';
+      masterStatus.textContent = isEnabled ? activeText : disabledText;
       masterStatus.style.color = 'var(--text-secondary)';
     }
     if (isEnabled) {
@@ -59,6 +93,38 @@ document.addEventListener('DOMContentLoaded', async () => {
     } else {
       if (uiCleanList) uiCleanList.classList.add('disabled');
     }
+  }
+
+  // Load language preference
+  const { settings: initialSettings } = await chrome.storage.local.get('settings');
+  let prefLocale = initialSettings?.locale;
+  if (!prefLocale) {
+    const uiLang = chrome.i18n.getUILanguage() || navigator.language || '';
+    prefLocale = uiLang.toLowerCase().startsWith('zh') ? 'zh_TW' : 'en';
+  }
+
+  async function updateLocale(locale, persist = false) {
+    await loadLocaleMessages(locale);
+    applyI18n();
+    if (langLabel) {
+      langLabel.textContent = 'ENG / 繁中';
+    }
+    if (masterToggle) {
+      updateMasterUI(masterToggle.checked);
+    }
+    if (persist) {
+      const { settings: cur } = await chrome.storage.local.get('settings');
+      await chrome.storage.local.set({ settings: { ...(cur || {}), locale } });
+    }
+  }
+
+  await updateLocale(prefLocale, false);
+
+  if (btnToggleLang) {
+    btnToggleLang.addEventListener('click', async () => {
+      const nextLocale = currentLocale === 'en' ? 'zh_TW' : 'en';
+      await updateLocale(nextLocale, true);
+    });
   }
 
   // Load initial settings

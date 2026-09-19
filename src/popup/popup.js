@@ -1,9 +1,47 @@
+let localeMessages = null;
+
+async function loadLocaleMessages(locale) {
+  try {
+    const res = await fetch(chrome.runtime.getURL(`_locales/${locale}/messages.json`));
+    localeMessages = await res.json();
+  } catch (e) {
+    localeMessages = null;
+  }
+}
+
+function getMsg(key) {
+  if (localeMessages && localeMessages[key]?.message) {
+    return localeMessages[key].message;
+  }
+  return chrome.i18n.getMessage(key) || '';
+}
+
+function applyI18n() {
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    const msg = getMsg(key);
+    if (msg) el.textContent = msg;
+  });
+  document.querySelectorAll('[data-i18n-title]').forEach(el => {
+    const key = el.getAttribute('data-i18n-title');
+    const msg = getMsg(key);
+    if (msg) el.title = msg;
+  });
+}
+
 document.addEventListener('DOMContentLoaded', async () => {
   const openBtn = document.getElementById('openSettingsBtn');
   const enableToggle = document.getElementById('enableToggle');
 
-  // Load initial enabled status
+  // Load settings & locale
   const { settings } = await chrome.storage.local.get('settings');
+  let prefLocale = settings?.locale;
+  if (!prefLocale) {
+    const uiLang = chrome.i18n.getUILanguage() || navigator.language || '';
+    prefLocale = uiLang.toLowerCase().startsWith('zh') ? 'zh_TW' : 'en';
+  }
+  await loadLocaleMessages(prefLocale);
+  applyI18n();
   if (enableToggle) {
     enableToggle.checked = settings?.enabled !== false;
 

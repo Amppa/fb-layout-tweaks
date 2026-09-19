@@ -44,9 +44,12 @@ graph TD
 
 ```text
 fb-trim/
-├── manifest.json              # Extension manifest (Manifest V3)
+├── manifest.json              # Extension manifest (Manifest V3 with default_locale)
 ├── README.md                  # User-facing introduction & installation guide
 ├── Development.md             # Developer architecture & design documentation
+├── _locales/                  # Internationalization string dictionaries
+│   ├── en/messages.json       # English (default fallback)
+│   └── zh_TW/messages.json    # Traditional Chinese
 ├── icons/                     # Extension branding icons (16, 32, 48, 128px)
 └── src/
     ├── background/
@@ -57,7 +60,7 @@ fb-trim/
     ├── options/
     │   ├── options.html       # Granular settings dashboard (Top Nav first, Left Sidebar second)
     │   ├── options.css        # Options UI styling (dark frosted theme)
-    │   └── options.js         # Settings manager & section-level action handlers
+    │   └── options.js         # Settings manager, i18n renderer & section actions
     └── popup/
         ├── popup.html         # Compact extension toolbar popup
         ├── popup.css          # Dark frosted theme & header toggle switch
@@ -188,7 +191,35 @@ FB Trim shares its design palette with companion extensions (`frosted-feed`):
 
 ---
 
-## 6. Maintenance & Extending FB Trim
+## 6. Internationalization (i18n)
+
+FB Trim utilizes Chrome's native extension internationalization API (`chrome.i18n`) with support for:
+- **English (`en`)**: Default fallback language.
+- **Traditional Chinese (`zh_TW`)**: Native localization aligned with Facebook's regional terminology.
+
+### Architecture & Declarative Rendering
+1. **Manifest Localization**:
+   - `manifest.json` specifies `"default_locale": "en"` and references `__MSG_extName__` and `__MSG_extDescription__`.
+2. **HTML Binding**:
+   - Elements declare translatable string keys via `data-i18n="<key>"` (text content) or `data-i18n-title="<key>"` (tooltip title).
+3. **Automatic DOM Hydration (`applyI18n`)**:
+   - Both `popup.js` and `options.js` execute a lightweight hydration helper upon `DOMContentLoaded`:
+   ```javascript
+   function applyI18n() {
+     document.querySelectorAll('[data-i18n]').forEach(el => {
+       const msg = chrome.i18n.getMessage(el.getAttribute('data-i18n'));
+       if (msg) el.textContent = msg;
+     });
+     document.querySelectorAll('[data-i18n-title]').forEach(el => {
+       const msg = chrome.i18n.getMessage(el.getAttribute('data-i18n-title'));
+       if (msg) el.title = msg;
+     });
+   }
+   ```
+
+---
+
+## 7. Maintenance & Extending FB Trim
 
 ### How to Add a New Item to Trim
 

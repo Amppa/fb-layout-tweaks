@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>FB Trim — Options</title>
+  <title data-i18n="optionsTitle">FB Trim Options</title>
   <link rel="stylesheet" href="options.css">
 </head>
 
@@ -15,13 +15,16 @@
       <div class="brand">
         <div class="logo-badge">FT</div>
         <div>
-          <h1 class="title">FB Trim Options</h1>
-          <p class="subtitle">Declutter & customize Facebook navigation</p>
+          <h1 class="title" data-i18n="optionsTitle">FB Trim Options</h1>
+          <p class="subtitle" data-i18n="optionsSubtitle">Declutter & customize Facebook navigation</p>
         </div>
       </div>
       <div class="header-action">
-        <span class="master-status-label" id="masterStatus">Active</span>
-        <label class="switch main-toggle" title="Master Toggle">
+        <button class="btn-lang" id="btnToggleLang" title="ENG / 繁中">
+          <span id="langLabel">ENG / 繁中</span>
+        </button>
+        <span class="master-status-label" id="masterStatus" data-i18n="statusActive">Active</span>
+        <label class="switch main-toggle" data-i18n-title="masterToggleTitle" title="Master Toggle">
           <input type="checkbox" id="enabled">
           <span class="slider round"></span>
         </label>
@@ -33,11 +36,14 @@
 
       <!-- Group: Top Navigation -->
       <div class="group-header">
-        <div class="group-title">Top Navigation</div>
+        <div class="group-title" data-i18n="groupTopNav">Top Navigation</div>
         <div class="group-actions">
-          <button class="btn-action" id="btnTopReset" title="Restore recommended top navigation defaults">Recommended</button>
-          <button class="btn-action" id="btnTopHideAll" title="Hide all top navigation items">Hide All</button>
-          <button class="btn-action" id="btnTopShowAll" title="Show all top navigation items">Show All</button>
+          <button class="btn-action" id="btnTopReset" data-i18n="btnRecommended" data-i18n-title="btnTopResetTitle"
+            title="Restore recommended top navigation defaults">Recommended</button>
+          <button class="btn-action" id="btnTopHideAll" data-i18n="btnHideAll" data-i18n-title="btnTopHideAllTitle"
+            title="Hide all top navigation items">Hide All</button>
+          <button class="btn-action" id="btnTopShowAll" data-i18n="btnShowAll" data-i18n-title="btnTopShowAllTitle"
+            title="Show all top navigation items">Show All</button>
         </div>
       </div>
 
@@ -45,16 +51,16 @@
       <div class="feature-item">
         <div class="feature-meta">
           <span class="feature-icon">🏠</span>
-          <div class="feature-title">Home (首頁)</div>
+          <div class="feature-title" data-i18n="itemHome">Home</div>
         </div>
-        <span class="badge-fixed">Always Shown</span>
+        <span class="badge-fixed" data-i18n="badgeAlwaysShown">Always Shown</span>
       </div>
 
       <!-- Top Reels -->
       <div class="feature-item">
         <div class="feature-meta">
           <span class="feature-icon">🎬</span>
-          <div class="feature-title">Reels</div>
+          <div class="feature-title" data-i18n="itemReels">Reels</div>
         </div>
         <label class="switch">
           <input type="checkbox" id="hideTopReels">
@@ -66,7 +72,7 @@
       <div class="feature-item">
         <div class="feature-meta">
           <span class="feature-icon">🛒</span>
-          <div class="feature-title">Marketplace</div>
+          <div class="feature-title" data-i18n="itemMarketplace">Marketplace</div>
         </div>
         <label class="switch">
           <input type="checkbox" id="hideTopMarketplace">
@@ -78,7 +84,7 @@
       <div class="feature-item">
         <div class="feature-meta">
           <span class="feature-icon">👥</span>
-          <div class="feature-title">Groups (社團)</div>
+          <div class="feature-title" data-i18n="itemGroups">Groups</div>
         </div>
         <label class="switch">
           <input type="checkbox" id="hideTopGroups">
@@ -90,7 +96,7 @@
       <div class="feature-item">
         <div class="feature-meta">
           <span class="feature-icon">🎮</span>
-          <div class="feature-title">Gaming</div>
+          <div class="feature-title" data-i18n="itemGaming">Gaming</div>
         </div>
         <label class="switch">
           <input type="checkbox" id="hideTopGaming">
@@ -100,11 +106,14 @@
 
       <!-- Group: Left Sidebar -->
       <div class="group-header">
-        <div class="group-title">Left Sidebar</div>
+        <div class="group-title" data-i18n="groupLeftSidebar">Left Sidebar</div>
         <div class="group-actions">
-          <button class="btn-action" id="btnLeftReset" title="Restore recommended left sidebar defaults">Recommended</button>
-          <button class="btn-action" id="btnLeftHideAll" title="Hide all left sidebar items">Hide All</button>
-          <button class="btn-action" id="btnLeftShowAll" title="Show all left sidebar items">Show All</button>
+          <button class="btn-action" id="btnLeftReset" data-i18n="btnRecommended" data-i18n-title="btnLeftResetTitle"
+            title="Restore recommended left sidebar defaults">Recommended</button>
+          <button class="btn-action" id="btnLeftHideAll" data-i18n="btnHideAll" data-i18n-title="btnLeftHideAllTitle"
+            title="Hide all left sidebar items">Hide All</button>
+          <button class="btn-action" id="btnLeftShowAll" data-i18n="btnShowAll" data-i18n-title="btnLeftShowAllTitle"
+            title="Show all left sidebar items">Show All</button>
         </div>
       </div>
 
@@ -112,34 +121,34 @@
       <div class="feature-item">
         <div class="feature-meta">
           <span class="feature-icon">👤</span>
-          <div class="feature-title">Profile (個人檔案)</div>
+          <div class="feature-title" data-i18n="itemProfile">Profile</div>
         </div>
-        <span class="badge-fixed">Always Shown</span>
+        <span class="badge-fixed" data-i18n="badgeAlwaysShown">Always Shown</span>
       </div>
 
       <!-- Left Feeds (Fixed) -->
       <div class="feature-item">
         <div class="feature-meta">
           <span class="feature-icon">📰</span>
-          <div class="feature-title">Feeds (動態消息)</div>
+          <div class="feature-title" data-i18n="itemFeeds">Feeds</div>
         </div>
-        <span class="badge-fixed">Always Shown</span>
+        <span class="badge-fixed" data-i18n="badgeAlwaysShown">Always Shown</span>
       </div>
 
       <!-- Left Messenger (Fixed) -->
       <div class="feature-item">
         <div class="feature-meta">
           <span class="feature-icon">💬</span>
-          <div class="feature-title">Messenger</div>
+          <div class="feature-title" data-i18n="itemMessenger">Messenger</div>
         </div>
-        <span class="badge-fixed">Always Shown</span>
+        <span class="badge-fixed" data-i18n="badgeAlwaysShown">Always Shown</span>
       </div>
 
       <!-- Left Friends -->
       <div class="feature-item">
         <div class="feature-meta">
           <span class="feature-icon">👥</span>
-          <div class="feature-title">Friends (朋友)</div>
+          <div class="feature-title" data-i18n="itemFriends">Friends</div>
         </div>
         <label class="switch">
           <input type="checkbox" id="hideLeftFriends">
@@ -151,7 +160,7 @@
       <div class="feature-item">
         <div class="feature-meta">
           <span class="feature-icon">👥</span>
-          <div class="feature-title">Groups (社團)</div>
+          <div class="feature-title" data-i18n="itemGroups">Groups</div>
         </div>
         <label class="switch">
           <input type="checkbox" id="hideLeftGroups">
@@ -163,7 +172,7 @@
       <div class="feature-item">
         <div class="feature-meta">
           <span class="feature-icon">🛒</span>
-          <div class="feature-title">Marketplace</div>
+          <div class="feature-title" data-i18n="itemMarketplace">Marketplace</div>
         </div>
         <label class="switch">
           <input type="checkbox" id="hideLeftMarketplace">
@@ -175,7 +184,7 @@
       <div class="feature-item">
         <div class="feature-meta">
           <span class="feature-icon">🎬</span>
-          <div class="feature-title">Reels</div>
+          <div class="feature-title" data-i18n="itemReels">Reels</div>
         </div>
         <label class="switch">
           <input type="checkbox" id="hideLeftReels">
@@ -187,7 +196,7 @@
       <div class="feature-item">
         <div class="feature-meta">
           <span class="feature-icon">⏰</span>
-          <div class="feature-title">Memories (動態回顧)</div>
+          <div class="feature-title" data-i18n="itemMemories">Memories</div>
         </div>
         <label class="switch">
           <input type="checkbox" id="hideLeftMemories">
@@ -199,7 +208,7 @@
       <div class="feature-item">
         <div class="feature-meta">
           <span class="feature-icon">🔖</span>
-          <div class="feature-title">Saved (我的珍藏)</div>
+          <div class="feature-title" data-i18n="itemSaved">Saved</div>
         </div>
         <label class="switch">
           <input type="checkbox" id="hideLeftSaved">
@@ -211,7 +220,7 @@
       <div class="feature-item">
         <div class="feature-meta">
           <span class="feature-icon">🚩</span>
-          <div class="feature-title">Pages (粉絲專頁)</div>
+          <div class="feature-title" data-i18n="itemPages">Pages</div>
         </div>
         <label class="switch">
           <input type="checkbox" id="hideLeftPages">
@@ -223,7 +232,7 @@
       <div class="feature-item">
         <div class="feature-meta">
           <span class="feature-icon">📅</span>
-          <div class="feature-title">Events (活動)</div>
+          <div class="feature-title" data-i18n="itemEvents">Events</div>
         </div>
         <label class="switch">
           <input type="checkbox" id="hideLeftEvents">
@@ -235,7 +244,7 @@
       <div class="feature-item">
         <div class="feature-meta">
           <span class="feature-icon">🎮</span>
-          <div class="feature-title">Gaming (遊戲)</div>
+          <div class="feature-title" data-i18n="itemGaming">Gaming</div>
         </div>
         <label class="switch">
           <input type="checkbox" id="hideLeftGaming">
@@ -247,7 +256,7 @@
       <div class="feature-item">
         <div class="feature-meta">
           <span class="feature-icon">🤖</span>
-          <div class="feature-title">Meta AI</div>
+          <div class="feature-title" data-i18n="itemMetaAI">Meta AI</div>
         </div>
         <label class="switch">
           <input type="checkbox" id="hideLeftMetaAI">
@@ -259,7 +268,7 @@
       <div class="feature-item">
         <div class="feature-meta">
           <span class="feature-icon">📊</span>
-          <div class="feature-title">Ads Manager (廣告管理員)</div>
+          <div class="feature-title" data-i18n="itemAdsManager">Ads Manager</div>
         </div>
         <label class="switch">
           <input type="checkbox" id="hideLeftAdsManager">
@@ -271,7 +280,7 @@
       <div class="feature-item">
         <div class="feature-meta">
           <span class="feature-icon">🎯</span>
-          <div class="feature-title">Recent Ad Activity (你的廣告動態)</div>
+          <div class="feature-title" data-i18n="itemRecentAdActivity">Recent Ad Activity</div>
         </div>
         <label class="switch">
           <input type="checkbox" id="hideLeftRecentAdActivity">
@@ -283,7 +292,7 @@
       <div class="feature-item">
         <div class="feature-meta">
           <span class="feature-icon">📈</span>
-          <div class="feature-title">Professional Dashboard (專業主控板)</div>
+          <div class="feature-title" data-i18n="itemProfessionalDashboard">Professional Dashboard</div>
         </div>
         <label class="switch">
           <input type="checkbox" id="hideLeftProfessionalDashboard">
@@ -295,7 +304,7 @@
       <div class="feature-item">
         <div class="feature-meta">
           <span class="feature-icon">🧒</span>
-          <div class="feature-title">Messenger Kids</div>
+          <div class="feature-title" data-i18n="itemMessengerKids">Messenger Kids</div>
         </div>
         <label class="switch">
           <input type="checkbox" id="hideLeftMessengerKids">
@@ -307,7 +316,7 @@
       <div class="feature-item">
         <div class="feature-meta">
           <span class="feature-icon">🥽</span>
-          <div class="feature-title">Meta Quest</div>
+          <div class="feature-title" data-i18n="itemMetaQuest">Meta Quest</div>
         </div>
         <label class="switch">
           <input type="checkbox" id="hideLeftMetaQuest">
@@ -319,7 +328,7 @@
       <div class="feature-item">
         <div class="feature-meta">
           <span class="feature-icon">🎗️</span>
-          <div class="feature-title">Fundraisers (募款活動)</div>
+          <div class="feature-title" data-i18n="itemFundraisers">Fundraisers</div>
         </div>
         <label class="switch">
           <input type="checkbox" id="hideLeftFundraisers">
@@ -331,7 +340,7 @@
       <div class="feature-item">
         <div class="feature-meta">
           <span class="feature-icon">💳</span>
-          <div class="feature-title">Orders & Payments (訂單與付款)</div>
+          <div class="feature-title" data-i18n="itemOrdersPayments">Orders & Payments</div>
         </div>
         <label class="switch">
           <input type="checkbox" id="hideLeftOrdersPayments">

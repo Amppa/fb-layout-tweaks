@@ -1,0 +1,136 @@
+{
+  "extName": {
+    "message": "FB Trim — Minimal Sidebar & Top Navigation",
+    "description": "Extension name"
+  },
+  "extDescription": {
+    "message": "Declutter Facebook by trimming unwanted navigation items, sidebar icons, and distraction tabs with zero layout shift.",
+    "description": "Extension description"
+  },
+  "popupTitle": {
+    "message": "FB Trim"
+  },
+  "popupSubtitle": {
+    "message": "Minimal Facebook Sidebar"
+  },
+  "popupToggleTitle": {
+    "message": "Toggle Extension"
+  },
+  "popupOpenSettings": {
+    "message": "Open Settings"
+  },
+  "optionsTitle": {
+    "message": "FB Trim Options"
+  },
+  "optionsSubtitle": {
+    "message": "Declutter & customize Facebook navigation"
+  },
+  "masterToggleTitle": {
+    "message": "Master Toggle"
+  },
+  "statusActive": {
+    "message": "Active"
+  },
+  "statusDisabled": {
+    "message": "Disabled"
+  },
+  "groupTopNav": {
+    "message": "Top Navigation"
+  },
+  "groupLeftSidebar": {
+    "message": "Left Sidebar"
+  },
+  "badgeAlwaysShown": {
+    "message": "Always Shown"
+  },
+  "btnRecommended": {
+    "message": "Recommended"
+  },
+  "btnHideAll": {
+    "message": "Hide All"
+  },
+  "btnShowAll": {
+    "message": "Show All"
+  },
+  "btnTopResetTitle": {
+    "message": "Restore recommended top navigation defaults"
+  },
+  "btnTopHideAllTitle": {
+    "message": "Hide all top navigation items"
+  },
+  "btnTopShowAllTitle": {
+    "message": "Show all top navigation items"
+  },
+  "btnLeftResetTitle": {
+    "message": "Restore recommended left sidebar defaults"
+  },
+  "btnLeftHideAllTitle": {
+    "message": "Hide all left sidebar items"
+  },
+  "btnLeftShowAllTitle": {
+    "message": "Show all left sidebar items"
+  },
+  "itemHome": {
+    "message": "Home"
+  },
+  "itemReels": {
+    "message": "Reels"
+  },
+  "itemMarketplace": {
+    "message": "Marketplace"
+  },
+  "itemGroups": {
+    "message": "Groups"
+  },
+  "itemGaming": {
+    "message": "Gaming"
+  },
+  "itemProfile": {
+    "message": "Profile"
+  },
+  "itemFeeds": {
+    "message": "Feeds"
+  },
+  "itemMessenger": {
+    "message": "Messenger"
+  },
+  "itemFriends": {
+    "message": "Friends"
+  },
+  "itemMemories": {
+    "message": "Memories"
+  },
+  "itemSaved": {
+    "message": "Saved"
+  },
+  "itemPages": {
+    "message": "Pages"
+  },
+  "itemEvents": {
+    "message": "Events"
+  },
+  "itemMetaAI": {
+    "message": "Meta AI"
+  },
+  "itemAdsManager": {
+    "message": "Ads Manager"
+  },
+  "itemRecentAdActivity": {
+    "message": "Recent Ad Activity"
+  },
+  "itemProfessionalDashboard": {
+    "message": "Professional Dashboard"
+  },
+  "itemMessengerKids": {
+    "message": "Messenger Kids"
+  },
+  "itemMetaQuest": {
+    "message": "Meta Quest"
+  },
+  "itemFundraisers": {
+    "message": "Fundraisers"
+  },
+  "itemOrdersPayments": {
+    "message": "Orders & Payments"
+  }
+}
