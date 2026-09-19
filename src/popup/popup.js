@@ -33,13 +33,9 @@ document.addEventListener('DOMContentLoaded', async () => {
   const openBtn = document.getElementById('openSettingsBtn');
   const enableToggle = document.getElementById('enableToggle');
 
-  // Load settings & locale
+  // Load settings & locale: do not auto-detect system language, default to 'en'
   const { settings } = await chrome.storage.local.get('settings');
-  let prefLocale = settings?.locale;
-  if (!prefLocale) {
-    const uiLang = chrome.i18n.getUILanguage() || navigator.language || '';
-    prefLocale = uiLang.toLowerCase().startsWith('zh') ? 'zh_TW' : 'en';
-  }
+  const prefLocale = settings?.locale || 'en';
   await loadLocaleMessages(prefLocale);
   applyI18n();
   if (enableToggle) {
@@ -54,11 +50,15 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   // Listen for storage changes from Options page
-  chrome.storage.onChanged.addListener((changes, area) => {
-    if (area === 'local' && changes.settings && enableToggle) {
-      const newSettings = changes.settings.newValue;
-      if (newSettings && typeof newSettings.enabled === 'boolean') {
+  chrome.storage.onChanged.addListener(async (changes, area) => {
+    if (area === 'local' && changes.settings) {
+      const newSettings = changes.settings.newValue || {};
+      if (typeof newSettings.enabled === 'boolean' && enableToggle) {
         enableToggle.checked = newSettings.enabled;
+      }
+      if (newSettings.locale) {
+        await loadLocaleMessages(newSettings.locale);
+        applyI18n();
       }
     }
   });

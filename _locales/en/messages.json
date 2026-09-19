@@ -40,6 +40,9 @@
   "groupLeftSidebar": {
     "message": "Left Sidebar"
   },
+  "langToggleTitle": {
+    "message": "Switch language"
+  },
   "badgeAlwaysShown": {
     "message": "Always Shown"
   },

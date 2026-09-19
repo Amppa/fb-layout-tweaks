@@ -32,8 +32,7 @@ function applyI18n() {
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
-  const btnToggleLang = document.getElementById('btnToggleLang');
-  const langLabel = document.getElementById('langLabel');
+  const langSegments = document.querySelectorAll('.lang-segment');
 
   const masterToggle = document.getElementById('enabled');
   const masterStatus = document.getElementById('masterStatus');
@@ -95,20 +94,20 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   }
 
-  // Load language preference
+  // Load language preference: do not auto-detect system language, default to 'en'
   const { settings: initialSettings } = await chrome.storage.local.get('settings');
-  let prefLocale = initialSettings?.locale;
-  if (!prefLocale) {
-    const uiLang = chrome.i18n.getUILanguage() || navigator.language || '';
-    prefLocale = uiLang.toLowerCase().startsWith('zh') ? 'zh_TW' : 'en';
-  }
+  const prefLocale = initialSettings?.locale || 'en';
 
   async function updateLocale(locale, persist = false) {
     await loadLocaleMessages(locale);
+    document.documentElement.lang = locale === 'zh_TW' ? 'zh-TW' : 'en';
     applyI18n();
-    if (langLabel) {
-      langLabel.textContent = 'ENG / 繁中';
-    }
+    langSegments.forEach(btn => {
+      const active = btn.dataset.lang === locale;
+      btn.classList.toggle('is-active', active);
+      if (active) btn.setAttribute('aria-pressed', 'true');
+      else btn.removeAttribute('aria-pressed');
+    });
     if (masterToggle) {
       updateMasterUI(masterToggle.checked);
     }
@@ -120,12 +119,13 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   await updateLocale(prefLocale, false);
 
-  if (btnToggleLang) {
-    btnToggleLang.addEventListener('click', async () => {
-      const nextLocale = currentLocale === 'en' ? 'zh_TW' : 'en';
-      await updateLocale(nextLocale, true);
+  langSegments.forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const next = btn.dataset.lang;
+      if (!next || next === currentLocale) return;
+      await updateLocale(next, true);
     });
-  }
+  });
 
   // Load initial settings
   const data = await chrome.storage.local.get('settings');
