@@ -3,38 +3,9 @@
  * Manages default settings persistence across installations and updates.
  */
 
-const DEFAULT_SETTINGS = {
-  enabled: true,
-  // Section: Left Sidebar (Curated clean defaults)
-  hideLeftProfile: false,
-  hideLeftFriends: false,
-  hideLeftFeeds: false,
-  hideLeftMessenger: true,
-  hideLeftGroups: false,
-  hideLeftMarketplace: true,
-  hideLeftReels: true,
-  hideLeftMemories: true,
-  hideLeftSaved: true,
-  hideLeftPages: true,
-  hideLeftEvents: true,
-  hideLeftBirthdays: true,
-  hideLeftGaming: true,
-  hideLeftGamingVideo: true,
-  hideLeftMetaAI: true,
-  hideLeftAdsManager: true,
-  hideLeftRecentAdActivity: true,
-  hideLeftProfessionalDashboard: true,
-  hideLeftMessengerKids: true,
-  hideLeftMetaQuest: true,
-  hideLeftFundraisers: true,
-  hideLeftOrdersPayments: true,
-  leftWidth: 360,
-  // Section: Top Navigation
-  hideTopReels: false,
-  hideTopMarketplace: true,
-  hideTopGroups: false,
-  hideTopGaming: true
-};
+// Single source of truth for all default settings (see src/shared/defaults.js).
+// importScripts() must be called at the top level of a classic service worker.
+importScripts('../shared/defaults.js');
 
 chrome.runtime.onInstalled.addListener(async () => {
   const data = await chrome.storage.local.get('settings');

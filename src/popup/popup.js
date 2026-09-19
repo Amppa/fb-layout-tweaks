@@ -1,33 +1,7 @@
-let localeMessages = null;
-
-async function loadLocaleMessages(locale) {
-  try {
-    const res = await fetch(chrome.runtime.getURL(`_locales/${locale}/messages.json`));
-    localeMessages = await res.json();
-  } catch (e) {
-    localeMessages = null;
-  }
-}
-
-function getMsg(key) {
-  if (localeMessages && localeMessages[key]?.message) {
-    return localeMessages[key].message;
-  }
-  return chrome.i18n.getMessage(key) || '';
-}
-
-function applyI18n() {
-  document.querySelectorAll('[data-i18n]').forEach(el => {
-    const key = el.getAttribute('data-i18n');
-    const msg = getMsg(key);
-    if (msg) el.textContent = msg;
-  });
-  document.querySelectorAll('[data-i18n-title]').forEach(el => {
-    const key = el.getAttribute('data-i18n-title');
-    const msg = getMsg(key);
-    if (msg) el.title = msg;
-  });
-}
+/**
+ * FB Trim - Popup
+ * Shared i18n helpers are provided by src/shared/i18n.js (loaded by popup.html).
+ */
 
 document.addEventListener('DOMContentLoaded', async () => {
   const openBtn = document.getElementById('openSettingsBtn');

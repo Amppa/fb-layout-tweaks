@@ -61,10 +61,13 @@ fb-trim/
     │   ├── options.html       # Granular settings dashboard (Top Nav first, Left Sidebar second)
     │   ├── options.css        # Options UI styling (dark frosted theme)
     │   └── options.js         # Settings manager, i18n renderer & section actions
-    └── popup/
-        ├── popup.html         # Compact extension toolbar popup
-        ├── popup.css          # Dark frosted theme & header toggle switch
-        └── popup.js           # Master enable/disable toggle & options launcher
+    ├── popup/
+    │   ├── popup.html         # Compact extension toolbar popup
+    │   ├── popup.css          # Dark frosted theme & header toggle switch
+    │   └── popup.js           # Master enable/disable toggle & options launcher
+    └── shared/
+        ├── defaults.js        # Single source of truth for all default settings
+        └── i18n.js            # Shared i18n helpers (loadLocaleMessages / getMsg / applyI18n)
 ```
 
 ---
@@ -202,16 +205,19 @@ FB Trim utilizes Chrome's native extension internationalization API (`chrome.i18
    - `manifest.json` specifies `"default_locale": "en"` and references `__MSG_extName__` and `__MSG_extDescription__`.
 2. **HTML Binding**:
    - Elements declare translatable string keys via `data-i18n="<key>"` (text content) or `data-i18n-title="<key>"` (tooltip title).
-3. **Automatic DOM Hydration (`applyI18n`)**:
-   - Both `popup.js` and `options.js` execute a lightweight hydration helper upon `DOMContentLoaded`:
+3. **Shared i18n Module (`src/shared/i18n.js`)**:
+   - A single copy of the hydration helpers is shared by `popup.html` and `options.html` via `<script src="../shared/i18n.js">`.
+   - `loadLocaleMessages(locale)` fetches `_locales/<locale>/messages.json` and updates `currentLocale` only on success.
+   - `getMsg(key)` prefers the fetched locale dictionary and falls back to `chrome.i18n.getMessage(key)`.
+   - `applyI18n()` hydrates the DOM after the shared script is loaded (typically upon `DOMContentLoaded`):
    ```javascript
    function applyI18n() {
      document.querySelectorAll('[data-i18n]').forEach(el => {
-       const msg = chrome.i18n.getMessage(el.getAttribute('data-i18n'));
+       const msg = getMsg(el.getAttribute('data-i18n'));
        if (msg) el.textContent = msg;
      });
      document.querySelectorAll('[data-i18n-title]').forEach(el => {
-       const msg = chrome.i18n.getMessage(el.getAttribute('data-i18n-title'));
+       const msg = getMsg(el.getAttribute('data-i18n-title'));
        if (msg) el.title = msg;
      });
    }
@@ -230,7 +236,7 @@ FB Trim utilizes Chrome's native extension internationalization API (`chrome.i18
    }
    ```
 
-2. **Add default setting in `src/background/background.js` and `src/options/options.js`**:
+2. **Add default setting in `src/shared/defaults.js`** (single source of truth, consumed by both the service worker and the options page):
    ```javascript
    hideLeftNewItem: true // or false
    ```

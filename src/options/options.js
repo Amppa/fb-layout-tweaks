@@ -1,35 +1,8 @@
-let currentLocale = 'en';
-let localeMessages = null;
-
-async function loadLocaleMessages(locale) {
-  try {
-    const res = await fetch(chrome.runtime.getURL(`_locales/${locale}/messages.json`));
-    localeMessages = await res.json();
-    currentLocale = locale;
-  } catch (e) {
-    localeMessages = null;
-  }
-}
-
-function getMsg(key) {
-  if (localeMessages && localeMessages[key]?.message) {
-    return localeMessages[key].message;
-  }
-  return chrome.i18n.getMessage(key) || '';
-}
-
-function applyI18n() {
-  document.querySelectorAll('[data-i18n]').forEach(el => {
-    const key = el.getAttribute('data-i18n');
-    const msg = getMsg(key);
-    if (msg) el.textContent = msg;
-  });
-  document.querySelectorAll('[data-i18n-title]').forEach(el => {
-    const key = el.getAttribute('data-i18n-title');
-    const msg = getMsg(key);
-    if (msg) el.title = msg;
-  });
-}
+/**
+ * FB Trim - Options Page
+ * Shared i18n helpers come from src/shared/i18n.js; default settings come from
+ * src/shared/defaults.js (both are loaded by options.html).
+ */
 
 document.addEventListener('DOMContentLoaded', async () => {
   const langSegments = document.querySelectorAll('.lang-segment');
@@ -46,37 +19,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   const btnLeftHideAll = document.getElementById('btnLeftHideAll');
   const btnLeftShowAll = document.getElementById('btnLeftShowAll');
 
-  // Curated clean defaults
-  const DEFAULTS = {
-    enabled: true,
-    hideLeftProfile: false,
-    hideLeftFriends: false,
-    hideLeftFeeds: false,
-    hideLeftMessenger: true,
-    hideLeftGroups: false,
-    hideLeftMarketplace: true,
-    hideLeftReels: true,
-    hideLeftMemories: true,
-    hideLeftSaved: true,
-    hideLeftPages: true,
-    hideLeftEvents: true,
-    hideLeftBirthdays: true,
-    hideLeftGaming: true,
-    hideLeftGamingVideo: true,
-    hideLeftMetaAI: true,
-    hideLeftAdsManager: true,
-    hideLeftRecentAdActivity: true,
-    hideLeftProfessionalDashboard: true,
-    hideLeftMessengerKids: true,
-    hideLeftMetaQuest: true,
-    hideLeftFundraisers: true,
-    hideLeftOrdersPayments: true,
-    leftWidth: 360,
-    hideTopReels: false,
-    hideTopMarketplace: true,
-    hideTopGroups: false,
-    hideTopGaming: true
-  };
+  // Curated clean defaults — single source of truth in src/shared/defaults.js
+  const DEFAULTS = DEFAULT_SETTINGS;
 
   const switches = {};
   document.querySelectorAll('#uiCleanList input[type="checkbox"]').forEach(input => {
@@ -180,51 +124,45 @@ document.addEventListener('DOMContentLoaded', async () => {
   const topKeys = ['hideTopReels', 'hideTopMarketplace', 'hideTopGroups', 'hideTopGaming'];
   const leftKeys = Object.keys(switches).filter(k => k.startsWith('hideLeft'));
 
+  // Section-Level Quick Actions (Top Navigation & Left Sidebar)
+  async function applySectionValues(keys, value) {
+    const { settings: current } = await chrome.storage.local.get('settings');
+    const updated = { ...current };
+    keys.forEach(key => {
+      if (switches[key]) {
+        switches[key].checked = value;
+        updateStatusIcon(switches[key]);
+      }
+      updated[key] = value;
+    });
+    await chrome.storage.local.set({ settings: updated });
+  }
+
+  async function resetSection(keys, extraPatch = {}) {
+    const { settings: current } = await chrome.storage.local.get('settings');
+    const updated = { ...current, ...extraPatch };
+    keys.forEach(key => {
+      const defVal = Boolean(DEFAULTS[key]);
+      if (switches[key]) {
+        switches[key].checked = defVal;
+        updateStatusIcon(switches[key]);
+      }
+      updated[key] = defVal;
+    });
+    await chrome.storage.local.set({ settings: updated });
+  }
+
   // Top Navigation Actions
   if (btnTopReset) {
-    btnTopReset.addEventListener('click', async () => {
-      const { settings: current } = await chrome.storage.local.get('settings');
-      const updated = { ...current };
-      topKeys.forEach(key => {
-        const defVal = Boolean(DEFAULTS[key]);
-        if (switches[key]) {
-          switches[key].checked = defVal;
-          updateStatusIcon(switches[key]);
-        }
-        updated[key] = defVal;
-      });
-      await chrome.storage.local.set({ settings: updated });
-    });
+    btnTopReset.addEventListener('click', () => resetSection(topKeys));
   }
 
   if (btnTopHideAll) {
-    btnTopHideAll.addEventListener('click', async () => {
-      const { settings: current } = await chrome.storage.local.get('settings');
-      const updated = { ...current };
-      topKeys.forEach(key => {
-        if (switches[key]) {
-          switches[key].checked = true;
-          updateStatusIcon(switches[key]);
-        }
-        updated[key] = true;
-      });
-      await chrome.storage.local.set({ settings: updated });
-    });
+    btnTopHideAll.addEventListener('click', () => applySectionValues(topKeys, true));
   }
 
   if (btnTopShowAll) {
-    btnTopShowAll.addEventListener('click', async () => {
-      const { settings: current } = await chrome.storage.local.get('settings');
-      const updated = { ...current };
-      topKeys.forEach(key => {
-        if (switches[key]) {
-          switches[key].checked = false;
-          updateStatusIcon(switches[key]);
-        }
-        updated[key] = false;
-      });
-      await chrome.storage.local.set({ settings: updated });
-    });
+    btnTopShowAll.addEventListener('click', () => applySectionValues(topKeys, false));
   }
 
   // Left Sidebar Actions
@@ -264,49 +202,17 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   if (btnLeftReset) {
     btnLeftReset.addEventListener('click', async () => {
-      const { settings: current } = await chrome.storage.local.get('settings');
-      const updated = { ...current };
-      leftKeys.forEach(key => {
-        const defVal = Boolean(DEFAULTS[key]);
-        if (switches[key]) {
-          switches[key].checked = defVal;
-          updateStatusIcon(switches[key]);
-        }
-        updated[key] = defVal;
-      });
-      updated.leftWidth = DEFAULTS.leftWidth;
+      // Recommended also restores the default left sidebar width.
+      await resetSection(leftKeys, { leftWidth: DEFAULTS.leftWidth });
       applyLeftWidthUI(DEFAULTS.leftWidth);
-      await chrome.storage.local.set({ settings: updated });
     });
   }
 
   if (btnLeftHideAll) {
-    btnLeftHideAll.addEventListener('click', async () => {
-      const { settings: current } = await chrome.storage.local.get('settings');
-      const updated = { ...current };
-      leftKeys.forEach(key => {
-        if (switches[key]) {
-          switches[key].checked = true;
-          updateStatusIcon(switches[key]);
-        }
-        updated[key] = true;
-      });
-      await chrome.storage.local.set({ settings: updated });
-    });
+    btnLeftHideAll.addEventListener('click', () => applySectionValues(leftKeys, true));
   }
 
   if (btnLeftShowAll) {
-    btnLeftShowAll.addEventListener('click', async () => {
-      const { settings: current } = await chrome.storage.local.get('settings');
-      const updated = { ...current };
-      leftKeys.forEach(key => {
-        if (switches[key]) {
-          switches[key].checked = false;
-          updateStatusIcon(switches[key]);
-        }
-        updated[key] = false;
-      });
-      await chrome.storage.local.set({ settings: updated });
-    });
+    btnLeftShowAll.addEventListener('click', () => applySectionValues(leftKeys, false));
   }
 });
