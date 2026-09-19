@@ -35,6 +35,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     hideLeftOrdersPayments: true,
     hideTopReels: false,
     hideTopMarketplace: false,
+    hideTopGroups: false,
     hideTopGaming: true
   };
 

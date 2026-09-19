@@ -131,9 +131,10 @@ interface Settings {
   hideLeftFundraisers: boolean;          // default: true
   hideLeftOrdersPayments: boolean;       // default: true
 
-  // Top Navigation items
+  // Top Navigation items (Home is always shown / fixed)
   hideTopReels: boolean;
   hideTopMarketplace: boolean;
+  hideTopGroups: boolean;
   hideTopGaming: boolean;                // default: true
 }
 ```
@@ -160,8 +161,8 @@ interface Settings {
 - Status indicator text/dots are omitted to maintain an ultra-clean, modern aesthetic.
 
 ### 5.2 Options Page (`src/options/`)
-- Full dashboard providing individual controls for 20 toggleable features.
-- Essential core items (**Profile**, **Feeds**, **Messenger**) are marked with an **Always Shown** badge without toggles.
+- Full dashboard providing individual controls for 21 toggleable features.
+- Essential core items (Left: **Profile**, **Feeds**, **Messenger**; Top: **Home**) are marked with an **Always Shown** badge without toggles.
 - Grouped into **Left Sidebar** and **Top Navigation**.
 - **Quick Action Bar**:
   - `Recommended`: Reverts to curated clean defaults.

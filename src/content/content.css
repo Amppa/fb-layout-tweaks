@@ -113,7 +113,7 @@ html.fb-diet-hide-left-orders-payments :is([data-pagelet="LeftRail"], div[role="
    Top Navigation Trim Rules
    ========================================================================== */
 
-/* Reels / Video */
+/* Reels */
 html.fb-diet-hide-top-reels :is(header, [role="banner"], [data-pagelet="Header"]) :is(li, div[role="tab"]):has(a[href*="/watch"]),
 html.fb-diet-hide-top-reels :is(header, [role="banner"], [data-pagelet="Header"]) :is(li, div[role="tab"]):has(a[href*="/reel"]),
 html.fb-diet-hide-top-reels :is(header, [role="banner"], [data-pagelet="Header"]) a[href*="/watch"],
@@ -124,6 +124,12 @@ html.fb-diet-hide-top-reels :is(header, [role="banner"], [data-pagelet="Header"]
 /* Marketplace */
 html.fb-diet-hide-top-marketplace :is(header, [role="banner"], [data-pagelet="Header"]) :is(li, div[role="tab"]):has(a[href*="/marketplace"]),
 html.fb-diet-hide-top-marketplace :is(header, [role="banner"], [data-pagelet="Header"]) a[href*="/marketplace"] {
+  display: none !important;
+}
+
+/* Groups */
+html.fb-diet-hide-top-groups :is(header, [role="banner"], [data-pagelet="Header"]) :is(li, div[role="tab"]):has(a[href*="/groups"]),
+html.fb-diet-hide-top-groups :is(header, [role="banner"], [data-pagelet="Header"]) a[href*="/groups"] {
   display: none !important;
 }
 

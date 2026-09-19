@@ -28,6 +28,7 @@ const DEFAULT_SETTINGS = {
   // Section: Top Navigation
   hideTopReels: false,
   hideTopMarketplace: false,
+  hideTopGroups: false,
   hideTopGaming: true
 };
 
