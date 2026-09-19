@@ -3,7 +3,6 @@
   --bg-card: #18181c;
   --bg-card-hover: #222228;
   --accent-color: #0ea5e9;
-  --accent-hover: #38bdf8;
   --accent-gradient: linear-gradient(135deg, #0ea5e9 0%, #38bdf8 100%);
   --text-primary: #f0f0f2;
   --text-secondary: #909099;
@@ -115,7 +114,7 @@ body {
 }
 
 .lang-segment:focus-visible {
-  outline: 2px solid var(--accent);
+  outline: 2px solid var(--accent-color);
   outline-offset: 1px;
 }
 
@@ -143,9 +142,9 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-top: 20px;
-  margin-bottom: 4px;
-  padding: 0 4px;
+  margin-top: 24px;
+  margin-bottom: 6px;
+  padding: 0 2px;
 }
 
 .features-list > .group-header:first-child {
@@ -153,11 +152,10 @@ body {
 }
 
 .group-title {
-  font-size: 12px;
+  font-size: 16px;
   font-weight: 700;
-  letter-spacing: 0.8px;
-  text-transform: uppercase;
-  color: var(--accent-color);
+  letter-spacing: -0.2px;
+  color: var(--text-primary);
 }
 
 .group-actions {

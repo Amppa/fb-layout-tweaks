@@ -115,25 +115,26 @@ input:checked + .slider:before {
 }
 
 .settings-btn {
-  background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
-  border: none;
-  color: #ffffff;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: #f0f0f2;
   font-size: 13px;
   font-weight: 600;
   padding: 10px 14px;
-  border-radius: 8px;
+  border-radius: 9px;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  transition: opacity 0.15s ease, transform 0.1s ease;
-  box-shadow: 0 4px 12px rgba(14, 165, 233, 0.25);
+  gap: 6px;
+  transition: all 0.15s ease;
   outline: none;
 }
 
 .settings-btn:hover {
-  opacity: 0.92;
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+  color: #ffffff;
 }
 
 .settings-btn:active {
@@ -141,5 +142,5 @@ input:checked + .slider:before {
 }
 
 .btn-icon {
-  font-size: 14px;
+  font-size: 13px;
 }
