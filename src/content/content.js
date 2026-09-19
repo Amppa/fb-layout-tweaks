@@ -26,6 +26,13 @@
       root.classList.toggle(className, isEnabled);
     }
 
+    const widthVal = parseInt(settings.leftWidth, 10);
+    if (isMasterEnabled && Number.isInteger(widthVal) && widthVal < 360) {
+      root.style.setProperty('--fb-trim-left-width', `${Math.max(0, widthVal)}px`);
+    } else {
+      root.style.removeProperty('--fb-trim-left-width');
+    }
+
     if (isMasterEnabled && Boolean(settings.hideLeftAdsManager)) {
       triggerThrottledScan();
     }

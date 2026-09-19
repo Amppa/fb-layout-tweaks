@@ -28,6 +28,7 @@ const DEFAULT_SETTINGS = {
   hideLeftMetaQuest: true,
   hideLeftFundraisers: true,
   hideLeftOrdersPayments: true,
+  leftWidth: 360,
   // Section: Top Navigation
   hideTopReels: false,
   hideTopMarketplace: true,
