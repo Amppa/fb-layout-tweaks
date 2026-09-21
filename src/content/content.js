@@ -77,9 +77,10 @@
     });
   }
 
-  // Load initial settings as early as possible
+  // Load initial settings as early as possible with fallback to DEFAULT_SETTINGS
   chrome.storage.local.get('settings', (data) => {
-    currentSettings = data?.settings || {};
+    const baseDefaults = (typeof DEFAULT_SETTINGS !== 'undefined' ? DEFAULT_SETTINGS : {});
+    currentSettings = { ...baseDefaults, ...(data?.settings || {}) };
     applyUiCleanClasses(currentSettings);
   });
 
@@ -98,7 +99,8 @@
   // Listen for realtime settings changes from Options page
   chrome.storage.onChanged.addListener((changes, area) => {
     if (area === 'local' && changes.settings) {
-      currentSettings = changes.settings.newValue || {};
+      const baseDefaults = (typeof DEFAULT_SETTINGS !== 'undefined' ? DEFAULT_SETTINGS : {});
+      currentSettings = { ...baseDefaults, ...(changes.settings.newValue || {}) };
       applyUiCleanClasses(currentSettings);
     }
   });

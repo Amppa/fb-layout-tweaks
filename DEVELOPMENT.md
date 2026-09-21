@@ -16,6 +16,12 @@ fb-trim-menu/
 │   ├── en/messages.json       # English (default fallback)
 │   └── zh_TW/messages.json    # Traditional Chinese
 ├── icons/                     # Extension branding icons (16, 32, 48, 128px)
+├── scripts/                   # Release packaging tools (Zero npm dependencies)
+│   ├── package.js             # Node.js release packager
+│   └── package.ps1            # Windows PowerShell release packager
+├── tests/                     # Integrity unit tests (Zero npm dependencies)
+│   ├── defaults.test.js       # Node.js native test runner (node --test)
+│   └── test.ps1               # Pure Windows PowerShell test runner
 └── src/
     ├── background/
     │   └── background.js      # Service worker: installation & storage defaults initialization
@@ -47,6 +53,37 @@ fb-trim-menu/
    - **Popup & Options changes**: Reopen the popup or reload the options page.
    - **Background service worker changes**: Click the reload/refresh icon on `chrome://extensions/`.
    - **Content script & CSS changes**: Click the reload icon on `chrome://extensions/` and reload the target Facebook tab (`https://www.facebook.com/*`).
+
+---
+
+## 🧪 Testing Strategy (`tests/`)
+
+Unit testing ensures that configuration keys, toggle elements, and i18n localization dictionaries remain 100% synchronized with zero runtime dependencies.
+
+```bash
+# Using Node.js (Node 18+):
+node --test tests/defaults.test.js
+
+# Or on Windows using PowerShell:
+powershell -ExecutionPolicy Bypass -File tests/test.ps1
+```
+
+- **Scope**: Verifies `DEFAULT_SETTINGS` type safety, bilingual dictionary parity (`en` <-> `zh_TW`), and input accessibility (`aria-label`).
+- **Rule**: Do not add heavy browser automation frameworks (Puppeteer/Playwright).
+
+---
+
+## 📦 Packaging for Release (`scripts/`)
+
+Packagers generate a clean release `.zip` in `release/fb-trim-v<version>.zip` excluding development documentation, tests, scripts, and git metadata:
+
+```bash
+# Using Node.js:
+node scripts/package.js
+
+# Or on Windows using PowerShell:
+powershell -ExecutionPolicy Bypass -File scripts/package.ps1
+```
 
 ---
 

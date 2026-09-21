@@ -1,0 +1,81 @@
+// tests/defaults.test.js
+// Unit tests for FB Trim using Node.js built-in test runner (Node 18+).
+// Run with: node --test tests/defaults.test.js
+
+const test = require('node:test');
+const assert = require('node:assert');
+const fs = require('node:fs');
+const path = require('node:path');
+
+// Mock self / globalThis for loading defaults.js
+require('../src/shared/defaults.js');
+
+const ROOT_DIR = path.resolve(__dirname, '..');
+
+test('DEFAULT_SETTINGS contains required core keys and valid types', () => {
+  const defaults = globalThis.DEFAULT_SETTINGS || self.DEFAULT_SETTINGS;
+
+  assert.ok(defaults, 'DEFAULT_SETTINGS must be defined on globalThis/self');
+  assert.strictEqual(typeof defaults.enabled, 'boolean', 'enabled should be boolean');
+  assert.strictEqual(typeof defaults.leftWidth, 'number', 'leftWidth should be number');
+  assert.ok(defaults.leftWidth >= 0 && defaults.leftWidth <= 360, 'leftWidth should be between 0 and 360');
+
+  // Verify all hide* keys are booleans
+  const hideKeys = Object.keys(defaults).filter(k => k.startsWith('hide'));
+  assert.ok(hideKeys.length >= 20, 'Should have at least 20 hide toggle keys');
+
+  for (const key of hideKeys) {
+    assert.strictEqual(typeof defaults[key], 'boolean', `${key} should be boolean`);
+  }
+});
+
+test('i18n message dictionaries are symmetrically aligned (en <-> zh_TW)', () => {
+  const enPath = path.join(ROOT_DIR, '_locales', 'en', 'messages.json');
+  const zhPath = path.join(ROOT_DIR, '_locales', 'zh_TW', 'messages.json');
+
+  assert.ok(fs.existsSync(enPath), 'en messages.json must exist');
+  assert.ok(fs.existsSync(zhPath), 'zh_TW messages.json must exist');
+
+  const enMessages = JSON.parse(fs.readFileSync(enPath, 'utf8'));
+  const zhMessages = JSON.parse(fs.readFileSync(zhPath, 'utf8'));
+
+  const enKeys = Object.keys(enMessages).sort();
+  const zhKeys = Object.keys(zhMessages).sort();
+
+  const missingInZh = enKeys.filter(k => !zhMessages[k]);
+  const missingInEn = zhKeys.filter(k => !enMessages[k]);
+
+  assert.deepStrictEqual(missingInZh, [], `Keys missing in zh_TW: ${missingInZh.join(', ')}`);
+  assert.deepStrictEqual(missingInEn, [], `Keys missing in en: ${missingInEn.join(', ')}`);
+});
+
+test('All configurable hide* keys in DEFAULT_SETTINGS have corresponding inputs in options.html', () => {
+  const optionsHtmlPath = path.join(ROOT_DIR, 'src', 'options', 'options.html');
+  assert.ok(fs.existsSync(optionsHtmlPath), 'options.html must exist');
+
+  const html = fs.readFileSync(optionsHtmlPath, 'utf8');
+  const defaults = globalThis.DEFAULT_SETTINGS || self.DEFAULT_SETTINGS;
+  const fixedKeys = new Set(['hideLeftProfile', 'hideLeftFeeds']);
+  const configurableKeys = Object.keys(defaults).filter(k => k.startsWith('hide') && !fixedKeys.has(k));
+
+  for (const key of configurableKeys) {
+    const hasId = html.includes(`id="${key}"`);
+    assert.ok(hasId, `options.html should contain an input with id="${key}"`);
+  }
+});
+
+test('All inputs with id in options.html have aria-label for accessibility', () => {
+  const optionsHtmlPath = path.join(ROOT_DIR, 'src', 'options', 'options.html');
+  const html = fs.readFileSync(optionsHtmlPath, 'utf8');
+
+  // Match input elements with id
+  const inputMatches = html.matchAll(/<input[^>]+id="([^"]+)"[^>]*>/g);
+  for (const match of inputMatches) {
+    const fullTag = match[0];
+    const id = match[1];
+    assert.ok(
+      fullTag.includes('aria-label='),
+      `Input #${id} in options.html must have an aria-label attribute`
+    );
+  }
+});

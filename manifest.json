@@ -36,6 +36,7 @@
         "src/content/content.css"
       ],
       "js": [
+        "src/shared/defaults.js",
         "src/content/content.js"
       ],
       "run_at": "document_start",
