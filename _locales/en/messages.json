@@ -4,7 +4,7 @@
     "description": "Extension name"
   },
   "extDescription": {
-    "message": "Declutter Facebook by trimming unwanted navigation items, sidebar icons, and distraction tabs with zero layout shift.",
+    "message": "Declutter Facebook by trimming unwanted navigation items, sidebar icons.",
     "description": "Extension description"
   },
   "popupTitle": {
