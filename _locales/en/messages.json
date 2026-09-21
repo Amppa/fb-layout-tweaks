@@ -150,5 +150,8 @@
   },
   "hintVisible": {
     "message": "Visible"
+  },
+  "itemHoverExpandLeftRail": {
+    "message": "Icon-only Sidebar (Floating labels on hover)"
   }
 }

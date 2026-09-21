@@ -29,6 +29,7 @@ self.DEFAULT_SETTINGS = {
   hideLeftMetaQuest: true,
   hideLeftFundraisers: true,
   hideLeftOrdersPayments: true,
+  hoverExpandLeftRail: false,
   leftWidth: 360,
   // Section: Top Navigation
   hideTopReels: false,

@@ -150,5 +150,8 @@
   },
   "hintVisible": {
     "message": "正常顯示"
+  },
+  "itemHoverExpandLeftRail": {
+    "message": "純圖示側邊欄（懸停浮動標籤）"
   }
 }

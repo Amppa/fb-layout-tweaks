@@ -61,10 +61,13 @@ if (Test-Path $defaultsPath) {
             $missingInHtml += $key
         }
     }
+    if ($htmlContent -notmatch 'id="hoverExpandLeftRail"') {
+        $missingInHtml += 'hoverExpandLeftRail'
+    }
     if ($missingInHtml.Count -gt 0) {
         Write-Host "    (Missing configurable keys in options.html: $($missingInHtml -join ', '))" -ForegroundColor Yellow
     }
-    Assert-Condition ($missingInHtml.Count -eq 0) "All configurable hide* toggles in defaults.js exist in options.html (total $($configurableKeys.Count) toggles)"
+    Assert-Condition ($missingInHtml.Count -eq 0) "All configurable toggles in defaults.js (including hoverExpandLeftRail) exist in options.html"
 } else {
     Assert-Condition $false "defaults.js must exist"
 }

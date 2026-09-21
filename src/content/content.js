@@ -26,8 +26,11 @@
       root.classList.toggle(className, isEnabled);
     }
 
+    const isHoverExpand = isMasterEnabled && Boolean(settings.hoverExpandLeftRail);
+    root.classList.toggle('fb-trim-hover-expand-left-rail', isHoverExpand);
+
     const widthVal = parseInt(settings.leftWidth, 10);
-    if (isMasterEnabled && Number.isInteger(widthVal) && widthVal < 360) {
+    if (isMasterEnabled && !isHoverExpand && Number.isInteger(widthVal) && widthVal < 360) {
       root.style.setProperty('--fb-trim-left-width', `${Math.max(0, widthVal)}px`);
     } else {
       root.style.removeProperty('--fb-trim-left-width');
@@ -102,6 +105,121 @@
       const baseDefaults = (typeof DEFAULT_SETTINGS !== 'undefined' ? DEFAULT_SETTINGS : {});
       currentSettings = { ...baseDefaults, ...(changes.settings.newValue || {}) };
       applyUiCleanClasses(currentSettings);
+      if (!currentSettings.hoverExpandLeftRail) {
+        hideBadges();
+      }
     }
   });
+
+  // Floating Individual Badges Manager (Clean & Displayed Together)
+  let badgesContainer = null;
+  let hoverTimer = null;
+  let isBadgesVisible = false;
+
+  function ensureBadgesContainer() {
+    if (badgesContainer && document.body.contains(badgesContainer)) return badgesContainer;
+    badgesContainer = document.getElementById('fb-trim-floating-badges');
+    if (!badgesContainer) {
+      badgesContainer = document.createElement('div');
+      badgesContainer.id = 'fb-trim-floating-badges';
+      document.body.appendChild(badgesContainer);
+    }
+    return badgesContainer;
+  }
+
+  function hideBadges() {
+    if (badgesContainer) {
+      badgesContainer.textContent = '';
+    }
+    isBadgesVisible = false;
+  }
+
+  function renderFloatingBadges() {
+    const container = ensureBadgesContainer();
+    const leftNav = document.querySelector('[data-pagelet="LeftRail"], div[role="navigation"]:not(header *):not([role="banner"] *):not([data-pagelet="Header"] *)');
+    if (!leftNav) return;
+
+    const items = leftNav.querySelectorAll('a[role="link"], div[role="button"]');
+    const fragment = document.createDocumentFragment();
+    const seenTitles = new Set();
+
+    for (const el of items) {
+      if (el.offsetParent === null) continue;
+      const rect = el.getBoundingClientRect();
+      if (rect.height === 0 || rect.width === 0 || rect.bottom <= 0 || rect.top >= window.innerHeight) continue;
+
+      let title = '';
+      const textSpans = el.querySelectorAll('span');
+      for (const span of textSpans) {
+        if (span.children.length === 0 && span.textContent.trim()) {
+          title = span.textContent.trim();
+          break;
+        }
+      }
+      if (!title) {
+        title = el.getAttribute('aria-label') || '';
+      }
+      title = title.trim();
+      if (!title || seenTitles.has(title)) continue;
+      seenTitles.add(title);
+
+      const pill = document.createElement('div');
+      pill.className = 'fb-trim-badge-pill';
+      pill.textContent = title;
+
+      // Accurately align badge vertical center with item center
+      const topPos = rect.top + (rect.height - 30) / 2;
+      pill.style.top = `${Math.round(topPos)}px`;
+      pill.style.left = `${Math.round(rect.right)}px`;
+
+      pill.addEventListener('click', (e) => {
+        e.preventDefault();
+        el.click();
+      });
+
+      fragment.appendChild(pill);
+    }
+
+    container.textContent = '';
+    container.appendChild(fragment);
+    isBadgesVisible = true;
+  }
+
+  function isInsideLeftRail(e) {
+    return e.clientX <= 76;
+  }
+
+  function isOverBadge(e) {
+    return Boolean(e.target && e.target.closest && e.target.closest('.fb-trim-badge-pill'));
+  }
+
+  document.addEventListener('mousemove', (e) => {
+    if (!currentSettings || currentSettings.enabled === false || !currentSettings.hoverExpandLeftRail) {
+      if (isBadgesVisible) hideBadges();
+      return;
+    }
+
+    if (isInsideLeftRail(e) || isOverBadge(e)) {
+      if (!isBadgesVisible) {
+        if (!hoverTimer) {
+          hoverTimer = setTimeout(() => {
+            renderFloatingBadges();
+            hoverTimer = null;
+          }, 50);
+        }
+      }
+    } else {
+      if (hoverTimer) {
+        clearTimeout(hoverTimer);
+        hoverTimer = null;
+      }
+      if (isBadgesVisible) {
+        hideBadges();
+      }
+    }
+  });
+
+  window.addEventListener('scroll', () => {
+    if (isBadgesVisible) hideBadges();
+  }, { passive: true });
 })();

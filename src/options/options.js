@@ -202,9 +202,16 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   if (btnLeftReset) {
     btnLeftReset.addEventListener('click', async () => {
-      // Recommended also restores the default left sidebar width.
-      await resetSection(leftKeys, { leftWidth: DEFAULTS.leftWidth });
+      // Recommended also restores the default left sidebar width and hover-expand setting.
+      await resetSection(leftKeys, {
+        leftWidth: DEFAULTS.leftWidth,
+        hoverExpandLeftRail: DEFAULTS.hoverExpandLeftRail
+      });
       applyLeftWidthUI(DEFAULTS.leftWidth);
+      if (switches.hoverExpandLeftRail) {
+        switches.hoverExpandLeftRail.checked = Boolean(DEFAULTS.hoverExpandLeftRail);
+        updateStatusIcon(switches.hoverExpandLeftRail);
+      }
     });
   }
 

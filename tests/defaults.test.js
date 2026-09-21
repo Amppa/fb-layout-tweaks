@@ -18,6 +18,7 @@ test('DEFAULT_SETTINGS contains required core keys and valid types', () => {
   assert.ok(defaults, 'DEFAULT_SETTINGS must be defined on globalThis/self');
   assert.strictEqual(typeof defaults.enabled, 'boolean', 'enabled should be boolean');
   assert.strictEqual(typeof defaults.leftWidth, 'number', 'leftWidth should be number');
+  assert.strictEqual(typeof defaults.hoverExpandLeftRail, 'boolean', 'hoverExpandLeftRail should be boolean');
   assert.ok(defaults.leftWidth >= 0 && defaults.leftWidth <= 360, 'leftWidth should be between 0 and 360');
 
   // Verify all hide* keys are booleans
