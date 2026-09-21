@@ -69,6 +69,31 @@ if (Test-Path $defaultsPath) {
     Assert-Condition $false "defaults.js must exist"
 }
 
+# Test 4: Verify icons integrity (16, 32, 48, 128)
+$requiredIcons = @(16, 32, 48, 128)
+$iconsValid = $true
+Add-Type -AssemblyName System.Drawing -ErrorAction SilentlyContinue
+
+foreach ($size in $requiredIcons) {
+    $iconPath = Join-Path $rootDir "icons/icon$size.png"
+    if (-not (Test-Path $iconPath)) {
+        Write-Host "    (Missing icon: icons/icon$size.png)" -ForegroundColor Yellow
+        $iconsValid = $false
+    } else {
+        try {
+            $img = [System.Drawing.Image]::FromFile($iconPath)
+            if ($img.Width -ne $size -or $img.Height -ne $size) {
+                Write-Host "    (Invalid dimension for icon$size.png: $($img.Width)x$($img.Height), expected ${size}x${size})" -ForegroundColor Yellow
+                $iconsValid = $false
+            }
+            $img.Dispose()
+        } catch {
+            # Non-fatal if System.Drawing is unavailable in headless
+        }
+    }
+}
+Assert-Condition $iconsValid "All production icons (16, 32, 48, 128px) exist and have correct dimensions"
+
 Write-Host ""
 if ($failed -eq 0) {
     Write-Host "All $passed tests passed successfully!" -ForegroundColor Green

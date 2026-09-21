@@ -68,7 +68,6 @@ test('All inputs with id in options.html have aria-label for accessibility', () 
   const optionsHtmlPath = path.join(ROOT_DIR, 'src', 'options', 'options.html');
   const html = fs.readFileSync(optionsHtmlPath, 'utf8');
 
-  // Match input elements with id
   const inputMatches = html.matchAll(/<input[^>]+id="([^"]+)"[^>]*>/g);
   for (const match of inputMatches) {
     const fullTag = match[0];
@@ -77,5 +76,15 @@ test('All inputs with id in options.html have aria-label for accessibility', () 
       fullTag.includes('aria-label='),
       `Input #${id} in options.html must have an aria-label attribute`
     );
+  }
+});
+
+test('All production icons exist (16, 32, 48, 128px)', () => {
+  const sizes = [16, 32, 48, 128];
+  for (const size of sizes) {
+    const iconPath = path.join(ROOT_DIR, 'icons', `icon${size}.png`);
+    assert.ok(fs.existsSync(iconPath), `icons/icon${size}.png must exist`);
+    const stats = fs.statSync(iconPath);
+    assert.ok(stats.size > 0, `icons/icon${size}.png should not be empty`);
   }
 });

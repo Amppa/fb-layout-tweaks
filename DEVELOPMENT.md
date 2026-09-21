@@ -16,6 +16,7 @@ fb-trim-menu/
 │   ├── en/messages.json       # English (default fallback)
 │   └── zh_TW/messages.json    # Traditional Chinese
 ├── icons/                     # Extension branding icons (16, 32, 48, 128px)
+├── design/                    # Raw design source assets (Affinity, SVG; NOT packaged)
 ├── scripts/                   # Release packaging tools (Zero npm dependencies)
 │   ├── package.js             # Node.js release packager
 │   └── package.ps1            # Windows PowerShell release packager
