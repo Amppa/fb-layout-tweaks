@@ -1,14 +1,14 @@
 {
   "extName": {
-    "message": "FB Trim — Minimal Sidebar & Top Navigation",
+    "message": "FB Layout Tweaks — Minimal Sidebar & Nav",
     "description": "Extension name"
   },
   "extDescription": {
-    "message": "Declutter Facebook by trimming unwanted navigation items, sidebar icons.",
+    "message": "Declutter Facebook by hiding unwanted navigation items and slimming the sidebar.",
     "description": "Extension description"
   },
   "popupTitle": {
-    "message": "FB Trim"
+    "message": "FB Layout Tweaks"
   },
   "popupSubtitle": {
     "message": "Minimal Facebook Sidebar"
@@ -20,7 +20,7 @@
     "message": "Options"
   },
   "optionsTitle": {
-    "message": "FB Trim Options"
+    "message": "FB Layout Tweaks Options"
   },
   "optionsSubtitle": {
     "message": "Declutter & customize Facebook navigation"

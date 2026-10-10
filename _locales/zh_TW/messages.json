@@ -1,6 +1,6 @@
 {
   "extName": {
-    "message": "FB Trim — 極簡側邊欄與頂部導覽",
+    "message": "FB Layout Tweaks — 極簡側邊欄與頂部導覽",
     "description": "套件名稱"
   },
   "extDescription": {
@@ -8,7 +8,7 @@
     "description": "套件描述"
   },
   "popupTitle": {
-    "message": "FB Trim"
+    "message": "FB Layout Tweaks"
   },
   "popupSubtitle": {
     "message": "極簡 Facebook 導覽"
@@ -20,7 +20,7 @@
     "message": "選項"
   },
   "optionsTitle": {
-    "message": "FB Trim 設定"
+    "message": "FB Layout Tweaks 設定"
   },
   "optionsSubtitle": {
     "message": "整理並自訂 Facebook 導覽項目"

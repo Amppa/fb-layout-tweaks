@@ -16,7 +16,7 @@ if (-not (Test-Path $manifestPath)) {
 
 $manifest = Get-Content $manifestPath -Raw | ConvertFrom-Json
 $version = if ($manifest.version) { $manifest.version } else { "1.0.0" }
-$slug = "fb-trim"
+$slug = "fb-layout-tweaks"
 $zipFileName = "$slug-v$version.zip"
 $zipFilePath = Join-Path $releaseDir $zipFileName
 

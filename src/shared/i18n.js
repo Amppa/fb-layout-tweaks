@@ -1,5 +1,5 @@
 /**
- * FB Trim - Shared i18n Helpers
+ * FB Layout Tweaks - Shared i18n Helpers
  * Single copy shared by popup and options pages (loaded via <script> tag).
  * Tracks currentLocale so callers can guard against redundant locale switches.
  */

@@ -1,41 +1,41 @@
 /**
- * FB Trim - Content Styles
- * Applies display: none !important to trimmed left sidebar and top navigation elements.
+ * FB Layout Tweaks - Content Styles
+ * Applies display: none !important to hidden left sidebar and top navigation elements.
  */
 
 /* ==========================================================================
    Left Sidebar Width & Deep Layout Override
    ========================================================================== */
 
-html[style*="--fb-trim-left-width"] :is([data-pagelet="LeftRail"], div[role="navigation"]:not(header *):not([role="banner"] *):not([data-pagelet="Header"] *)),
-html[style*="--fb-trim-left-width"] :is([data-pagelet="LeftRail"], div[role="navigation"]:not(header *):not([role="banner"] *):not([data-pagelet="Header"] *)) * {
+html[style*="--fb-layout-tweaks-left-width"] :is([data-pagelet="LeftRail"], div[role="navigation"]:not(header *):not([role="banner"] *):not([data-pagelet="Header"] *)),
+html[style*="--fb-layout-tweaks-left-width"] :is([data-pagelet="LeftRail"], div[role="navigation"]:not(header *):not([role="banner"] *):not([data-pagelet="Header"] *)) * {
   box-sizing: border-box !important;
 }
 
 /* Force container and all direct wrap layers to adopt target width and clear min-width */
-html[style*="--fb-trim-left-width"] :is([data-pagelet="LeftRail"], div[role="navigation"]:not(header *):not([role="banner"] *):not([data-pagelet="Header"] *)),
-html[style*="--fb-trim-left-width"] :is([data-pagelet="LeftRail"], div[role="navigation"]:not(header *):not([role="banner"] *):not([data-pagelet="Header"] *)) > div,
-html[style*="--fb-trim-left-width"] :is([data-pagelet="LeftRail"], div[role="navigation"]:not(header *):not([role="banner"] *):not([data-pagelet="Header"] *)) [role="navigation"] {
-  width: var(--fb-trim-left-width) !important;
-  max-width: var(--fb-trim-left-width) !important;
+html[style*="--fb-layout-tweaks-left-width"] :is([data-pagelet="LeftRail"], div[role="navigation"]:not(header *):not([role="banner"] *):not([data-pagelet="Header"] *)),
+html[style*="--fb-layout-tweaks-left-width"] :is([data-pagelet="LeftRail"], div[role="navigation"]:not(header *):not([role="banner"] *):not([data-pagelet="Header"] *)) > div,
+html[style*="--fb-layout-tweaks-left-width"] :is([data-pagelet="LeftRail"], div[role="navigation"]:not(header *):not([role="banner"] *):not([data-pagelet="Header"] *)) [role="navigation"] {
+  width: var(--fb-layout-tweaks-left-width) !important;
+  max-width: var(--fb-layout-tweaks-left-width) !important;
   min-width: 0 !important;
-  flex-basis: var(--fb-trim-left-width) !important;
+  flex-basis: var(--fb-layout-tweaks-left-width) !important;
   overflow-x: hidden !important;
   transition: width 0.15s ease, flex-basis 0.15s ease !important;
 }
 
-html[style*="--fb-trim-left-width: 0px"] :is([data-pagelet="LeftRail"], div[role="navigation"]:not(header *):not([role="banner"] *):not([data-pagelet="Header"] *)) {
+html[style*="--fb-layout-tweaks-left-width: 0px"] :is([data-pagelet="LeftRail"], div[role="navigation"]:not(header *):not([role="banner"] *):not([data-pagelet="Header"] *)) {
   display: none !important;
 }
 
 /* Clear min-width on all lists and items inside the left rail so they can shrink freely */
-html[style*="--fb-trim-left-width"] :is([data-pagelet="LeftRail"], div[role="navigation"]:not(header *):not([role="banner"] *):not([data-pagelet="Header"] *)) :is(ul, ol, li, div[role="listitem"], a, [role="button"]) {
+html[style*="--fb-layout-tweaks-left-width"] :is([data-pagelet="LeftRail"], div[role="navigation"]:not(header *):not([role="banner"] *):not([data-pagelet="Header"] *)) :is(ul, ol, li, div[role="listitem"], a, [role="button"]) {
   min-width: 0 !important;
   max-width: 100% !important;
 }
 
 /* Prevent label texts from pushing container width out */
-html[style*="--fb-trim-left-width"] :is([data-pagelet="LeftRail"], div[role="navigation"]:not(header *):not([role="banner"] *):not([data-pagelet="Header"] *)) span {
+html[style*="--fb-layout-tweaks-left-width"] :is([data-pagelet="LeftRail"], div[role="navigation"]:not(header *):not([role="banner"] *):not([data-pagelet="Header"] *)) span {
   overflow: hidden !important;
   text-overflow: ellipsis !important;
   white-space: nowrap !important;
@@ -46,8 +46,8 @@ html[style*="--fb-trim-left-width"] :is([data-pagelet="LeftRail"], div[role="nav
    ========================================================================== */
 
 /* 1. Base Collapsed State (72px clean icon rail) */
-html.fb-trim-hover-expand-left-rail :is([data-pagelet="LeftRail"], div[role="navigation"]:not(header *):not([role="banner"] *):not([data-pagelet="Header"] *)),
-html.fb-trim-hover-expand-left-rail :is([data-pagelet="LeftRail"], div[role="navigation"]:not(header *):not([role="banner"] *):not([data-pagelet="Header"] *)) > div {
+html.fb-layout-tweaks-hover-expand-left-rail :is([data-pagelet="LeftRail"], div[role="navigation"]:not(header *):not([role="banner"] *):not([data-pagelet="Header"] *)),
+html.fb-layout-tweaks-hover-expand-left-rail :is([data-pagelet="LeftRail"], div[role="navigation"]:not(header *):not([role="banner"] *):not([data-pagelet="Header"] *)) > div {
   width: 72px !important;
   max-width: 72px !important;
   min-width: 72px !important;
@@ -57,18 +57,18 @@ html.fb-trim-hover-expand-left-rail :is([data-pagelet="LeftRail"], div[role="nav
 }
 
 /* Clear min-width on descendants so items shrink cleanly into 72px rail */
-html.fb-trim-hover-expand-left-rail :is([data-pagelet="LeftRail"], div[role="navigation"]:not(header *):not([role="banner"] *):not([data-pagelet="Header"] *)) :is(ul, ol, li, div[role="listitem"], a, [role="button"]) {
+html.fb-layout-tweaks-hover-expand-left-rail :is([data-pagelet="LeftRail"], div[role="navigation"]:not(header *):not([role="banner"] *):not([data-pagelet="Header"] *)) :is(ul, ol, li, div[role="listitem"], a, [role="button"]) {
   min-width: 0 !important;
   box-sizing: border-box !important;
 }
 
 /* Hide native text labels in 72px collapsed rail */
-html.fb-trim-hover-expand-left-rail :is([data-pagelet="LeftRail"], div[role="navigation"]:not(header *):not([role="banner"] *):not([data-pagelet="Header"] *)) span {
+html.fb-layout-tweaks-hover-expand-left-rail :is([data-pagelet="LeftRail"], div[role="navigation"]:not(header *):not([role="banner"] *):not([data-pagelet="Header"] *)) span {
   display: none !important;
 }
 
 /* 2. Individual Floating Badges (Clean, Zero-Shift Overlay, Displayed together) */
-#fb-trim-floating-badges {
+#fb-layout-tweaks-floating-badges {
   position: fixed !important;
   top: 0 !important;
   left: 0 !important;
@@ -78,7 +78,7 @@ html.fb-trim-hover-expand-left-rail :is([data-pagelet="LeftRail"], div[role="nav
   z-index: 2147483647 !important;
 }
 
-.fb-trim-badge-pill {
+.fb-layout-tweaks-badge-pill {
   position: fixed !important;
   pointer-events: auto !important;
   background: rgba(24, 25, 26, 0.95) !important;
@@ -102,13 +102,13 @@ html.fb-trim-hover-expand-left-rail :is([data-pagelet="LeftRail"], div[role="nav
   transition: background-color 0.1s ease, color 0.1s ease !important;
 }
 
-.fb-trim-badge-pill:hover {
+.fb-layout-tweaks-badge-pill:hover {
   background: rgba(45, 47, 49, 0.98) !important;
   color: #ffffff !important;
 }
 
 /* ==========================================================================
-   Left Sidebar Trim Rules
+   Left Sidebar Hide Rules
    ========================================================================== */
 
 /* Messenger */
@@ -227,7 +227,7 @@ html.fb-diet-hide-left-orders-payments :is([data-pagelet="LeftRail"], div[role="
 }
 
 /* ==========================================================================
-   Top Navigation Trim Rules
+   Top Navigation Hide Rules
    ========================================================================== */
 
 /* Reels */

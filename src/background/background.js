@@ -1,5 +1,5 @@
 /**
- * FB Trim - Background Service Worker
+ * FB Layout Tweaks - Background Service Worker
  * Manages default settings persistence across installations and updates.
  */
 

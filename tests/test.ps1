@@ -4,7 +4,7 @@
 $ErrorActionPreference = "Stop"
 $rootDir = Split-Path -Parent $PSScriptRoot
 
-Write-Host "Running FB Trim Unit Tests (PowerShell)..." -ForegroundColor Cyan
+Write-Host "Running FB Layout Tweaks Unit Tests (PowerShell)..." -ForegroundColor Cyan
 $passed = 0
 $failed = 0
 

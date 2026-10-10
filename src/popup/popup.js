@@ -1,5 +1,5 @@
 /**
- * FB Trim - Popup
+ * FB Layout Tweaks - Popup
  * Shared i18n helpers are provided by src/shared/i18n.js (loaded by popup.html).
  */
 

@@ -1,5 +1,5 @@
 /**
- * FB Trim - Shared Default Settings
+ * FB Layout Tweaks - Shared Default Settings
  * Single source of truth shared by the service worker (via importScripts)
  * and extension pages (via <script> tag).
  */

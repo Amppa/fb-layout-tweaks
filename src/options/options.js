@@ -1,5 +1,5 @@
 /**
- * FB Trim - Options Page
+ * FB Layout Tweaks - Options Page
  * Shared i18n helpers come from src/shared/i18n.js; default settings come from
  * src/shared/defaults.js (both are loaded by options.html).
  */

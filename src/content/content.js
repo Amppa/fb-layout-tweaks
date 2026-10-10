@@ -1,5 +1,5 @@
 /**
- * FB Trim - Content Script
+ * FB Layout Tweaks - Content Script
  * Applies CSS class tokens to document.documentElement based on user preferences,
  * and runs a targeted dynamic scan for asynchronous items like Ads Manager.
  */
@@ -27,13 +27,13 @@
     }
 
     const isHoverExpand = isMasterEnabled && Boolean(settings.hoverExpandLeftRail);
-    root.classList.toggle('fb-trim-hover-expand-left-rail', isHoverExpand);
+    root.classList.toggle('fb-layout-tweaks-hover-expand-left-rail', isHoverExpand);
 
     const widthVal = parseInt(settings.leftWidth, 10);
     if (isMasterEnabled && !isHoverExpand && Number.isInteger(widthVal) && widthVal < 360) {
-      root.style.setProperty('--fb-trim-left-width', `${Math.max(0, widthVal)}px`);
+      root.style.setProperty('--fb-layout-tweaks-left-width', `${Math.max(0, widthVal)}px`);
     } else {
-      root.style.removeProperty('--fb-trim-left-width');
+      root.style.removeProperty('--fb-layout-tweaks-left-width');
     }
 
     if (isMasterEnabled && Boolean(settings.hideLeftAdsManager)) {
@@ -118,10 +118,10 @@
 
   function ensureBadgesContainer() {
     if (badgesContainer && document.body.contains(badgesContainer)) return badgesContainer;
-    badgesContainer = document.getElementById('fb-trim-floating-badges');
+    badgesContainer = document.getElementById('fb-layout-tweaks-floating-badges');
     if (!badgesContainer) {
       badgesContainer = document.createElement('div');
-      badgesContainer.id = 'fb-trim-floating-badges';
+      badgesContainer.id = 'fb-layout-tweaks-floating-badges';
       document.body.appendChild(badgesContainer);
     }
     return badgesContainer;
@@ -164,7 +164,7 @@
       seenTitles.add(title);
 
       const pill = document.createElement('div');
-      pill.className = 'fb-trim-badge-pill';
+      pill.className = 'fb-layout-tweaks-badge-pill';
       pill.textContent = title;
 
       // Accurately align badge vertical center with item center
@@ -190,7 +190,7 @@
   }
 
   function isOverBadge(e) {
-    return Boolean(e.target && e.target.closest && e.target.closest('.fb-trim-badge-pill'));
+    return Boolean(e.target && e.target.closest && e.target.closest('.fb-layout-tweaks-badge-pill'));
   }
 
   document.addEventListener('mousemove', (e) => {

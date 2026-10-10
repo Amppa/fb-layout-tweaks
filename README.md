@@ -1,8 +1,8 @@
-# FB Trim — Minimal Sidebar & Top Navigation
+# FB Layout Tweaks — Minimal Sidebar & Top Navigation
 
-A sleek, ultra-lightweight Google Chrome extension (Manifest V3) that declutters Facebook by trimming unwanted navigation items, sidebar icons, and distraction tabs with zero layout shift.
+A sleek, ultra-lightweight Google Chrome extension (Manifest V3) that declutters Facebook by hiding unwanted navigation items, sidebar icons, and distraction tabs with zero layout shift.
 
-Designed with a modern dark frosted aesthetic, FB Trim gives you complete granular control over your Facebook desktop workspace.
+Designed with a modern dark frosted aesthetic, FB Layout Tweaks gives you complete granular control over your Facebook desktop workspace.
 
 ---
 
@@ -45,7 +45,7 @@ Designed with a modern dark frosted aesthetic, FB Trim gives you complete granul
 2. Open Google Chrome and navigate to `chrome://extensions`.
 3. Toggle on **Developer mode** in the upper right corner.
 4. Click **Load unpacked** in the top left.
-5. Select the project root folder (`fb-trim`).
+5. Select the project root folder (`fb-layout-tweaks`).
 6. Open or refresh Facebook to enjoy a decluttered, focused browsing experience!
 
 ---

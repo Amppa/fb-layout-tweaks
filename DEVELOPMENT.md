@@ -1,13 +1,13 @@
-# Development Guide — FB Trim
+# Development Guide — FB Layout Tweaks
 
-This document covers the technical architecture, development workflow, state management, design system, and extension conventions for **FB Trim — Minimal Sidebar & Top Navigation**.
+This document covers the technical architecture, development workflow, state management, design system, and extension conventions for **FB Layout Tweaks — Minimal Sidebar & Top Navigation**.
 
 ---
 
 ## 🛠️ Project Structure
 
 ```text
-fb-trim-menu/
+fb-layout-tweaks/
 ├── manifest.json              # Manifest V3 extension configuration (default_locale: en)
 ├── README.md                  # User-facing introduction & installation guide
 ├── DEVELOPMENT.md             # Technical architecture & development guide (this file)
@@ -49,7 +49,7 @@ fb-trim-menu/
 1. Clone or open this repository.
 2. In Google Chrome, navigate to `chrome://extensions/`.
 3. Enable **Developer mode** (toggle in the top-right corner).
-4. Click **Load unpacked** (top-left) and select the `fb-trim-menu` repository root directory.
+4. Click **Load unpacked** (top-left) and select the `fb-layout-tweaks` repository root directory.
 5. Making changes:
    - **Popup & Options changes**: Reopen the popup or reload the options page.
    - **Background service worker changes**: Click the reload/refresh icon on `chrome://extensions/`.
@@ -76,7 +76,7 @@ powershell -ExecutionPolicy Bypass -File tests/test.ps1
 
 ## 📦 Packaging for Release (`scripts/`)
 
-Packagers generate a clean release `.zip` in `release/fb-trim-v<version>.zip` excluding development documentation, tests, scripts, and git metadata:
+Packagers generate a clean release `.zip` in `release/fb-layout-tweaks-v<version>.zip` excluding development documentation, tests, scripts, and git metadata:
 
 ```bash
 # Using Node.js:
@@ -120,7 +120,7 @@ graph TD
 
 Traditional content scripts executing at `document_idle` suffer from Flash of Unstyled Content (FOUC), where unwanted navigation items flicker briefly before being hidden by JavaScript.
 
-**FB Trim's Zero-FOUC Solution**:
+**FB Layout Tweaks' Zero-FOUC Solution**:
 1. `content_scripts` are registered in `manifest.json` with `"run_at": "document_start"`.
 2. Both `content.css` and `content.js` are injected before DOM tree painting begins.
 3. `content.js` queries `chrome.storage.local` immediately and applies CSS token classes directly to `document.documentElement` (`<html>`):
@@ -139,7 +139,7 @@ This guarantees target elements are invisible prior to the browser's first paint
 
 Facebook heavily utilizes compiled React components with dynamic, obfuscated class names (e.g. `x193iq5w xeuugli`). Relying purely on static classes is inherently fragile.
 
-FB Trim employs a dual-layer strategy:
+FB Layout Tweaks employs a dual-layer strategy:
 1. **Primary Layer (Attribute & URL Matching)**:
    Matches persistent attributes such as `href*="/friends/"`, `href*="/marketplace/"`, SVG paths, or `aria-label` attributes.
 2. **Secondary Layer (Dynamic Text Scanner)**:
@@ -238,7 +238,7 @@ self.DEFAULT_SETTINGS = {
 
 ## 🌐 Internationalization (i18n)
 
-FB Trim utilizes Chrome's native internationalization API (`chrome.i18n`) with support for:
+FB Layout Tweaks utilizes Chrome's native internationalization API (`chrome.i18n`) with support for:
 - **English (`en`)**: Default fallback language (`"default_locale": "en"`).
 - **Traditional Chinese (`zh_TW`)**: Aligned with Facebook's official regional terms.
 
@@ -249,9 +249,9 @@ FB Trim utilizes Chrome's native internationalization API (`chrome.i18n`) with s
 
 ---
 
-## 🔧 Maintenance & Extending FB Trim
+## 🔧 Maintenance & Extending FB Layout Tweaks
 
-### Adding a New Item to Trim
+### Adding a New Item to Hide
 
 1. **Add CSS rule in `src/content/content.css`**:
    ```css

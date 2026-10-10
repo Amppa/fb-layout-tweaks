@@ -3,7 +3,7 @@
 // Zero npm dependencies: uses built-in system tools (tar, PowerShell Compress-Archive, or zip).
 //
 // Excludes scripts/, tests/, *.md, git data, and release archives.
-// Output: release/fb-trim-v<version>.zip
+// Output: release/fb-layout-tweaks-v<version>.zip
 
 const fs = require('fs');
 const path = require('path');
@@ -21,7 +21,7 @@ if (!fs.existsSync(MANIFEST_PATH)) {
 
 const manifest = JSON.parse(fs.readFileSync(MANIFEST_PATH, 'utf8'));
 const version = manifest.version || '1.0.0';
-const slug = 'fb-trim';
+const slug = 'fb-layout-tweaks';
 
 const zipFileName = `${slug}-v${version}.zip`;
 const zipFilePath = path.join(RELEASE_DIR, zipFileName);

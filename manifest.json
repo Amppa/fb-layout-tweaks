@@ -11,7 +11,7 @@
     "*://*.facebook.com/*"
   ],
   "action": {
-    "default_title": "FB Trim",
+    "default_title": "FB Layout Tweaks",
     "default_popup": "src/popup/popup.html",
     "default_icon": {
       "16": "icons/icon16.png",

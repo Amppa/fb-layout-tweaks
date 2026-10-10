@@ -1,5 +1,5 @@
 // tests/defaults.test.js
-// Unit tests for FB Trim using Node.js built-in test runner (Node 18+).
+// Unit tests for FB Layout Tweaks using Node.js built-in test runner (Node 18+).
 // Run with: node --test tests/defaults.test.js
 
 const test = require('node:test');
