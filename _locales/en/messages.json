@@ -4,7 +4,7 @@
     "description": "Extension name"
   },
   "extDescription": {
-    "message": "Declutter Facebook by hiding unwanted navigation items and slimming the sidebar.",
+    "message": "Declutter Facebook: hide unwanted nav items, slim the left sidebar, and collapse the right rail with per-section hides.",
     "description": "Extension description"
   },
   "popupTitle": {
