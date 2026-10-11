@@ -11,6 +11,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   const masterToggle = document.getElementById('enabled');
   const masterStatus = document.getElementById('masterStatus');
   const uiCleanList = document.getElementById('uiCleanList');
+  const versionEl = document.getElementById('optionsVersion');
+  if (versionEl) versionEl.textContent = chrome.runtime.getManifest().version;
 
   const btnTopReset = document.getElementById('btnTopReset');
   const btnTopHideAll = document.getElementById('btnTopHideAll');

@@ -158,3 +158,10 @@ input:checked + .slider:before {
 .btn-icon {
   font-size: 13px;
 }
+
+.version-footer {
+  font-size: 10px;
+  color: var(--text-secondary);
+  text-align: center;
+  opacity: 0.7;
+}

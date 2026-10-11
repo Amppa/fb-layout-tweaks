@@ -460,3 +460,11 @@ input:checked+.slider:before {
   cursor: default;
   opacity: 0.85;
 }
+
+.version-footer {
+  margin-top: 16px;
+  font-size: 11px;
+  color: var(--text-secondary);
+  text-align: center;
+  opacity: 0.7;
+}

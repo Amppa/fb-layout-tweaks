@@ -6,6 +6,8 @@
 document.addEventListener('DOMContentLoaded', async () => {
   const openBtn = document.getElementById('openSettingsBtn');
   const enableToggle = document.getElementById('enableToggle');
+  const versionEl = document.getElementById('popupVersion');
+  if (versionEl) versionEl.textContent = chrome.runtime.getManifest().version;
 
   // Load settings & locale: do not auto-detect system language, default to 'en'
   const { settings } = await chrome.storage.local.get('settings');
