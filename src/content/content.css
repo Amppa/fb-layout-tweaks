@@ -373,6 +373,16 @@ html.fb-layout-tweaks-hover-expand-right-rail:not(.fb-layout-tweaks-right-rail-e
   transition: opacity 0.1s ease !important;
 }
 
+/* Collapsed: Hide Contacts header icon buttons (search + more options) without layout shift */
+html.fb-layout-tweaks-hover-expand-right-rail:not(.fb-layout-tweaks-right-rail-expanded) :is(#right_rail_container, div[role="complementary"]) :is(
+  div[data-focus-target="right_rail"],
+  div[aria-haspopup="menu"][role="button"]
+) {
+  opacity: 0 !important;
+  pointer-events: none !important;
+  transition: opacity 0.1s ease !important;
+}
+
 /* 3. Flyout Expanded State (Floating strictly on top of middle content) */
 html.fb-layout-tweaks-hover-expand-right-rail.fb-layout-tweaks-right-rail-expanded :is(#right_rail_container, div[role="complementary"]) > div {
   position: fixed !important;
