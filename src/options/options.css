@@ -7,7 +7,7 @@
 body {
   background-color: var(--bg-primary);
   color: var(--text-primary);
-  font-family: var(--font-sans);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   min-height: 100vh;
   padding: 40px 20px;
@@ -81,7 +81,7 @@ body {
   padding: 4px 10px;
   border-radius: 6px;
   cursor: pointer;
-  transition: var(--transition-fast);
+  transition: all 0.15s ease;
   outline: none;
 }
 
@@ -176,7 +176,7 @@ body {
   padding: 4px 10px;
   border-radius: 6px;
   cursor: pointer;
-  transition: var(--transition-fast);
+  transition: all 0.15s ease;
   outline: none;
   user-select: none;
 }
@@ -263,7 +263,7 @@ body {
   right: 0;
   bottom: 0;
   background-color: var(--overlay-strong);
-  transition: var(--transition-switch);
+  transition: .2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .slider:before {
@@ -274,7 +274,7 @@ body {
   left: 3px;
   bottom: 3px;
   background-color: var(--white);
-  transition: var(--transition-switch);
+  transition: .2s cubic-bezier(0.4, 0, 0.2, 1);
   box-shadow: var(--shadow-sm);
 }
 
@@ -329,7 +329,7 @@ input:checked+.slider:before {
   border-radius: 999px;
   cursor: pointer;
   user-select: none;
-  transition: var(--transition-fast);
+  transition: all 0.15s ease;
 }
 
 .pill:hover {
