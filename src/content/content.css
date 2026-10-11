@@ -8,8 +8,8 @@
    ========================================================================== */
 
 /* 1. Base Spacer in Document Flow (STRICT 72px AT ALL TIMES - NEVER RESIZES OR PUSHES FEED) */
-html.fb-layout-tweaks-hover-expand-left-rail :is([data-pagelet="LeftRail"], div[role="navigation"]:not(header *):not([role="banner"] *):not([data-pagelet="Header"] *)),
-html.fb-layout-tweaks-hover-expand-left-rail.fb-layout-tweaks-rail-expanded :is([data-pagelet="LeftRail"], div[role="navigation"]:not(header *):not([role="banner"] *):not([data-pagelet="Header"] *)) {
+html.fb-layout-tweaks-hover-expand-left-rail :is(.fb-layout-tweaks-left-rail, [data-pagelet="LeftRail"]),
+html.fb-layout-tweaks-hover-expand-left-rail.fb-layout-tweaks-rail-expanded :is(.fb-layout-tweaks-left-rail, [data-pagelet="LeftRail"]) {
   width: 72px !important;
   max-width: 72px !important;
   min-width: 72px !important;
@@ -19,7 +19,7 @@ html.fb-layout-tweaks-hover-expand-left-rail.fb-layout-tweaks-rail-expanded :is(
 }
 
 /* 2. Floating Visual Drawer (position: fixed overlay - NEVER PUSHES FEED) */
-html.fb-layout-tweaks-hover-expand-left-rail :is([data-pagelet="LeftRail"], div[role="navigation"]:not(header *):not([role="banner"] *):not([data-pagelet="Header"] *)) > div {
+html.fb-layout-tweaks-hover-expand-left-rail :is(.fb-layout-tweaks-left-rail, [data-pagelet="LeftRail"]) > div {
   position: fixed !important;
   top: 56px !important;
   left: 0 !important;
@@ -37,13 +37,13 @@ html.fb-layout-tweaks-hover-expand-left-rail :is([data-pagelet="LeftRail"], div[
 }
 
 /* Clear min-width on descendants so items fit cleanly into 72px rail */
-html.fb-layout-tweaks-hover-expand-left-rail :is([data-pagelet="LeftRail"], div[role="navigation"]:not(header *):not([role="banner"] *):not([data-pagelet="Header"] *)) :is(ul, ol, li, div[role="listitem"], a, [role="button"]) {
+html.fb-layout-tweaks-hover-expand-left-rail :is(.fb-layout-tweaks-left-rail, [data-pagelet="LeftRail"]) :is(ul, ol, li, div[role="listitem"], a, [role="button"]) {
   min-width: 0 !important;
   box-sizing: border-box !important;
 }
 
 /* Collapsed: Hide native text labels without touching icon spans */
-html.fb-layout-tweaks-hover-expand-left-rail:not(.fb-layout-tweaks-rail-expanded) :is([data-pagelet="LeftRail"], div[role="navigation"]:not(header *):not([role="banner"] *):not([data-pagelet="Header"] *)) :is(a, [role="button"]) span:not(:has(svg, img, i, [role="img"])) {
+html.fb-layout-tweaks-hover-expand-left-rail:not(.fb-layout-tweaks-rail-expanded) :is(.fb-layout-tweaks-left-rail, [data-pagelet="LeftRail"]) :is(a, [role="button"]) span:not(:has(svg, img, i, [role="img"])) {
   opacity: 0 !important;
   max-width: 0 !important;
   display: inline-block !important;
@@ -53,7 +53,7 @@ html.fb-layout-tweaks-hover-expand-left-rail:not(.fb-layout-tweaks-rail-expanded
 }
 
 /* Collapsed: Keep section heading on a natural single line (no hardcoded pixels, scales with font size) */
-html.fb-layout-tweaks-hover-expand-left-rail:not(.fb-layout-tweaks-rail-expanded) :is([data-pagelet="LeftRail"], div[role="navigation"]:not(header *):not([role="banner"] *):not([data-pagelet="Header"] *)) :is(
+html.fb-layout-tweaks-hover-expand-left-rail:not(.fb-layout-tweaks-rail-expanded) :is(.fb-layout-tweaks-left-rail, [data-pagelet="LeftRail"]) :is(
   h2, h3, [role="heading"],
   div:has(> :is(h2, h3, [role="heading"]))
 ):not(:has(svg, img, [role="img"], i)) {
@@ -63,7 +63,7 @@ html.fb-layout-tweaks-hover-expand-left-rail:not(.fb-layout-tweaks-rail-expanded
 }
 
 /* Collapsed: Make heading text & edit button transparent while preserving its natural 1-line height */
-html.fb-layout-tweaks-hover-expand-left-rail:not(.fb-layout-tweaks-rail-expanded) :is([data-pagelet="LeftRail"], div[role="navigation"]:not(header *):not([role="banner"] *):not([data-pagelet="Header"] *)) :is(
+html.fb-layout-tweaks-hover-expand-left-rail:not(.fb-layout-tweaks-rail-expanded) :is(.fb-layout-tweaks-left-rail, [data-pagelet="LeftRail"]) :is(
   h2, h3, [role="heading"],
   div:has(> :is(h2, h3, [role="heading"]))
 ):not(:has(svg, img, [role="img"], i)) :is(span, a, [role="button"]) {
@@ -78,7 +78,7 @@ html.fb-layout-tweaks-hover-expand-left-rail:not(.fb-layout-tweaks-rail-expanded
 }
 
 /* Collapsed: Hide bottom legal footer (Privacy, Terms, Cookies...) to eliminate multi-line vertical clutter */
-html.fb-layout-tweaks-hover-expand-left-rail:not(.fb-layout-tweaks-rail-expanded) :is([data-pagelet="LeftRail"], div[role="navigation"]:not(header *):not([role="banner"] *):not([data-pagelet="Header"] *)) :is(
+html.fb-layout-tweaks-hover-expand-left-rail:not(.fb-layout-tweaks-rail-expanded) :is(.fb-layout-tweaks-left-rail, [data-pagelet="LeftRail"]) :is(
   footer,
   [role="contentinfo"],
   div:not(:has(ul, [role="list"], [role="listitem"])):has(a[href*="privacy"], a[href*="policies"], a[href*="cookies"], a[href*="/terms/"])
@@ -87,7 +87,7 @@ html.fb-layout-tweaks-hover-expand-left-rail:not(.fb-layout-tweaks-rail-expanded
 }
 
 /* 3. Flyout Expanded State (Floating strictly on top of middle content) */
-html.fb-layout-tweaks-hover-expand-left-rail.fb-layout-tweaks-rail-expanded :is([data-pagelet="LeftRail"], div[role="navigation"]:not(header *):not([role="banner"] *):not([data-pagelet="Header"] *)) > div {
+html.fb-layout-tweaks-hover-expand-left-rail.fb-layout-tweaks-rail-expanded :is(.fb-layout-tweaks-left-rail, [data-pagelet="LeftRail"]) > div {
   position: fixed !important;
   top: 56px !important;
   left: 0 !important;
@@ -104,7 +104,7 @@ html.fb-layout-tweaks-hover-expand-left-rail.fb-layout-tweaks-rail-expanded :is(
 }
 
 /* Expanded: Show text labels smoothly without clipping */
-html.fb-layout-tweaks-hover-expand-left-rail.fb-layout-tweaks-rail-expanded :is([data-pagelet="LeftRail"], div[role="navigation"]:not(header *):not([role="banner"] *):not([data-pagelet="Header"] *)) :is(a, [role="button"]) span:not(:has(svg, img, i, [role="img"])) {
+html.fb-layout-tweaks-hover-expand-left-rail.fb-layout-tweaks-rail-expanded :is(.fb-layout-tweaks-left-rail, [data-pagelet="LeftRail"]) :is(a, [role="button"]) span:not(:has(svg, img, i, [role="img"])) {
   opacity: 1 !important;
   max-width: none !important;
   overflow: visible !important;
@@ -112,7 +112,7 @@ html.fb-layout-tweaks-hover-expand-left-rail.fb-layout-tweaks-rail-expanded :is(
 }
 
 /* Expanded: Maintain natural section heading height */
-html.fb-layout-tweaks-hover-expand-left-rail.fb-layout-tweaks-rail-expanded :is([data-pagelet="LeftRail"], div[role="navigation"]:not(header *):not([role="banner"] *):not([data-pagelet="Header"] *)) :is(
+html.fb-layout-tweaks-hover-expand-left-rail.fb-layout-tweaks-rail-expanded :is(.fb-layout-tweaks-left-rail, [data-pagelet="LeftRail"]) :is(
   h2, h3, [role="heading"],
   div:has(> :is(h2, h3, [role="heading"]))
 ):not(:has(svg, img, [role="img"], i)) {
@@ -122,7 +122,7 @@ html.fb-layout-tweaks-hover-expand-left-rail.fb-layout-tweaks-rail-expanded :is(
 }
 
 /* Expanded: Fade in section heading text and edit button smoothly */
-html.fb-layout-tweaks-hover-expand-left-rail.fb-layout-tweaks-rail-expanded :is([data-pagelet="LeftRail"], div[role="navigation"]:not(header *):not([role="banner"] *):not([data-pagelet="Header"] *)) :is(
+html.fb-layout-tweaks-hover-expand-left-rail.fb-layout-tweaks-rail-expanded :is(.fb-layout-tweaks-left-rail, [data-pagelet="LeftRail"]) :is(
   h2, h3, [role="heading"],
   div:has(> :is(h2, h3, [role="heading"]))
 ):not(:has(svg, img, [role="img"], i)) :is(span, a, [role="button"]) {
@@ -143,59 +143,59 @@ html.fb-layout-tweaks-hover-expand-left-rail :is([role="main"], [data-pagelet="F
    ========================================================================== */
 
 /* Messenger */
-html.fb-layout-tweaks-hide-left-messenger :is([data-pagelet="LeftRail"], div[role="navigation"]:not(header *):not([role="banner"] *):not([data-pagelet="Header"] *)) :is(li, div[role="listitem"]):has(a[href*="/messages"], a[href*="messenger.com"]) {
+html.fb-layout-tweaks-hide-left-messenger :is(.fb-layout-tweaks-left-rail, [data-pagelet="LeftRail"]) :is(li, div[role="listitem"]):has(a[href*="/messages"], a[href*="messenger.com"]) {
   display: none !important;
 }
 
 /* Friends */
-html.fb-layout-tweaks-hide-left-friends :is([data-pagelet="LeftRail"], div[role="navigation"]:not(header *):not([role="banner"] *):not([data-pagelet="Header"] *)) :is(li, div[role="listitem"]):has(a[href*="/friends"]) {
+html.fb-layout-tweaks-hide-left-friends :is(.fb-layout-tweaks-left-rail, [data-pagelet="LeftRail"]) :is(li, div[role="listitem"]):has(a[href*="/friends"]) {
   display: none !important;
 }
 
 /* Groups (bookmark only: scoped to main bookmarks list, shortcuts in 2nd list survive) */
-html.fb-layout-tweaks-hide-left-groups :is([data-pagelet="LeftRail"], div[role="navigation"]:not(header *):not([role="banner"] *):not([data-pagelet="Header"] *)) :is(ul:first-of-type, [role="list"]:first-of-type) :is(li, div[role="listitem"]):has(a[href*="/groups"]) {
+html.fb-layout-tweaks-hide-left-groups :is(.fb-layout-tweaks-left-rail, [data-pagelet="LeftRail"]) :is(ul:first-of-type, [role="list"]:first-of-type) :is(li, div[role="listitem"]):has(a[href*="/groups"]) {
   display: none !important;
 }
 
 /* Marketplace */
-html.fb-layout-tweaks-hide-left-marketplace :is([data-pagelet="LeftRail"], div[role="navigation"]:not(header *):not([role="banner"] *):not([data-pagelet="Header"] *)) :is(li, div[role="listitem"]):has(a[href*="/marketplace"]) {
+html.fb-layout-tweaks-hide-left-marketplace :is(.fb-layout-tweaks-left-rail, [data-pagelet="LeftRail"]) :is(li, div[role="listitem"]):has(a[href*="/marketplace"]) {
   display: none !important;
 }
 
 /* Reels */
-html.fb-layout-tweaks-hide-left-reels :is([data-pagelet="LeftRail"], div[role="navigation"]:not(header *):not([role="banner"] *):not([data-pagelet="Header"] *)) :is(li, div[role="listitem"]):has(a[href*="/reel"], a[href*="/watch"], a[href*="/videos"]) {
+html.fb-layout-tweaks-hide-left-reels :is(.fb-layout-tweaks-left-rail, [data-pagelet="LeftRail"]) :is(li, div[role="listitem"]):has(a[href*="/reel"], a[href*="/watch"], a[href*="/videos"]) {
   display: none !important;
 }
 
 /* Memories (動態回顧) */
-html.fb-layout-tweaks-hide-left-memories :is([data-pagelet="LeftRail"], div[role="navigation"]:not(header *):not([role="banner"] *):not([data-pagelet="Header"] *)) :is(li, div[role="listitem"]):has(a[href*="/memories"], a[href*="/onthisday"]) {
+html.fb-layout-tweaks-hide-left-memories :is(.fb-layout-tweaks-left-rail, [data-pagelet="LeftRail"]) :is(li, div[role="listitem"]):has(a[href*="/memories"], a[href*="/onthisday"]) {
   display: none !important;
 }
 
 /* Saved (我的珍藏) */
-html.fb-layout-tweaks-hide-left-saved :is([data-pagelet="LeftRail"], div[role="navigation"]:not(header *):not([role="banner"] *):not([data-pagelet="Header"] *)) :is(li, div[role="listitem"]):has(a[href*="/saved"]) {
+html.fb-layout-tweaks-hide-left-saved :is(.fb-layout-tweaks-left-rail, [data-pagelet="LeftRail"]) :is(li, div[role="listitem"]):has(a[href*="/saved"]) {
   display: none !important;
 }
 
 /* Pages (bookmark only: scoped to main bookmarks list, shortcuts in 2nd list survive) */
-html.fb-layout-tweaks-hide-left-pages :is([data-pagelet="LeftRail"], div[role="navigation"]:not(header *):not([role="banner"] *):not([data-pagelet="Header"] *)) :is(ul:first-of-type, [role="list"]:first-of-type) :is(li, div[role="listitem"]):has(a[href*="/pages"]) {
+html.fb-layout-tweaks-hide-left-pages :is(.fb-layout-tweaks-left-rail, [data-pagelet="LeftRail"]) :is(ul:first-of-type, [role="list"]:first-of-type) :is(li, div[role="listitem"]):has(a[href*="/pages"]) {
   display: none !important;
 }
 
 /* Events (bookmark only: scoped to main bookmarks list, matches /events landing with any query params, excluding birthdays) */
-html.fb-layout-tweaks-hide-left-events :is([data-pagelet="LeftRail"], div[role="navigation"]:not(header *):not([role="banner"] *):not([data-pagelet="Header"] *)) :is(ul:first-of-type, [role="list"]:first-of-type) :is(li, div[role="listitem"]):has(
+html.fb-layout-tweaks-hide-left-events :is(.fb-layout-tweaks-left-rail, [data-pagelet="LeftRail"]) :is(ul:first-of-type, [role="list"]:first-of-type) :is(li, div[role="listitem"]):has(
   a[href*="/events"]:not([href*="birthday"])
 ) {
   display: none !important;
 }
 
 /* Birthdays (生日) */
-html.fb-layout-tweaks-hide-left-birthdays :is([data-pagelet="LeftRail"], div[role="navigation"]:not(header *):not([role="banner"] *):not([data-pagelet="Header"] *)) :is(li, div[role="listitem"]):has(a[href*="birthday"]) {
+html.fb-layout-tweaks-hide-left-birthdays :is(.fb-layout-tweaks-left-rail, [data-pagelet="LeftRail"]) :is(li, div[role="listitem"]):has(a[href*="birthday"]) {
   display: none !important;
 }
 
 /* Gaming (bookmark only: scoped to main bookmarks list, matches play games / games_bookmark, excluding gaming video) */
-html.fb-layout-tweaks-hide-left-gaming :is([data-pagelet="LeftRail"], div[role="navigation"]:not(header *):not([role="banner"] *):not([data-pagelet="Header"] *)) :is(ul:first-of-type, [role="list"]:first-of-type) :is(li, div[role="listitem"]):has(
+html.fb-layout-tweaks-hide-left-gaming :is(.fb-layout-tweaks-left-rail, [data-pagelet="LeftRail"]) :is(ul:first-of-type, [role="list"]:first-of-type) :is(li, div[role="listitem"]):has(
   a[href*="/gaming"]:not([href*="games_video_bookmark"]):not([href*="video"]),
   a[href*="/games"]:not([href*="games_video_bookmark"]):not([href*="video"]),
   a[href*="games_bookmark"]:not([href*="games_video_bookmark"])
@@ -204,12 +204,12 @@ html.fb-layout-tweaks-hide-left-gaming :is([data-pagelet="LeftRail"], div[role="
 }
 
 /* Gaming Video (電玩遊戲影片) */
-html.fb-layout-tweaks-hide-left-gaming-video :is([data-pagelet="LeftRail"], div[role="navigation"]:not(header *):not([role="banner"] *):not([data-pagelet="Header"] *)) :is(li, div[role="listitem"]):has(a[href*="games_video_bookmark"], a[href*="gaming/video"], a[href*="gaming_video"]) {
+html.fb-layout-tweaks-hide-left-gaming-video :is(.fb-layout-tweaks-left-rail, [data-pagelet="LeftRail"]) :is(li, div[role="listitem"]):has(a[href*="games_video_bookmark"], a[href*="gaming/video"], a[href*="gaming_video"]) {
   display: none !important;
 }
 
 /* Meta AI */
-html.fb-layout-tweaks-hide-left-metaai :is([data-pagelet="LeftRail"], div[role="navigation"]:not(header *):not([role="banner"] *):not([data-pagelet="Header"] *)) :is(li, div[role="listitem"]):has(a[href*="/meta_ai"], a[href*="/metaai"], a[href*="meta.ai"], a[aria-label*="Meta AI" i]) {
+html.fb-layout-tweaks-hide-left-metaai :is(.fb-layout-tweaks-left-rail, [data-pagelet="LeftRail"]) :is(li, div[role="listitem"]):has(a[href*="/meta_ai"], a[href*="/metaai"], a[href*="meta.ai"], a[aria-label*="Meta AI" i]) {
   display: none !important;
 }
 
@@ -232,39 +232,39 @@ html.fb-layout-tweaks-hide-left-ads-manager .fb-layout-tweaks-hide-left-ads-mana
 }
 
 /* Recent Ad Activity (你的廣告動態) */
-html.fb-layout-tweaks-hide-left-recent-ad-activity :is([data-pagelet="LeftRail"], div[role="navigation"]:not(header *):not([role="banner"] *):not([data-pagelet="Header"] *)) :is(li, div[role="listitem"], div[role="button"]):has(a[href*="ads/activity"],
+html.fb-layout-tweaks-hide-left-recent-ad-activity :is(.fb-layout-tweaks-left-rail, [data-pagelet="LeftRail"]) :is(li, div[role="listitem"], div[role="button"]):has(a[href*="ads/activity"],
   a[aria-label*="廣告動態"],
   a[aria-label*="Ad Activity" i]) {
   display: none !important;
 }
 
 /* Professional Dashboard (專業主控板) */
-html.fb-layout-tweaks-hide-left-professional-dashboard :is([data-pagelet="LeftRail"], div[role="navigation"]:not(header *):not([role="banner"] *):not([data-pagelet="Header"] *)) :is(li, div[role="listitem"]):has(a[href*="professional_dashboard"]) {
+html.fb-layout-tweaks-hide-left-professional-dashboard :is(.fb-layout-tweaks-left-rail, [data-pagelet="LeftRail"]) :is(li, div[role="listitem"]):has(a[href*="professional_dashboard"]) {
   display: none !important;
 }
 
 /* Messenger Kids */
-html.fb-layout-tweaks-hide-left-messenger-kids :is([data-pagelet="LeftRail"], div[role="navigation"]:not(header *):not([role="banner"] *):not([data-pagelet="Header"] *)) :is(li, div[role="listitem"]):has(a[href*="messenger_kids"], a[href*="/kids"]) {
+html.fb-layout-tweaks-hide-left-messenger-kids :is(.fb-layout-tweaks-left-rail, [data-pagelet="LeftRail"]) :is(li, div[role="listitem"]):has(a[href*="messenger_kids"], a[href*="/kids"]) {
   display: none !important;
 }
 
 /* Meta Quest */
-html.fb-layout-tweaks-hide-left-meta-quest :is([data-pagelet="LeftRail"], div[role="navigation"]:not(header *):not([role="banner"] *):not([data-pagelet="Header"] *)) :is(li, div[role="listitem"]):has(a[href*="quest"]) {
+html.fb-layout-tweaks-hide-left-meta-quest :is(.fb-layout-tweaks-left-rail, [data-pagelet="LeftRail"]) :is(li, div[role="listitem"]):has(a[href*="quest"]) {
   display: none !important;
 }
 
 /* Fundraisers (募款活動) */
-html.fb-layout-tweaks-hide-left-fundraisers :is([data-pagelet="LeftRail"], div[role="navigation"]:not(header *):not([role="banner"] *):not([data-pagelet="Header"] *)) :is(li, div[role="listitem"]):has(a[href*="/fundraisers"]) {
+html.fb-layout-tweaks-hide-left-fundraisers :is(.fb-layout-tweaks-left-rail, [data-pagelet="LeftRail"]) :is(li, div[role="listitem"]):has(a[href*="/fundraisers"]) {
   display: none !important;
 }
 
 /* Orders & Payments (訂單與付款) */
-html.fb-layout-tweaks-hide-left-orders-payments :is([data-pagelet="LeftRail"], div[role="navigation"]:not(header *):not([role="banner"] *):not([data-pagelet="Header"] *)) :is(li, div[role="listitem"]):has(a[href*="/facebook_pay"], a[href*="/orders"]) {
+html.fb-layout-tweaks-hide-left-orders-payments :is(.fb-layout-tweaks-left-rail, [data-pagelet="LeftRail"]) :is(li, div[role="listitem"]):has(a[href*="/facebook_pay"], a[href*="/orders"]) {
   display: none !important;
 }
 
 /* Feeds (bookmark only: sk=h_chr feed view, scoped to main bookmarks list) */
-html.fb-layout-tweaks-hide-left-feeds :is([data-pagelet="LeftRail"], div[role="navigation"]:not(header *):not([role="banner"] *):not([data-pagelet="Header"] *)) :is(ul:first-of-type, [role="list"]:first-of-type) :is(li, div[role="listitem"]):has(a[href*="sk=h_chr"]) {
+html.fb-layout-tweaks-hide-left-feeds :is(.fb-layout-tweaks-left-rail, [data-pagelet="LeftRail"]) :is(ul:first-of-type, [role="list"]:first-of-type) :is(li, div[role="listitem"]):has(a[href*="sk=h_chr"]) {
   display: none !important;
 }
 
@@ -300,12 +300,12 @@ html.fb-layout-tweaks-hide-top-gaming :is(header, [role="banner"], [data-pagelet
 
 /* ==========================================================================
    Icon-Only Right Sidebar & Flyout Drawer (mirrors left rail, opens leftward)
-   Anchor: #right_rail_container with div[role="complementary"] fallback.
+   Marker: .fb-layout-tweaks-right-rail, #right_rail_container, [data-pagelet="RightRail"].
    ========================================================================== */
 
 /* 1. Base Spacer in Document Flow (STRICT 72px AT ALL TIMES - NEVER RESIZES OR PUSHES FEED) */
-html.fb-layout-tweaks-hover-expand-right-rail :is([data-pagelet="RightRail"], [data-pagelet="RightRail"] div[role="complementary"], div[role="complementary"][data-pagelet="RightRail"], #right_rail_container):not([role="dialog"] *):not([aria-modal="true"] *):not([role="main"] *):not([data-pagelet*="Photo"] *):not([data-pagelet*="Media"] *):not([data-pagelet*="Tahoe"] *),
-html.fb-layout-tweaks-hover-expand-right-rail.fb-layout-tweaks-right-rail-expanded :is([data-pagelet="RightRail"], [data-pagelet="RightRail"] div[role="complementary"], div[role="complementary"][data-pagelet="RightRail"], #right_rail_container):not([role="dialog"] *):not([aria-modal="true"] *):not([role="main"] *):not([data-pagelet*="Photo"] *):not([data-pagelet*="Media"] *):not([data-pagelet*="Tahoe"] *) {
+html.fb-layout-tweaks-hover-expand-right-rail :is(.fb-layout-tweaks-right-rail, [data-pagelet="RightRail"], #right_rail_container):not([role="dialog"] *),
+html.fb-layout-tweaks-hover-expand-right-rail.fb-layout-tweaks-right-rail-expanded :is(.fb-layout-tweaks-right-rail, [data-pagelet="RightRail"], #right_rail_container):not([role="dialog"] *) {
   width: 72px !important;
   max-width: 72px !important;
   min-width: 72px !important;
@@ -315,7 +315,7 @@ html.fb-layout-tweaks-hover-expand-right-rail.fb-layout-tweaks-right-rail-expand
 }
 
 /* 2. Floating Visual Drawer (position: fixed overlay - NEVER PUSHES FEED) */
-html.fb-layout-tweaks-hover-expand-right-rail :is([data-pagelet="RightRail"] div[role="complementary"], div[role="complementary"][data-pagelet="RightRail"], [data-pagelet="RightRail"]:not(:has(div[role="complementary"])), #right_rail_container):not([role="dialog"] *):not([aria-modal="true"] *):not([role="main"] *):not([data-pagelet*="Photo"] *):not([data-pagelet*="Media"] *):not([data-pagelet*="Tahoe"] *) > div {
+html.fb-layout-tweaks-hover-expand-right-rail :is(.fb-layout-tweaks-right-rail, [data-pagelet="RightRail"], #right_rail_container):not([role="dialog"] *) > div {
   position: fixed !important;
   top: 56px !important;
   right: 0 !important;
@@ -333,13 +333,13 @@ html.fb-layout-tweaks-hover-expand-right-rail :is([data-pagelet="RightRail"] div
 }
 
 /* Clear min-width on descendants so items fit cleanly into 72px rail */
-html.fb-layout-tweaks-hover-expand-right-rail :is([data-pagelet="RightRail"], #right_rail_container):not([role="dialog"] *):not([aria-modal="true"] *):not([role="main"] *):not([data-pagelet*="Photo"] *):not([data-pagelet*="Media"] *):not([data-pagelet*="Tahoe"] *) :is(ul, ol, li, div[role="listitem"], a, [role="button"]) {
+html.fb-layout-tweaks-hover-expand-right-rail :is(.fb-layout-tweaks-right-rail, [data-pagelet="RightRail"], #right_rail_container):not([role="dialog"] *) :is(ul, ol, li, div[role="listitem"], a, [role="button"]) {
   min-width: 0 !important;
   box-sizing: border-box !important;
 }
 
 /* Collapsed: Hide contact names without touching avatar spans */
-html.fb-layout-tweaks-hover-expand-right-rail:not(.fb-layout-tweaks-right-rail-expanded) :is([data-pagelet="RightRail"], #right_rail_container):not([role="dialog"] *):not([aria-modal="true"] *):not([role="main"] *):not([data-pagelet*="Photo"] *):not([data-pagelet*="Media"] *):not([data-pagelet*="Tahoe"] *) :is(a, [role="button"]) span:not(:has(svg, img, i, [role="img"])) {
+html.fb-layout-tweaks-hover-expand-right-rail:not(.fb-layout-tweaks-right-rail-expanded) :is(.fb-layout-tweaks-right-rail, [data-pagelet="RightRail"], #right_rail_container):not([role="dialog"] *) :is(a, [role="button"]) span:not(:has(svg, img, i, [role="img"])) {
   opacity: 0 !important;
   max-width: 0 !important;
   display: inline-block !important;
@@ -349,7 +349,7 @@ html.fb-layout-tweaks-hover-expand-right-rail:not(.fb-layout-tweaks-right-rail-e
 }
 
 /* Collapsed: Keep section headings (Sponsored / Birthdays / Contacts / Group chats) on a natural single line */
-html.fb-layout-tweaks-hover-expand-right-rail:not(.fb-layout-tweaks-right-rail-expanded) :is([data-pagelet="RightRail"], #right_rail_container):not([role="dialog"] *):not([aria-modal="true"] *):not([role="main"] *):not([data-pagelet*="Photo"] *):not([data-pagelet*="Media"] *):not([data-pagelet*="Tahoe"] *) :is(
+html.fb-layout-tweaks-hover-expand-right-rail:not(.fb-layout-tweaks-right-rail-expanded) :is(.fb-layout-tweaks-right-rail, [data-pagelet="RightRail"], #right_rail_container):not([role="dialog"] *) :is(
   h2, h3, [role="heading"],
   div:has(> :is(h2, h3, [role="heading"]))
 ):not(:has(svg, img, [role="img"], i)) {
@@ -359,7 +359,7 @@ html.fb-layout-tweaks-hover-expand-right-rail:not(.fb-layout-tweaks-right-rail-e
 }
 
 /* Collapsed: Make heading text & header icon buttons transparent while preserving natural 1-line height */
-html.fb-layout-tweaks-hover-expand-right-rail:not(.fb-layout-tweaks-right-rail-expanded) :is([data-pagelet="RightRail"], #right_rail_container):not([role="dialog"] *):not([aria-modal="true"] *):not([role="main"] *):not([data-pagelet*="Photo"] *):not([data-pagelet*="Media"] *):not([data-pagelet*="Tahoe"] *) :is(
+html.fb-layout-tweaks-hover-expand-right-rail:not(.fb-layout-tweaks-right-rail-expanded) :is(.fb-layout-tweaks-right-rail, [data-pagelet="RightRail"], #right_rail_container):not([role="dialog"] *) :is(
   h2, h3, [role="heading"],
   div:has(> :is(h2, h3, [role="heading"]))
 ):not(:has(svg, img, [role="img"], i)) :is(span, a, [role="button"]) {
@@ -374,7 +374,7 @@ html.fb-layout-tweaks-hover-expand-right-rail:not(.fb-layout-tweaks-right-rail-e
 }
 
 /* Collapsed: Hide Contacts header icon buttons (search + more options) without layout shift */
-html.fb-layout-tweaks-hover-expand-right-rail:not(.fb-layout-tweaks-right-rail-expanded) :is([data-pagelet="RightRail"], #right_rail_container):not([role="dialog"] *):not([aria-modal="true"] *):not([role="main"] *):not([data-pagelet*="Photo"] *):not([data-pagelet*="Media"] *):not([data-pagelet*="Tahoe"] *) :is(
+html.fb-layout-tweaks-hover-expand-right-rail:not(.fb-layout-tweaks-right-rail-expanded) :is(.fb-layout-tweaks-right-rail, [data-pagelet="RightRail"], #right_rail_container):not([role="dialog"] *) :is(
   div[data-focus-target="right_rail"],
   div[aria-haspopup="menu"][role="button"]
 ) {
@@ -384,7 +384,7 @@ html.fb-layout-tweaks-hover-expand-right-rail:not(.fb-layout-tweaks-right-rail-e
 }
 
 /* 3. Flyout Expanded State (Floating strictly on top of middle content) */
-html.fb-layout-tweaks-hover-expand-right-rail.fb-layout-tweaks-right-rail-expanded :is([data-pagelet="RightRail"] div[role="complementary"], div[role="complementary"][data-pagelet="RightRail"], [data-pagelet="RightRail"]:not(:has(div[role="complementary"])), #right_rail_container):not([role="dialog"] *):not([aria-modal="true"] *):not([role="main"] *):not([data-pagelet*="Photo"] *):not([data-pagelet*="Media"] *):not([data-pagelet*="Tahoe"] *) > div {
+html.fb-layout-tweaks-hover-expand-right-rail.fb-layout-tweaks-right-rail-expanded :is(.fb-layout-tweaks-right-rail, [data-pagelet="RightRail"], #right_rail_container):not([role="dialog"] *) > div {
   position: fixed !important;
   top: 56px !important;
   right: 0 !important;
@@ -401,7 +401,7 @@ html.fb-layout-tweaks-hover-expand-right-rail.fb-layout-tweaks-right-rail-expand
 }
 
 /* Expanded: Show text labels smoothly without clipping */
-html.fb-layout-tweaks-hover-expand-right-rail.fb-layout-tweaks-right-rail-expanded :is([data-pagelet="RightRail"], #right_rail_container):not([role="dialog"] *):not([aria-modal="true"] *):not([role="main"] *):not([data-pagelet*="Photo"] *):not([data-pagelet*="Media"] *):not([data-pagelet*="Tahoe"] *) :is(a, [role="button"]) span:not(:has(svg, img, i, [role="img"])) {
+html.fb-layout-tweaks-hover-expand-right-rail.fb-layout-tweaks-right-rail-expanded :is(.fb-layout-tweaks-right-rail, [data-pagelet="RightRail"], #right_rail_container):not([role="dialog"] *) :is(a, [role="button"]) span:not(:has(svg, img, i, [role="img"])) {
   opacity: 1 !important;
   max-width: none !important;
   overflow: visible !important;
@@ -409,7 +409,7 @@ html.fb-layout-tweaks-hover-expand-right-rail.fb-layout-tweaks-right-rail-expand
 }
 
 /* Expanded: Maintain natural section heading height */
-html.fb-layout-tweaks-hover-expand-right-rail.fb-layout-tweaks-right-rail-expanded :is([data-pagelet="RightRail"], #right_rail_container):not([role="dialog"] *):not([aria-modal="true"] *):not([role="main"] *):not([data-pagelet*="Photo"] *):not([data-pagelet*="Media"] *):not([data-pagelet*="Tahoe"] *) :is(
+html.fb-layout-tweaks-hover-expand-right-rail.fb-layout-tweaks-right-rail-expanded :is(.fb-layout-tweaks-right-rail, [data-pagelet="RightRail"], #right_rail_container):not([role="dialog"] *) :is(
   h2, h3, [role="heading"],
   div:has(> :is(h2, h3, [role="heading"]))
 ):not(:has(svg, img, [role="img"], i)) {
@@ -419,7 +419,7 @@ html.fb-layout-tweaks-hover-expand-right-rail.fb-layout-tweaks-right-rail-expand
 }
 
 /* Expanded: Fade in section heading text and header buttons smoothly */
-html.fb-layout-tweaks-hover-expand-right-rail.fb-layout-tweaks-right-rail-expanded :is([data-pagelet="RightRail"], #right_rail_container):not([role="dialog"] *):not([aria-modal="true"] *):not([role="main"] *):not([data-pagelet*="Photo"] *):not([data-pagelet*="Media"] *):not([data-pagelet*="Tahoe"] *) :is(
+html.fb-layout-tweaks-hover-expand-right-rail.fb-layout-tweaks-right-rail-expanded :is(.fb-layout-tweaks-right-rail, [data-pagelet="RightRail"], #right_rail_container):not([role="dialog"] *) :is(
   h2, h3, [role="heading"],
   div:has(> :is(h2, h3, [role="heading"]))
 ):not(:has(svg, img, [role="img"], i)) :is(span, a, [role="button"]) {
@@ -444,7 +444,7 @@ html.fb-layout-tweaks-hide-right-birthdays .fb-layout-tweaks-hide-right-birthday
 }
 
 /* Meta AI contact row: stable aria-label icon anchor + scanner fallback node */
-html.fb-layout-tweaks-hide-right-metaai :is(#right_rail_container, div[role="complementary"]) li:has(i[aria-label*="Meta AI" i]),
+html.fb-layout-tweaks-hide-right-metaai :is(.fb-layout-tweaks-right-rail, [data-pagelet="RightRail"], #right_rail_container) li:has(i[aria-label*="Meta AI" i]),
 html.fb-layout-tweaks-hide-right-metaai .fb-layout-tweaks-hide-right-metaai-node {
   display: none !important;
 }

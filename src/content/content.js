@@ -43,6 +43,10 @@
     root.classList.toggle('fb-layout-tweaks-hover-expand-left-rail', isHoverExpand);
     root.classList.toggle('fb-layout-tweaks-hover-expand-right-rail', trimRightRail);
 
+    if (isMasterEnabled) {
+      tagRailContainers();
+    }
+
     if (isMasterEnabled && settings.showLeftAdsManager === false) {
       triggerThrottledScan();
     }
@@ -161,12 +165,51 @@
     }
   }
 
+  const RIGHT_RAIL_EXCLUDE_ANCESTORS = '[role="dialog"], [aria-modal="true"], [role="main"], [data-pagelet*="Photo"], [data-pagelet*="Media"], [data-pagelet*="Tahoe"]';
+
+  function tagRailContainers() {
+    try {
+      // Tag genuine Left Rail containers
+      const leftCandidates = document.querySelectorAll(
+        '[data-pagelet="LeftRail"], div[role="navigation"]:not(header *):not([role="banner"] *):not([data-pagelet="Header"] *)'
+      );
+      for (const el of leftCandidates) {
+        if (!el.classList.contains('fb-layout-tweaks-left-rail')) {
+          el.classList.add('fb-layout-tweaks-left-rail');
+        }
+      }
+
+      // Tag genuine Right Rail containers (strictly excluding photo/dialog overlays)
+      const rightCandidates = document.querySelectorAll(
+        '#right_rail_container, [data-pagelet="RightRail"], div[role="complementary"]'
+      );
+      for (const el of rightCandidates) {
+        if (el.closest(RIGHT_RAIL_EXCLUDE_ANCESTORS)) {
+          el.classList.remove('fb-layout-tweaks-right-rail');
+          continue;
+        }
+        if (
+          el.id === 'right_rail_container' ||
+          el.getAttribute('data-pagelet') === 'RightRail' ||
+          el.closest('#right_rail_container, [data-pagelet="RightRail"]')
+        ) {
+          if (!el.classList.contains('fb-layout-tweaks-right-rail')) {
+            el.classList.add('fb-layout-tweaks-right-rail');
+          }
+        }
+      }
+    } catch (e) {
+      // Non-fatal
+    }
+  }
+
   let scanScheduled = false;
   function triggerThrottledScan() {
     if (scanScheduled) return;
     scanScheduled = true;
     requestAnimationFrame(() => {
       scanScheduled = false;
+      tagRailContainers();
       scanLeftRailDynamicItems();
       scanRightRailDynamicItems();
     });
@@ -228,12 +271,12 @@
 
     // Check if mouse is directly over any left navigation button / link / item
     const isOverItem = Boolean(target.closest(
-      '[data-pagelet="LeftRail"] :is(a, [role="button"], [role="listitem"], li), div[role="navigation"]:not(header *):not([role="banner"] *):not([data-pagelet="Header"] *) :is(a, [role="button"], [role="listitem"], li)'
+      ':is(.fb-layout-tweaks-left-rail, [data-pagelet="LeftRail"]) :is(a, [role="button"], [role="listitem"], li)'
     ));
 
     // When already expanded, allow smooth navigation within the expanded left rail container
     const isOverRail = isRailExpanded && Boolean(target.closest(
-      '[data-pagelet="LeftRail"], div[role="navigation"]:not(header *):not([role="banner"] *):not([data-pagelet="Header"] *)'
+      '.fb-layout-tweaks-left-rail, [data-pagelet="LeftRail"]'
     ));
 
     if (isOverItem || isOverRail) {
@@ -276,16 +319,11 @@
     document.documentElement.classList.toggle('fb-layout-tweaks-right-rail-expanded', expanded);
   }
 
-  const RIGHT_RAIL_EXCLUDE_ANCESTORS = '[role="dialog"], [aria-modal="true"], [role="main"], [data-pagelet*="Photo"], [data-pagelet*="Media"], [data-pagelet*="Tahoe"]';
-
   function getRightRailContainer(node) {
     if (!node || !node.closest) return null;
-    const rail = node.closest('#right_rail_container, [data-pagelet="RightRail"], div[role="complementary"]');
+    const rail = node.closest('.fb-layout-tweaks-right-rail, #right_rail_container, [data-pagelet="RightRail"]');
     if (!rail) return null;
     if (rail.closest(RIGHT_RAIL_EXCLUDE_ANCESTORS)) return null;
-    if (!rail.closest('#right_rail_container, [data-pagelet="RightRail"]')) {
-      return null;
-    }
     return rail;
   }
 
