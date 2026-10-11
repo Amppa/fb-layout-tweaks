@@ -1,10 +1,10 @@
 {
   "extName": {
-    "message": "FB Layout Tweaks — 極簡側邊欄與頂部導覽",
+    "message": "FB Layout Tweaks — 臉書排版極簡化",
     "description": "套件名稱"
   },
   "extDescription": {
-    "message": "整理 Facebook 介面，隱藏不需要的側邊欄圖示與頂部導覽標籤。",
+    "message": "極簡化 Facebook 介面：收合左右側邊欄（懸停展開）、隱藏贊助廣告與自訂導覽項目。",
     "description": "套件描述"
   },
   "popupTitle": {
@@ -158,10 +158,10 @@
     "message": "電玩遊戲影片"
   },
   "itemHoverExpandLeftRail": {
-    "message": "最小化"
+    "message": "左側欄最小化"
   },
   "itemMinimizeRightRail": {
-    "message": "最小化"
+    "message": "右側欄最小化"
   },
   "itemHideRightSponsored": {
     "message": "隱藏 Sponsored"

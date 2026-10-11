@@ -4,7 +4,7 @@
     "description": "Extension name"
   },
   "extDescription": {
-    "message": "Declutter Facebook: hide unwanted nav items, slim the left sidebar, and collapse the right rail with per-section hides.",
+    "message": "Minimalist Facebook layout: collapse sidebars to icon rails (hover to expand), hide sponsored ads, and declutter navigation.",
     "description": "Extension description"
   },
   "popupTitle": {
@@ -158,10 +158,10 @@
     "message": "Gaming Video"
   },
   "itemHoverExpandLeftRail": {
-    "message": "Minimize"
+    "message": "Minimize Left Sidebar"
   },
   "itemMinimizeRightRail": {
-    "message": "Minimize"
+    "message": "Minimize Right Sidebar"
   },
   "itemHideRightSponsored": {
     "message": "Hide Sponsored"
