@@ -57,7 +57,7 @@ test('All configurable show* keys in DEFAULT_SETTINGS have corresponding inputs 
 
   const html = fs.readFileSync(optionsHtmlPath, 'utf8');
   const defaults = globalThis.DEFAULT_SETTINGS || self.DEFAULT_SETTINGS;
-  const fixedKeys = new Set(['showLeftProfile', 'showLeftFeeds']);
+  const fixedKeys = new Set(['showLeftProfile']);
   const configurableKeys = Object.keys(defaults).filter(k => k.startsWith('show') && !fixedKeys.has(k));
 
   for (const key of configurableKeys) {

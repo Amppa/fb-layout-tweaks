@@ -53,7 +53,7 @@ if (Test-Path $defaultsPath) {
     $defaultsText = Get-Content $defaultsPath -Raw
     $showKeys = [regex]::Matches($defaultsText, '(show[A-Za-z0-9]+)\s*:') | ForEach-Object { $_.Groups[1].Value }
     
-    $fixedKeys = @('showLeftProfile', 'showLeftFeeds')
+    $fixedKeys = @('showLeftProfile')
     $configurableKeys = $showKeys | Where-Object { $fixedKeys -notcontains $_ }
     $missingInHtml = @()
     foreach ($key in $configurableKeys) {

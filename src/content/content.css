@@ -139,8 +139,8 @@ html.fb-diet-hide-left-friends :is([data-pagelet="LeftRail"], div[role="navigati
   display: none !important;
 }
 
-/* Groups (bookmark only: exact /groups/ landing page, never /groups/<id> shortcuts) */
-html.fb-diet-hide-left-groups :is([data-pagelet="LeftRail"], div[role="navigation"]:not(header *):not([role="banner"] *):not([data-pagelet="Header"] *)) :is(li, div[role="listitem"]):has(a[href$="/groups/"], a[href*="/groups/?"], a[href*="/groups/#"]) {
+/* Groups (bookmark only: scoped to main bookmarks list, shortcuts in 2nd list survive) */
+html.fb-diet-hide-left-groups :is([data-pagelet="LeftRail"], div[role="navigation"]:not(header *):not([role="banner"] *):not([data-pagelet="Header"] *)) :is(ul:first-of-type, [role="list"]:first-of-type) :is(li, div[role="listitem"]):has(a[href*="/groups"]) {
   display: none !important;
 }
 
@@ -164,13 +164,15 @@ html.fb-diet-hide-left-saved :is([data-pagelet="LeftRail"], div[role="navigation
   display: none !important;
 }
 
-/* Pages (bookmark only: exact /pages/ landing page, never /<slug>-<id> page shortcuts) */
-html.fb-diet-hide-left-pages :is([data-pagelet="LeftRail"], div[role="navigation"]:not(header *):not([role="banner"] *):not([data-pagelet="Header"] *)) :is(li, div[role="listitem"]):has(a[href$="/pages/"], a[href*="/pages/?"], a[href*="/pages/#"]) {
+/* Pages (bookmark only: scoped to main bookmarks list, shortcuts in 2nd list survive) */
+html.fb-diet-hide-left-pages :is([data-pagelet="LeftRail"], div[role="navigation"]:not(header *):not([role="banner"] *):not([data-pagelet="Header"] *)) :is(ul:first-of-type, [role="list"]:first-of-type) :is(li, div[role="listitem"]):has(a[href*="/pages"]) {
   display: none !important;
 }
 
-/* Events (bookmark only: exact /events/ landing page, never /events/<id> links, excluding birthdays) */
-html.fb-diet-hide-left-events :is([data-pagelet="LeftRail"], div[role="navigation"]:not(header *):not([role="banner"] *):not([data-pagelet="Header"] *)) :is(li, div[role="listitem"]):has(a[href$="/events/"]:not([href*="birthday"]), a[href*="/events/?"]:not([href*="birthday"]), a[href*="/events/#"]:not([href*="birthday"])) {
+/* Events (bookmark only: scoped to main bookmarks list, matches /events landing with any query params, excluding birthdays) */
+html.fb-diet-hide-left-events :is([data-pagelet="LeftRail"], div[role="navigation"]:not(header *):not([role="banner"] *):not([data-pagelet="Header"] *)) :is(ul:first-of-type, [role="list"]:first-of-type) :is(li, div[role="listitem"]):has(
+  a[href*="/events"]:not([href*="birthday"])
+) {
   display: none !important;
 }
 
@@ -179,8 +181,12 @@ html.fb-diet-hide-left-birthdays :is([data-pagelet="LeftRail"], div[role="naviga
   display: none !important;
 }
 
-/* Gaming (bookmark only: exact /gaming/ landing page, never /gaming/<id> or /games/<id> shortcuts, excluding gaming video) */
-html.fb-diet-hide-left-gaming :is([data-pagelet="LeftRail"], div[role="navigation"]:not(header *):not([role="banner"] *):not([data-pagelet="Header"] *)) :is(li, div[role="listitem"]):has(a[href$="/gaming/"]:not([href*="games_video_bookmark"]):not([href*="video"]), a[href*="/gaming/?"]:not([href*="games_video_bookmark"]):not([href*="video"]), a[href*="/gaming/#"]:not([href*="games_video_bookmark"]):not([href*="video"]), a[href$="/games/"]:not([href*="games_video_bookmark"]):not([href*="video"]), a[href*="/games/?"]:not([href*="games_video_bookmark"]):not([href*="video"]), a[href*="/games/#"]:not([href*="games_video_bookmark"]):not([href*="video"])) {
+/* Gaming (bookmark only: scoped to main bookmarks list, matches play games / games_bookmark, excluding gaming video) */
+html.fb-diet-hide-left-gaming :is([data-pagelet="LeftRail"], div[role="navigation"]:not(header *):not([role="banner"] *):not([data-pagelet="Header"] *)) :is(ul:first-of-type, [role="list"]:first-of-type) :is(li, div[role="listitem"]):has(
+  a[href*="/gaming"]:not([href*="games_video_bookmark"]):not([href*="video"]),
+  a[href*="/games"]:not([href*="games_video_bookmark"]):not([href*="video"]),
+  a[href*="games_bookmark"]:not([href*="games_video_bookmark"])
+) {
   display: none !important;
 }
 
@@ -241,6 +247,11 @@ html.fb-diet-hide-left-fundraisers :is([data-pagelet="LeftRail"], div[role="navi
 
 /* Orders & Payments (訂單與付款) */
 html.fb-diet-hide-left-orders-payments :is([data-pagelet="LeftRail"], div[role="navigation"]:not(header *):not([role="banner"] *):not([data-pagelet="Header"] *)) :is(li, div[role="listitem"]):has(a[href*="/facebook_pay"], a[href*="/orders"]) {
+  display: none !important;
+}
+
+/* Feeds (bookmark only: sk=h_chr feed view, scoped to main bookmarks list) */
+html.fb-diet-hide-left-feeds :is([data-pagelet="LeftRail"], div[role="navigation"]:not(header *):not([role="banner"] *):not([data-pagelet="Header"] *)) :is(ul:first-of-type, [role="list"]:first-of-type) :is(li, div[role="listitem"]):has(a[href*="sk=h_chr"]) {
   display: none !important;
 }
 

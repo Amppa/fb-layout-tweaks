@@ -23,8 +23,8 @@
 
     for (const [key, value] of Object.entries(settings)) {
       if (!key.startsWith('show')) continue;
-      // Fixed anchors (Profile, Feeds) have no hide rule.
-      if (key === 'showLeftProfile' || key === 'showLeftFeeds') continue;
+      // Fixed anchor (Profile) has no hide rule.
+      if (key === 'showLeftProfile') continue;
       const className = getUiCleanClassName(key);
       const isHidden = isMasterEnabled && value === false;
       root.classList.toggle(className, isHidden);
