@@ -7,7 +7,7 @@
 body {
   background: var(--bg-primary);
   color: var(--text-primary);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font-family: var(--font-sans);
   width: 300px;
   padding: 16px;
   user-select: none;
@@ -125,7 +125,7 @@ body {
   right: 0;
   bottom: 0;
   background-color: var(--overlay-strong);
-  transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: var(--transition-switch);
 }
 
 .slider:before {
@@ -136,7 +136,7 @@ body {
   left: 3px;
   bottom: 3px;
   background-color: var(--white);
-  transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: var(--transition-switch);
   box-shadow: var(--shadow-sm);
 }
 
@@ -169,7 +169,7 @@ input:checked + .slider:before {
   align-items: center;
   justify-content: center;
   gap: 6px;
-  transition: all 0.15s ease;
+  transition: var(--transition-fast);
   outline: none;
 }
 
