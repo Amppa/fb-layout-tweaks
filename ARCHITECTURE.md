@@ -8,14 +8,14 @@ Quick-reference map to help developers and AI assistants navigate features to th
 
 | Feature / Domain | Directory | Primary Responsibility & Context |
 | :--- | :--- | :--- |
-| **Host DOM & Injected UI** | `src/content/` | Injected into Facebook (`https://www.facebook.com/*`); Zero-FOUC root class injector (`content.js`) and scoped declarative CSS hiding rules (`content.css`). |
+| **Host DOM & Injected UI** | `src/content/` | Injected into Facebook (`https://www.facebook.com/*`); Zero-FOUC root class injector (`content.js`) and scoped declarative CSS hiding rules (`content.css`); left/top per-item hides plus right-rail avatar collapse with dynamic text scanner for lazy sections. |
 | **Background Service Worker** | `src/background/` | Manifest V3 service worker (`background.js`); installation lifecycle & `DEFAULT_SETTINGS` initialization in `chrome.storage.local`. |
-| **Toolbar Quick Panel** | `src/popup/` | Ephemeral browser action panel (`popup.html` / `popup.js` / `popup.css`); master ON/OFF toggle, section quick toggles (`trimTopNav`, `trimLeftItems`, `hoverExpandLeftRail`), jump to options. |
-| **Extension Settings Page** | `src/options/` | Full-tab configuration center (`options.html` / `options.js` / `options.css`); dedicated cards for Top Navigation Items, Left Sidebar Items, and Left Sidebar Behavior; section master switches linked to popup (`trimTopNav`, `trimLeftItems`), section actions (`Recommended`, `Hide All`, `Show All`). |
-| **Shared Foundations** | `src/shared/` | Cross-context utilities: state defaults (`defaults.js`), i18n localization helper (`i18n.js`). |
+| **Toolbar Quick Panel** | `src/popup/` | Ephemeral browser action panel (`popup.html` / `popup.js` / `popup.css`); master ON/OFF toggle, section quick toggles (`trimTopNav`, `trimLeftItems`, `trimRightRail`, `hoverExpandLeftRail`), jump to options. |
+| **Extension Settings Page** | `src/options/` | Full-tab configuration center (`options.html` / `options.js` / `options.css`); three cards — Top pills, Left pills + minimize, Right minimize + per-section hide switches (checked = hidden); section master switches linked to popup (`trimTopNav`, `trimLeftItems`, `trimRightRail`), section actions (`Recommended`, `Hide All`, `Show All`) for Top/Left pills. |
+| **Shared Foundations** | `src/shared/` | Cross-context utilities: state defaults (`defaults.js`, authored in top/left/right groups), i18n localization helper (`i18n.js`), design tokens (`tokens.css`, linked by popup/options pages). |
 | **Localization Dictionaries** | `_locales/` | Native Chrome i18n dictionaries: English fallback (`_locales/en/messages.json`) and Traditional Chinese (`_locales/zh_TW/messages.json`). |
 | **Icons & Brand Artwork** | `icons/`, `design/` | Production PNGs (`icons/`: 16, 32, 48, 128px) vs master SVG and design assets (`design/`). |
-| **Release & Tooling** | `scripts/`, `tests/` | Packaging automation (`scripts/package.js`, `scripts/package.ps1`) and integrity unit tests (`tests/defaults.test.js`, `tests/test.ps1`). |
+| **Release & Tooling** | `scripts/`, `tests/` | Packaging automation (`scripts/package.js`, `scripts/package.ps1`) and integrity unit tests (`tests/*.test.js`, `tests/test.ps1`). |
 
 ---
 
