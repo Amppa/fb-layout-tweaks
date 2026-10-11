@@ -162,15 +162,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Left Sidebar Actions
 
   if (btnLeftReset) {
-    btnLeftReset.addEventListener('click', async () => {
-      // Recommended also restores the default hover-expand setting.
-      await resetSection(leftKeys, {
-        hoverExpandLeftRail: DEFAULTS.hoverExpandLeftRail
-      });
-      if (switches.hoverExpandLeftRail) {
-        switches.hoverExpandLeftRail.checked = Boolean(DEFAULTS.hoverExpandLeftRail);
-      }
-    });
+    btnLeftReset.addEventListener('click', () => resetSection(leftKeys));
   }
 
   if (btnLeftHideAll) {

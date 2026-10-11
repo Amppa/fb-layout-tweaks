@@ -16,17 +16,14 @@
   "popupToggleTitle": {
     "message": "Toggle Extension"
   },
-  "popupMaster": {
-    "message": "Master"
-  },
   "popupTrimTopTitle": {
-    "message": "Top Navigation"
+    "message": "Top Navigation Items"
   },
   "popupTrimLeftTitle": {
     "message": "Left Sidebar Items"
   },
   "popupMiniTitle": {
-    "message": "Icon-only"
+    "message": "Left Sidebar Icon-only"
   },
   "popupDetailSettings": {
     "message": "Detailed Settings"
@@ -47,10 +44,13 @@
     "message": "Disabled"
   },
   "groupTopNav": {
-    "message": "Top Navigation"
+    "message": "Top Navigation Items"
   },
   "groupLeftSidebar": {
-    "message": "Left Sidebar"
+    "message": "Left Sidebar Items"
+  },
+  "groupSidebarBehavior": {
+    "message": "Left Sidebar Behavior"
   },
   "langToggleTitle": {
     "message": "Switch language"
@@ -161,6 +161,9 @@
     "message": "Visible"
   },
   "itemHoverExpandLeftRail": {
-    "message": "Icon-only Sidebar (Floating labels on hover)"
+    "message": "Icon-only Sidebar"
+  },
+  "descHoverExpandLeftRail": {
+    "message": "Shrink to icon rail and expand when hovered"
   }
 }

@@ -35,12 +35,12 @@
     <!-- UI Hide List -->
     <div class="features-list" id="uiCleanList">
 
-      <!-- Card: Top Navigation -->
+      <!-- Card: Top Navigation Items -->
       <section class="section-card">
 
-        <!-- Group: Top Navigation -->
+        <!-- Group: Top Navigation Items -->
         <div class="group-header">
-          <div class="group-title" data-i18n="groupTopNav">Top Navigation</div>
+          <div class="group-title" data-i18n="groupTopNav">Top Navigation Items</div>
           <div class="group-actions">
             <button class="btn-action" id="btnTopReset" data-i18n="btnRecommended" data-i18n-title="btnTopResetTitle"
               title="Restore recommended top navigation defaults">Recommended</button>
@@ -86,12 +86,12 @@
 
       </section>
 
-      <!-- Card: Left Sidebar -->
+      <!-- Card: Left Sidebar Items -->
       <section class="section-card">
 
-        <!-- Group: Left Sidebar -->
+        <!-- Group: Left Sidebar Items -->
         <div class="group-header">
-          <div class="group-title" data-i18n="groupLeftSidebar">Left Sidebar</div>
+          <div class="group-title" data-i18n="groupLeftSidebar">Left Sidebar Items</div>
           <div class="group-actions">
             <button class="btn-action" id="btnLeftReset" data-i18n="btnRecommended" data-i18n-title="btnLeftResetTitle"
               title="Restore recommended left sidebar defaults">Recommended</button>
@@ -220,17 +220,28 @@
           </label>
         </div>
 
-        <hr class="section-divider">
+      </section>
 
-        <!-- Icon-only Sidebar: feature switch (toggle, not a visibility pill) -->
+      <!-- Card: Left Sidebar Behavior -->
+      <section class="section-card">
+
+        <!-- Group: Left Sidebar Behavior -->
+        <div class="group-header">
+          <div class="group-title" data-i18n="groupSidebarBehavior">Left Sidebar Behavior</div>
+        </div>
+
+        <!-- Icon-only Sidebar: feature switch -->
         <div class="feature-item">
           <div class="feature-meta">
-            <span class="feature-icon">✨</span>
-            <div class="feature-title" data-i18n="itemHoverExpandLeftRail">Icon-only Sidebar (Floating labels on hover)</div>
+            <span class="feature-icon">⚡</span>
+            <div>
+              <div class="feature-title" data-i18n="itemHoverExpandLeftRail">Icon-only Sidebar</div>
+              <div class="feature-desc" data-i18n="descHoverExpandLeftRail">Shrink to icon rail and expand when hovered</div>
+            </div>
           </div>
           <div class="feature-action">
             <label class="switch">
-              <input type="checkbox" id="hoverExpandLeftRail" aria-label="Toggle Icon-only Sidebar Floating labels on hover">
+              <input type="checkbox" id="hoverExpandLeftRail" aria-label="Toggle Left Sidebar Icon-only">
               <span class="slider round"></span>
             </label>
           </div>
