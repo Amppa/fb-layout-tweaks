@@ -11,6 +11,9 @@ This document defines core engineering logics, workflows, command runbooks, and 
 node tests/defaults.test.js
 # Or: node --test tests/defaults.test.js
 
+# Run the full suite (defaults, tokens, i18n usage)
+node --test tests/*.test.js
+
 # Or pure Windows PowerShell unit tests (Zero dependencies):
 powershell -ExecutionPolicy Bypass -File tests/test.ps1
 
