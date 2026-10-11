@@ -8,8 +8,10 @@
   let currentSettings = null;
 
   function getUiCleanClassName(key) {
-    if (key === 'hideLeftMetaAI') return 'fb-diet-hide-left-metaai';
-    return 'fb-diet-' + key.replace(/([A-Z])/g, '-$1').toLowerCase();
+    // Maps show* keys to the stable fb-diet-hide-* CSS tokens (content.css
+    // keeps hide-based class names to avoid a full stylesheet rename).
+    if (key === 'showLeftMetaAI') return 'fb-diet-hide-left-metaai';
+    return 'fb-diet-' + key.replace(/^show/, 'hide').replace(/([A-Z])/g, '-$1').toLowerCase();
   }
 
   function applyUiCleanClasses(settings) {
@@ -20,10 +22,12 @@
     const isMasterEnabled = settings.enabled !== false;
 
     for (const [key, value] of Object.entries(settings)) {
-      if (!key.startsWith('hide')) continue;
+      if (!key.startsWith('show')) continue;
+      // Fixed anchors (Profile, Feeds) have no hide rule.
+      if (key === 'showLeftProfile' || key === 'showLeftFeeds') continue;
       const className = getUiCleanClassName(key);
-      const isEnabled = isMasterEnabled && Boolean(value);
-      root.classList.toggle(className, isEnabled);
+      const isHidden = isMasterEnabled && value === false;
+      root.classList.toggle(className, isHidden);
     }
 
     const isHoverExpand = isMasterEnabled && Boolean(settings.hoverExpandLeftRail);
@@ -36,16 +40,21 @@
       root.style.removeProperty('--fb-layout-tweaks-left-width');
     }
 
-    if (isMasterEnabled && Boolean(settings.hideLeftAdsManager)) {
+    if (isMasterEnabled && settings.showLeftAdsManager === false) {
       triggerThrottledScan();
     }
+  }
+
+  function isAdsManagerHidden() {
+    if (!currentSettings) return false;
+    return currentSettings.showLeftAdsManager === false;
   }
 
   function scanLeftRailDynamicItems() {
     try {
       if (!currentSettings || currentSettings.enabled === false) return;
 
-      if (currentSettings.hideLeftAdsManager) {
+      if (isAdsManagerHidden()) {
         const candidates = document.querySelectorAll(
           'a[href*="adsmanager"], a[href*="ads/manager"], a[href*="ad_center"], a[aria-label*="廣告管理員"], a[aria-label*="Ads Manager" i]'
         );

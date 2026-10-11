@@ -13,6 +13,10 @@ chrome.runtime.onInstalled.addListener(async () => {
     await chrome.storage.local.set({ settings: DEFAULT_SETTINGS });
   } else {
     const merged = { ...DEFAULT_SETTINGS, ...data.settings };
+    // Single-user cleanup: drop legacy hide* keys from the pre-pill schema.
+    for (const key of Object.keys(merged)) {
+      if (key.startsWith('hide')) delete merged[key];
+    }
     await chrome.storage.local.set({ settings: merged });
   }
 });

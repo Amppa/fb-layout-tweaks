@@ -3,10 +3,12 @@
   --bg-card: #18181c;
   --bg-card-hover: #222228;
   --accent-color: #0ea5e9;
-  --accent-gradient: linear-gradient(135deg, #0ea5e9 0%, #38bdf8 100%);
+  --accent-color-dark: #0750a3;
+
   --text-primary: #f0f0f2;
   --text-secondary: #909099;
   --divider: rgba(255, 255, 255, 0.08);
+  --pill-bg: rgba(255, 255, 255, 0.05);
 }
 
 * {
@@ -46,18 +48,11 @@ body {
 }
 
 .logo-badge {
-  background: var(--accent-gradient);
-  color: #ffffff;
-  font-weight: 800;
-  font-size: 16px;
-  letter-spacing: 0.5px;
   width: 42px;
   height: 42px;
   border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 4px 12px rgba(14, 165, 233, 0.35);
+  object-fit: cover;
+  display: block;
 }
 
 .title {
@@ -137,18 +132,25 @@ body {
   pointer-events: none;
 }
 
+/* Section Card (Top Navigation / Left Sidebar) */
+.section-card {
+  background: var(--bg-card);
+  border: 1px solid var(--divider);
+  border-radius: 14px;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
 /* Group Header */
 .group-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-top: 24px;
-  margin-bottom: 6px;
-  padding: 0 2px;
-}
-
-.features-list>.group-header:first-child {
-  margin-top: 4px;
+  margin-bottom: 8px;
+  padding: 0 4px 10px;
+  border-bottom: 1px solid var(--divider);
 }
 
 .group-title {
@@ -186,10 +188,10 @@ body {
 
 /* Width Control Card */
 .width-control-card {
-  background: var(--bg-card);
+  background: rgba(255, 255, 255, 0.03);
   border: 1px solid var(--divider);
-  border-radius: 12px;
-  padding: 12px 16px;
+  border-radius: 10px;
+  padding: 12px 14px;
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -214,7 +216,7 @@ body {
 .width-value-badge {
   background: rgba(255, 255, 255, 0.06);
   border: 1px solid var(--divider);
-  color: var(--accent);
+  color: var(--accent-color);
   font-size: 12px;
   font-weight: 700;
   font-family: monospace;
@@ -256,7 +258,8 @@ input[type="range"].width-slider::-webkit-slider-thumb {
   border-radius: 50%;
   background: #ffffff;
   cursor: pointer;
-  margin-top: -5px; /* (6px - 16px) / 2 to perfectly center on Chrome */
+  margin-top: -5px;
+  /* (6px - 16px) / 2 to perfectly center on Chrome */
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
 }
 
@@ -277,33 +280,31 @@ input[type="range"].width-slider::-moz-range-thumb {
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
 }
 
+.feature-icon {
+  font-size: 18px;
+  width: 24px;
+  display: flex;
+  justify-content: center;
+}
+
+/* Feature toggle row (non-pill switches, e.g. Icon-only Sidebar) */
 .feature-item {
-  background: var(--bg-card);
-  border: 1px solid var(--divider);
-  border-radius: 12px;
-  padding: 12px 16px;
+  padding: 10px 8px;
+  border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  transition: background 0.15s ease, border-color 0.15s ease;
+  transition: background 0.15s ease;
 }
 
 .feature-item:hover {
   background: var(--bg-card-hover);
-  border-color: rgba(255, 255, 255, 0.15);
 }
 
 .feature-meta {
   display: flex;
   align-items: center;
   gap: 12px;
-}
-
-.feature-icon {
-  font-size: 18px;
-  width: 24px;
-  display: flex;
-  justify-content: center;
 }
 
 .feature-title {
@@ -318,43 +319,13 @@ input[type="range"].width-slider::-moz-range-thumb {
   gap: 10px;
 }
 
-.action-icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 24px;
-  height: 22px;
-  font-size: 16px;
-  line-height: 1;
-  user-select: none;
-  transition: transform 0.15s ease;
-}
-
-.action-icon-locked {
-  font-size: 14px;
-  opacity: 0.8;
-}
-
-/* Switch Styles */
+/* Switch Styles (master toggle) */
 .switch {
   position: relative;
   display: inline-block;
   width: 40px;
   height: 22px;
   flex-shrink: 0;
-}
-
-.switch-locked {
-  cursor: not-allowed;
-  opacity: 0.55;
-}
-
-.switch-locked input {
-  cursor: not-allowed;
-}
-
-.switch-locked .slider {
-  cursor: not-allowed;
 }
 
 .switch input {
@@ -415,4 +386,70 @@ input:checked+.slider:before {
 
 .main-toggle input:checked+.slider:before {
   transform: translateX(22px);
+}
+
+/* Pill grid (checked = visible) */
+.pill-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--pill-bg);
+  border: 1px solid var(--divider);
+  color: var(--text-secondary);
+  font-size: 13px;
+  font-weight: 600;
+  padding: 7px 12px;
+  border-radius: 999px;
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.15s ease;
+}
+
+.pill:hover {
+  background: var(--bg-card-hover);
+  color: var(--text-primary);
+}
+
+.pill input {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+}
+
+.pill:has(input:checked),
+.pill-locked {
+  background: var(--accent-color-dark);
+  border-color: var(--accent-color);
+  color: #ffffff;
+}
+
+.pill:has(input:focus-visible) {
+  outline: 2px solid var(--accent-color);
+  outline-offset: 1px;
+}
+
+.pill-icon {
+  font-size: 15px;
+  line-height: 1;
+}
+
+.pill-label {
+  line-height: 1.3;
+}
+
+.pill-lock {
+  font-size: 12px;
+  opacity: 0.8;
+}
+
+.pill-locked {
+  cursor: default;
+  opacity: 0.85;
 }

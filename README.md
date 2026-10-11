@@ -13,8 +13,9 @@ Designed with a modern dark frosted aesthetic, FB Layout Tweaks gives you comple
   - **Home**: Always visible core navigation anchor.
   - **4 Granular Toggles**: Reels, Marketplace (default hidden), Groups, and Gaming (default hidden).
 - **Left Sidebar Controls**:
-  - **Essential Fixed Items**: Profile, Feeds, and Messenger remain permanently visible as core daily essentials.
-  - **17 Granular Toggles**: Friends, Groups, Marketplace, Reels, Memories, Saved, Pages, Events, Gaming, Meta AI, Ads Manager, Recent Ad Activity, Professional Dashboard, Messenger Kids, Meta Quest, Fundraisers, and Orders & Payments.
+  - **Essential Fixed Items**: Profile and Feeds remain permanently visible as core daily essentials.
+  - **20 Granular Toggles**: Friends, Groups, Marketplace, Reels, Memories, Saved, Pages, Events, Birthdays, Gaming, Gaming Video, Meta AI, Messenger, Ads Manager, Recent Ad Activity, Professional Dashboard, Messenger Kids, Meta Quest, Fundraisers, and Orders & Payments.
+  - **Icon-Only Sidebar & Width Slider**: Optional hover-to-expand rail mode and customizable sidebar width slider (0–360px).
 - **Independent Section-Level Actions**: Each navigation section features its own dedicated `Recommended`, `Hide All`, and `Show All` action buttons directly aligned to section headers.
 - **Sleek Minimal Popup**: A compact toolbar popup with a built-in master enable/disable switch and quick access to the Options page.
 - **Multi-Language Support (i18n)**: Fully localized in English and Traditional Chinese, matching native Facebook terminology.
@@ -27,15 +28,11 @@ Designed with a modern dark frosted aesthetic, FB Layout Tweaks gives you comple
 | Section | Item | Status / Default |
 | :--- | :--- | :--- |
 | **Top Navigation** | Home | **Always Shown** (Fixed) |
-| | Reels | Shown by default |
-| | Marketplace | **Hidden by default** |
-| | Groups | Shown by default |
-| | Gaming | **Hidden by default** |
-| **Left Sidebar** | Profile | **Always Shown** (Fixed) |
-| | Feeds | **Always Shown** (Fixed) |
-| | Messenger | **Always Shown** (Fixed) |
-| | Friends, Groups, Reels, Memories, Saved, Pages, Events | Shown by default |
-| | Gaming, Meta AI, Ads Manager, Recent Ad Activity, Professional Dashboard, Messenger Kids, Meta Quest, Fundraisers, Orders & Payments | **Hidden by default** |
+| | Reels, Groups | Shown by default |
+| | Marketplace, Gaming | **Hidden by default** |
+| **Left Sidebar** | Profile, Feeds | **Always Shown** (Fixed) |
+| | Friends, Groups | Shown by default |
+| | Marketplace, Reels, Memories, Saved, Pages, Events, Birthdays, Gaming, Gaming Video, Meta AI, Messenger, Ads Manager, Recent Ad Activity, Professional Dashboard, Messenger Kids, Meta Quest, Fundraisers, Orders & Payments | **Hidden by default** |
 
 ---
 
@@ -52,6 +49,8 @@ Designed with a modern dark frosted aesthetic, FB Layout Tweaks gives you comple
 
 ## Documentation & Architecture
 
-- **[DEVELOPMENT.md](DEVELOPMENT.md)**: Technical architecture, Manifest V3 design patterns, storage synchronization, and selector strategies.
-- **[AGENTS.md](AGENTS.md)**: Engineering discipline, coding style, AI behavioral contract, and pre-flight checklist.
+- **[DEVELOPMENT.md](DEVELOPMENT.md)**: Engineering logics, command runbooks, feature implementation checklist, and TODOs.
+- **[ARCHITECTURE.md](ARCHITECTURE.md)**: Feature and directory map, context boundaries, storage sync, and targeting mechanisms.
+- **[AGENTS.md](AGENTS.md)**: AI behavioral contract, git workflow, and surgical discipline.
+
 

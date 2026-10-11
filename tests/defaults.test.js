@@ -8,6 +8,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 
 // Mock self / globalThis for loading defaults.js
+globalThis.self ??= globalThis;
 require('../src/shared/defaults.js');
 
 const ROOT_DIR = path.resolve(__dirname, '..');
@@ -21,11 +22,11 @@ test('DEFAULT_SETTINGS contains required core keys and valid types', () => {
   assert.strictEqual(typeof defaults.hoverExpandLeftRail, 'boolean', 'hoverExpandLeftRail should be boolean');
   assert.ok(defaults.leftWidth >= 0 && defaults.leftWidth <= 360, 'leftWidth should be between 0 and 360');
 
-  // Verify all hide* keys are booleans
-  const hideKeys = Object.keys(defaults).filter(k => k.startsWith('hide'));
-  assert.ok(hideKeys.length >= 20, 'Should have at least 20 hide toggle keys');
+  // Verify all show* keys are booleans
+  const showKeys = Object.keys(defaults).filter(k => k.startsWith('show'));
+  assert.ok(showKeys.length >= 20, 'Should have at least 20 show toggle keys');
 
-  for (const key of hideKeys) {
+  for (const key of showKeys) {
     assert.strictEqual(typeof defaults[key], 'boolean', `${key} should be boolean`);
   }
 });
@@ -50,14 +51,14 @@ test('i18n message dictionaries are symmetrically aligned (en <-> zh_TW)', () =>
   assert.deepStrictEqual(missingInEn, [], `Keys missing in en: ${missingInEn.join(', ')}`);
 });
 
-test('All configurable hide* keys in DEFAULT_SETTINGS have corresponding inputs in options.html', () => {
+test('All configurable show* keys in DEFAULT_SETTINGS have corresponding inputs in options.html', () => {
   const optionsHtmlPath = path.join(ROOT_DIR, 'src', 'options', 'options.html');
   assert.ok(fs.existsSync(optionsHtmlPath), 'options.html must exist');
 
   const html = fs.readFileSync(optionsHtmlPath, 'utf8');
   const defaults = globalThis.DEFAULT_SETTINGS || self.DEFAULT_SETTINGS;
-  const fixedKeys = new Set(['hideLeftProfile', 'hideLeftFeeds']);
-  const configurableKeys = Object.keys(defaults).filter(k => k.startsWith('hide') && !fixedKeys.has(k));
+  const fixedKeys = new Set(['showLeftProfile', 'showLeftFeeds']);
+  const configurableKeys = Object.keys(defaults).filter(k => k.startsWith('show') && !fixedKeys.has(k));
 
   for (const key of configurableKeys) {
     const hasId = html.includes(`id="${key}"`);

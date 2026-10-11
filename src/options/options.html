@@ -13,7 +13,7 @@
     <!-- Header -->
     <header class="header">
       <div class="brand">
-        <div class="logo-badge">FLT</div>
+        <img class="logo-badge" src="../../icons/icon48.png" alt="">
         <div>
           <h1 class="title" data-i18n="optionsTitle">FB Layout Tweaks Options</h1>
           <p class="subtitle" data-i18n="optionsSubtitle">Declutter & customize Facebook navigation</p>
@@ -35,465 +35,211 @@
     <!-- UI Hide List -->
     <div class="features-list" id="uiCleanList">
 
-      <!-- Group: Top Navigation -->
-      <div class="group-header">
-        <div class="group-title" data-i18n="groupTopNav">Top Navigation</div>
-        <div class="group-actions">
-          <button class="btn-action" id="btnTopReset" data-i18n="btnRecommended" data-i18n-title="btnTopResetTitle"
-            title="Restore recommended top navigation defaults">Recommended</button>
-          <button class="btn-action" id="btnTopHideAll" data-i18n="btnHideAll" data-i18n-title="btnTopHideAllTitle"
-            title="Hide all top navigation items">Hide All</button>
-          <button class="btn-action" id="btnTopShowAll" data-i18n="btnShowAll" data-i18n-title="btnTopShowAllTitle"
-            title="Show all top navigation items">Show All</button>
-        </div>
-      </div>
+      <!-- Card: Top Navigation -->
+      <section class="section-card">
 
-      <!-- Top Home (Fixed) -->
-      <div class="feature-item">
-        <div class="feature-meta">
-          <span class="feature-icon">🏠</span>
-          <div class="feature-title" data-i18n="itemHome">Home</div>
-        </div>
-        <div class="feature-action">
-          <span class="action-icon action-icon-locked" title="固定顯示（鎖定）" data-i18n-title="badgeAlwaysShown">🔒</span>
-          <label class="switch switch-locked">
-            <input type="checkbox" disabled aria-label="Home (Always Shown)">
-            <span class="slider round"></span>
-          </label>
-        </div>
-      </div>
-
-      <!-- Top Reels -->
-      <div class="feature-item">
-        <div class="feature-meta">
-          <span class="feature-icon">🎬</span>
-          <div class="feature-title" data-i18n="itemReels">Reels</div>
-        </div>
-        <div class="feature-action">
-          <span class="action-icon action-status-icon" id="status_hideTopReels">🐵</span>
-          <label class="switch">
-            <input type="checkbox" id="hideTopReels" aria-label="Toggle Top Reels">
-            <span class="slider round"></span>
-          </label>
-        </div>
-      </div>
-
-      <!-- Top Marketplace -->
-      <div class="feature-item">
-        <div class="feature-meta">
-          <span class="feature-icon">🛒</span>
-          <div class="feature-title" data-i18n="itemMarketplace">Marketplace</div>
-        </div>
-        <div class="feature-action">
-          <span class="action-icon action-status-icon" id="status_hideTopMarketplace">🐵</span>
-          <label class="switch">
-            <input type="checkbox" id="hideTopMarketplace" aria-label="Toggle Top Marketplace">
-            <span class="slider round"></span>
-          </label>
-        </div>
-      </div>
-
-      <!-- Top Groups -->
-      <div class="feature-item">
-        <div class="feature-meta">
-          <span class="feature-icon">👥</span>
-          <div class="feature-title" data-i18n="itemGroups">Groups</div>
-        </div>
-        <div class="feature-action">
-          <span class="action-icon action-status-icon" id="status_hideTopGroups">🐵</span>
-          <label class="switch">
-            <input type="checkbox" id="hideTopGroups" aria-label="Toggle Top Groups">
-            <span class="slider round"></span>
-          </label>
-        </div>
-      </div>
-
-      <!-- Top Gaming -->
-      <div class="feature-item">
-        <div class="feature-meta">
-          <span class="feature-icon">🎮</span>
-          <div class="feature-title" data-i18n="itemGaming">Gaming</div>
-        </div>
-        <div class="feature-action">
-          <span class="action-icon action-status-icon" id="status_hideTopGaming">🐵</span>
-          <label class="switch">
-            <input type="checkbox" id="hideTopGaming" aria-label="Toggle Top Gaming">
-            <span class="slider round"></span>
-          </label>
-        </div>
-      </div>
-
-      <!-- Group: Left Sidebar -->
-      <div class="group-header">
-        <div class="group-title" data-i18n="groupLeftSidebar">Left Sidebar</div>
-        <div class="group-actions">
-          <button class="btn-action" id="btnLeftReset" data-i18n="btnRecommended" data-i18n-title="btnLeftResetTitle"
-            title="Restore recommended left sidebar defaults">Recommended</button>
-          <button class="btn-action" id="btnLeftHideAll" data-i18n="btnHideAll" data-i18n-title="btnLeftHideAllTitle"
-            title="Hide all left sidebar items">Hide All</button>
-          <button class="btn-action" id="btnLeftShowAll" data-i18n="btnShowAll" data-i18n-title="btnLeftShowAllTitle"
-            title="Show all left sidebar items">Show All</button>
-        </div>
-      </div>
-
-      <!-- Left Sidebar Hover Expand Controller -->
-      <div class="feature-item hover-expand-card">
-        <div class="feature-meta">
-          <span class="feature-icon">✨</span>
-          <div class="feature-title" data-i18n="itemHoverExpandLeftRail">Icon-only Sidebar (Floating labels on hover)</div>
-        </div>
-        <div class="feature-action">
-          <span class="action-icon action-status-icon" id="status_hoverExpandLeftRail">🐵</span>
-          <label class="switch">
-            <input type="checkbox" id="hoverExpandLeftRail" aria-label="Toggle Icon-only Sidebar Floating labels on hover">
-            <span class="slider round"></span>
-          </label>
-        </div>
-      </div>
-
-      <!-- Left Sidebar Width Controller -->
-      <div class="width-control-card">
-        <div class="width-control-header">
-          <div class="width-control-label">
-            <span class="feature-icon">↔️</span>
-            <span data-i18n="labelLeftWidth">Sidebar Width</span>
+        <!-- Group: Top Navigation -->
+        <div class="group-header">
+          <div class="group-title" data-i18n="groupTopNav">Top Navigation</div>
+          <div class="group-actions">
+            <button class="btn-action" id="btnTopReset" data-i18n="btnRecommended" data-i18n-title="btnTopResetTitle"
+              title="Restore recommended top navigation defaults">Recommended</button>
+            <button class="btn-action" id="btnTopHideAll" data-i18n="btnHideAll" data-i18n-title="btnTopHideAllTitle"
+              title="Hide all top navigation items">Hide All</button>
+            <button class="btn-action" id="btnTopShowAll" data-i18n="btnShowAll" data-i18n-title="btnTopShowAllTitle"
+              title="Show all top navigation items">Show All</button>
           </div>
-          <span class="width-value-badge" id="leftWidthValue">360px</span>
         </div>
-        <div class="width-slider-row">
-          <input type="range" id="leftWidthSlider" min="0" max="360" step="10" value="360" class="width-slider" aria-label="Left Sidebar Width">
-        </div>
-      </div>
 
-      <!-- 1. Left Profile (Fixed) -->
-      <div class="feature-item">
-        <div class="feature-meta">
-          <span class="feature-icon">👤</span>
-          <div class="feature-title" data-i18n="itemProfile">Profile</div>
-        </div>
-        <div class="feature-action">
-          <span class="action-icon action-icon-locked" title="固定顯示（鎖定）" data-i18n-title="badgeAlwaysShown">🔒</span>
-          <label class="switch switch-locked">
-            <input type="checkbox" disabled aria-label="Profile (Always Shown)">
-            <span class="slider round"></span>
+        <!-- Pill grid: checked = visible -->
+        <div class="pill-grid">
+          <span class="pill pill-locked" title="固定顯示（鎖定）" data-i18n-title="badgeAlwaysShown">
+            <span class="pill-icon">🏠</span>
+            <span class="pill-label" data-i18n="itemHome">Home</span>
+            <span class="pill-lock">🔒</span>
+          </span>
+          <label class="pill">
+            <input type="checkbox" id="showTopReels" aria-label="Toggle Top Reels">
+            <span class="pill-icon">🎬</span>
+            <span class="pill-label" data-i18n="itemReels">Reels</span>
+          </label>
+          <label class="pill">
+            <input type="checkbox" id="showTopMarketplace" aria-label="Toggle Top Marketplace">
+            <span class="pill-icon">🛒</span>
+            <span class="pill-label" data-i18n="itemMarketplace">Marketplace</span>
+          </label>
+          <label class="pill">
+            <input type="checkbox" id="showTopGroups" aria-label="Toggle Top Groups">
+            <span class="pill-icon">👥</span>
+            <span class="pill-label" data-i18n="itemGroups">Groups</span>
+          </label>
+          <label class="pill">
+            <input type="checkbox" id="showTopGaming" aria-label="Toggle Top Gaming">
+            <span class="pill-icon">🎮</span>
+            <span class="pill-label" data-i18n="itemGaming">Gaming</span>
           </label>
         </div>
-      </div>
 
-      <!-- 2. Left Meta AI -->
-      <div class="feature-item">
-        <div class="feature-meta">
-          <span class="feature-icon">🤖</span>
-          <div class="feature-title" data-i18n="itemMetaAI">Meta AI</div>
+      </section>
+
+      <!-- Card: Left Sidebar -->
+      <section class="section-card">
+
+        <!-- Group: Left Sidebar -->
+        <div class="group-header">
+          <div class="group-title" data-i18n="groupLeftSidebar">Left Sidebar</div>
+          <div class="group-actions">
+            <button class="btn-action" id="btnLeftReset" data-i18n="btnRecommended" data-i18n-title="btnLeftResetTitle"
+              title="Restore recommended left sidebar defaults">Recommended</button>
+            <button class="btn-action" id="btnLeftHideAll" data-i18n="btnHideAll" data-i18n-title="btnLeftHideAllTitle"
+              title="Hide all left sidebar items">Hide All</button>
+            <button class="btn-action" id="btnLeftShowAll" data-i18n="btnShowAll" data-i18n-title="btnLeftShowAllTitle"
+              title="Show all left sidebar items">Show All</button>
+          </div>
         </div>
-        <div class="feature-action">
-          <span class="action-icon action-status-icon" id="status_hideLeftMetaAI">🐵</span>
-          <label class="switch">
-            <input type="checkbox" id="hideLeftMetaAI" aria-label="Toggle Left Meta AI">
-            <span class="slider round"></span>
+
+        <!-- Icon-only Sidebar: feature switch (toggle, not a visibility pill) -->
+        <div class="feature-item">
+          <div class="feature-meta">
+            <span class="feature-icon">✨</span>
+            <div class="feature-title" data-i18n="itemHoverExpandLeftRail">Icon-only Sidebar (Floating labels on hover)</div>
+          </div>
+          <div class="feature-action">
+            <label class="switch">
+              <input type="checkbox" id="hoverExpandLeftRail" aria-label="Toggle Icon-only Sidebar Floating labels on hover">
+              <span class="slider round"></span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Left Sidebar Width Controller -->
+        <div class="width-control-card">          <div class="width-control-header">
+            <div class="width-control-label">
+              <span class="feature-icon">↔️</span>
+              <span data-i18n="labelLeftWidth">Sidebar Width</span>
+            </div>
+            <span class="width-value-badge" id="leftWidthValue">360px</span>
+          </div>
+          <div class="width-slider-row">
+            <input type="range" id="leftWidthSlider" min="0" max="360" step="10" value="360" class="width-slider" aria-label="Left Sidebar Width">
+          </div>
+        </div>
+
+        <!-- Pill grid: checked = visible -->
+        <div class="pill-grid">
+          <span class="pill pill-locked" title="固定顯示（鎖定）" data-i18n-title="badgeAlwaysShown">
+            <span class="pill-icon">👤</span>
+            <span class="pill-label" data-i18n="itemProfile">Profile</span>
+            <span class="pill-lock">🔒</span>
+          </span>
+          <label class="pill">
+            <input type="checkbox" id="showLeftMetaAI" aria-label="Toggle Left Meta AI">
+            <span class="pill-icon">🤖</span>
+            <span class="pill-label" data-i18n="itemMetaAI">Meta AI</span>
+          </label>
+          <label class="pill">
+            <input type="checkbox" id="showLeftFriends" aria-label="Toggle Left Friends">
+            <span class="pill-icon">👥</span>
+            <span class="pill-label" data-i18n="itemFriends">Friends</span>
+          </label>
+          <label class="pill">
+            <input type="checkbox" id="showLeftMemories" aria-label="Toggle Left Memories">
+            <span class="pill-icon">⏰</span>
+            <span class="pill-label" data-i18n="itemMemories">Memories</span>
+          </label>
+          <label class="pill">
+            <input type="checkbox" id="showLeftSaved" aria-label="Toggle Left Saved">
+            <span class="pill-icon">🔖</span>
+            <span class="pill-label" data-i18n="itemSaved">Saved</span>
+          </label>
+          <label class="pill">
+            <input type="checkbox" id="showLeftGroups" aria-label="Toggle Left Groups">
+            <span class="pill-icon">👥</span>
+            <span class="pill-label" data-i18n="itemGroups">Groups</span>
+          </label>
+          <label class="pill">
+            <input type="checkbox" id="showLeftReels" aria-label="Toggle Left Reels">
+            <span class="pill-icon">🎬</span>
+            <span class="pill-label" data-i18n="itemReels">Reels</span>
+          </label>
+          <label class="pill">
+            <input type="checkbox" id="showLeftMarketplace" aria-label="Toggle Left Marketplace">
+            <span class="pill-icon">🛒</span>
+            <span class="pill-label" data-i18n="itemMarketplace">Marketplace</span>
+          </label>
+          <label class="pill">
+            <input type="checkbox" id="showLeftBirthdays" aria-label="Toggle Left Birthdays">
+            <span class="pill-icon">🎂</span>
+            <span class="pill-label" data-i18n="itemBirthdays">Birthdays</span>
+          </label>
+          <label class="pill">
+            <input type="checkbox" id="showLeftRecentAdActivity" aria-label="Toggle Left Recent Ad Activity">
+            <span class="pill-icon">🎯</span>
+            <span class="pill-label" data-i18n="itemRecentAdActivity">Recent Ad Activity</span>
+          </label>
+          <label class="pill">
+            <input type="checkbox" id="showLeftGaming" aria-label="Toggle Left Gaming">
+            <span class="pill-icon">🎮</span>
+            <span class="pill-label" data-i18n="itemGaming">Gaming</span>
+          </label>
+          <label class="pill">
+            <input type="checkbox" id="showLeftEvents" aria-label="Toggle Left Events">
+            <span class="pill-icon">📅</span>
+            <span class="pill-label" data-i18n="itemEvents">Events</span>
+          </label>
+          <label class="pill">
+            <input type="checkbox" id="showLeftOrdersPayments" aria-label="Toggle Left Orders & Payments">
+            <span class="pill-icon">💳</span>
+            <span class="pill-label" data-i18n="itemOrdersPayments">Orders & Payments</span>
+          </label>
+          <label class="pill">
+            <input type="checkbox" id="showLeftPages" aria-label="Toggle Left Pages">
+            <span class="pill-icon">🚩</span>
+            <span class="pill-label" data-i18n="itemPages">Pages</span>
+          </label>
+          <span class="pill pill-locked" title="固定顯示（鎖定）" data-i18n-title="badgeAlwaysShown">
+            <span class="pill-icon">📰</span>
+            <span class="pill-label" data-i18n="itemFeeds">Feeds</span>
+            <span class="pill-lock">🔒</span>
+          </span>
+          <label class="pill">
+            <input type="checkbox" id="showLeftProfessionalDashboard" aria-label="Toggle Left Professional Dashboard">
+            <span class="pill-icon">📈</span>
+            <span class="pill-label" data-i18n="itemProfessionalDashboard">Professional Dashboard</span>
+          </label>
+          <label class="pill">
+            <input type="checkbox" id="showLeftGamingVideo" aria-label="Toggle Left Gaming Video">
+            <span class="pill-icon">👾</span>
+            <span class="pill-label" data-i18n="itemGamingVideo">Gaming Video</span>
+          </label>
+          <label class="pill">
+            <input type="checkbox" id="showLeftAdsManager" aria-label="Toggle Left Ads Manager">
+            <span class="pill-icon">📊</span>
+            <span class="pill-label" data-i18n="itemAdsManager">Ads Manager</span>
+          </label>
+          <label class="pill">
+            <input type="checkbox" id="showLeftMessenger" aria-label="Toggle Left Messenger">
+            <span class="pill-icon">💬</span>
+            <span class="pill-label" data-i18n="itemMessenger">Messenger</span>
+          </label>
+          <label class="pill">
+            <input type="checkbox" id="showLeftMessengerKids" aria-label="Toggle Left Messenger Kids">
+            <span class="pill-icon">🧒</span>
+            <span class="pill-label" data-i18n="itemMessengerKids">Messenger Kids</span>
+          </label>
+          <label class="pill">
+            <input type="checkbox" id="showLeftMetaQuest" aria-label="Toggle Left Meta Quest">
+            <span class="pill-icon">🥽</span>
+            <span class="pill-label" data-i18n="itemMetaQuest">Meta Quest</span>
+          </label>
+          <label class="pill">
+            <input type="checkbox" id="showLeftFundraisers" aria-label="Toggle Left Fundraisers">
+            <span class="pill-icon">🎗️</span>
+            <span class="pill-label" data-i18n="itemFundraisers">Fundraisers</span>
           </label>
         </div>
-      </div>
 
-      <!-- 3. Left Friends -->
-      <div class="feature-item">
-        <div class="feature-meta">
-          <span class="feature-icon">👥</span>
-          <div class="feature-title" data-i18n="itemFriends">Friends</div>
-        </div>
-        <div class="feature-action">
-          <span class="action-icon action-status-icon" id="status_hideLeftFriends">🐵</span>
-          <label class="switch">
-            <input type="checkbox" id="hideLeftFriends" aria-label="Toggle Left Friends">
-            <span class="slider round"></span>
-          </label>
-        </div>
-      </div>
-
-      <!-- 4. Left Memories -->
-      <div class="feature-item">
-        <div class="feature-meta">
-          <span class="feature-icon">⏰</span>
-          <div class="feature-title" data-i18n="itemMemories">Memories</div>
-        </div>
-        <div class="feature-action">
-          <span class="action-icon action-status-icon" id="status_hideLeftMemories">🐵</span>
-          <label class="switch">
-            <input type="checkbox" id="hideLeftMemories" aria-label="Toggle Left Memories">
-            <span class="slider round"></span>
-          </label>
-        </div>
-      </div>
-
-      <!-- 5. Left Saved -->
-      <div class="feature-item">
-        <div class="feature-meta">
-          <span class="feature-icon">🔖</span>
-          <div class="feature-title" data-i18n="itemSaved">Saved</div>
-        </div>
-        <div class="feature-action">
-          <span class="action-icon action-status-icon" id="status_hideLeftSaved">🐵</span>
-          <label class="switch">
-            <input type="checkbox" id="hideLeftSaved" aria-label="Toggle Left Saved">
-            <span class="slider round"></span>
-          </label>
-        </div>
-      </div>
-
-      <!-- 6. Left Groups -->
-      <div class="feature-item">
-        <div class="feature-meta">
-          <span class="feature-icon">👥</span>
-          <div class="feature-title" data-i18n="itemGroups">Groups</div>
-        </div>
-        <div class="feature-action">
-          <span class="action-icon action-status-icon" id="status_hideLeftGroups">🐵</span>
-          <label class="switch">
-            <input type="checkbox" id="hideLeftGroups" aria-label="Toggle Left Groups">
-            <span class="slider round"></span>
-          </label>
-        </div>
-      </div>
-
-      <!-- 7. Left Reels -->
-      <div class="feature-item">
-        <div class="feature-meta">
-          <span class="feature-icon">🎬</span>
-          <div class="feature-title" data-i18n="itemReels">Reels</div>
-        </div>
-        <div class="feature-action">
-          <span class="action-icon action-status-icon" id="status_hideLeftReels">🐵</span>
-          <label class="switch">
-            <input type="checkbox" id="hideLeftReels" aria-label="Toggle Left Reels">
-            <span class="slider round"></span>
-          </label>
-        </div>
-      </div>
-
-      <!-- 8. Left Marketplace -->
-      <div class="feature-item">
-        <div class="feature-meta">
-          <span class="feature-icon">🛒</span>
-          <div class="feature-title" data-i18n="itemMarketplace">Marketplace</div>
-        </div>
-        <div class="feature-action">
-          <span class="action-icon action-status-icon" id="status_hideLeftMarketplace">🐵</span>
-          <label class="switch">
-            <input type="checkbox" id="hideLeftMarketplace" aria-label="Toggle Left Marketplace">
-            <span class="slider round"></span>
-          </label>
-        </div>
-      </div>
-
-      <!-- 9. Left Birthdays -->
-      <div class="feature-item">
-        <div class="feature-meta">
-          <span class="feature-icon">🎂</span>
-          <div class="feature-title" data-i18n="itemBirthdays">Birthdays</div>
-        </div>
-        <div class="feature-action">
-          <span class="action-icon action-status-icon" id="status_hideLeftBirthdays">🐵</span>
-          <label class="switch">
-            <input type="checkbox" id="hideLeftBirthdays" aria-label="Toggle Left Birthdays">
-            <span class="slider round"></span>
-          </label>
-        </div>
-      </div>
-
-      <!-- 10. Left Recent Ad Activity -->
-      <div class="feature-item">
-        <div class="feature-meta">
-          <span class="feature-icon">🎯</span>
-          <div class="feature-title" data-i18n="itemRecentAdActivity">Recent Ad Activity</div>
-        </div>
-        <div class="feature-action">
-          <span class="action-icon action-status-icon" id="status_hideLeftRecentAdActivity">🐵</span>
-          <label class="switch">
-            <input type="checkbox" id="hideLeftRecentAdActivity" aria-label="Toggle Left Recent Ad Activity">
-            <span class="slider round"></span>
-          </label>
-        </div>
-      </div>
-
-      <!-- 11. Left Gaming -->
-      <div class="feature-item">
-        <div class="feature-meta">
-          <span class="feature-icon">🎮</span>
-          <div class="feature-title" data-i18n="itemGaming">Gaming</div>
-        </div>
-        <div class="feature-action">
-          <span class="action-icon action-status-icon" id="status_hideLeftGaming">🐵</span>
-          <label class="switch">
-            <input type="checkbox" id="hideLeftGaming" aria-label="Toggle Left Gaming">
-            <span class="slider round"></span>
-          </label>
-        </div>
-      </div>
-
-      <!-- 12. Left Events -->
-      <div class="feature-item">
-        <div class="feature-meta">
-          <span class="feature-icon">📅</span>
-          <div class="feature-title" data-i18n="itemEvents">Events</div>
-        </div>
-        <div class="feature-action">
-          <span class="action-icon action-status-icon" id="status_hideLeftEvents">🐵</span>
-          <label class="switch">
-            <input type="checkbox" id="hideLeftEvents" aria-label="Toggle Left Events">
-            <span class="slider round"></span>
-          </label>
-        </div>
-      </div>
-
-      <!-- 13. Left Orders & Payments -->
-      <div class="feature-item">
-        <div class="feature-meta">
-          <span class="feature-icon">💳</span>
-          <div class="feature-title" data-i18n="itemOrdersPayments">Orders & Payments</div>
-        </div>
-        <div class="feature-action">
-          <span class="action-icon action-status-icon" id="status_hideLeftOrdersPayments">🐵</span>
-          <label class="switch">
-            <input type="checkbox" id="hideLeftOrdersPayments" aria-label="Toggle Left Orders & Payments">
-            <span class="slider round"></span>
-          </label>
-        </div>
-      </div>
-
-      <!-- 14. Left Pages -->
-      <div class="feature-item">
-        <div class="feature-meta">
-          <span class="feature-icon">🚩</span>
-          <div class="feature-title" data-i18n="itemPages">Pages</div>
-        </div>
-        <div class="feature-action">
-          <span class="action-icon action-status-icon" id="status_hideLeftPages">🐵</span>
-          <label class="switch">
-            <input type="checkbox" id="hideLeftPages" aria-label="Toggle Left Pages">
-            <span class="slider round"></span>
-          </label>
-        </div>
-      </div>
-
-      <!-- 15. Left Feeds (Fixed) -->
-      <div class="feature-item">
-        <div class="feature-meta">
-          <span class="feature-icon">📰</span>
-          <div class="feature-title" data-i18n="itemFeeds">Feeds</div>
-        </div>
-        <div class="feature-action">
-          <span class="action-icon action-icon-locked" title="固定顯示（鎖定）" data-i18n-title="badgeAlwaysShown">🔒</span>
-          <label class="switch switch-locked">
-            <input type="checkbox" disabled aria-label="Feeds (Always Shown)">
-            <span class="slider round"></span>
-          </label>
-        </div>
-      </div>
-
-      <!-- 16. Left Professional Dashboard -->
-      <div class="feature-item">
-        <div class="feature-meta">
-          <span class="feature-icon">📈</span>
-          <div class="feature-title" data-i18n="itemProfessionalDashboard">Professional Dashboard</div>
-        </div>
-        <div class="feature-action">
-          <span class="action-icon action-status-icon" id="status_hideLeftProfessionalDashboard">🐵</span>
-          <label class="switch">
-            <input type="checkbox" id="hideLeftProfessionalDashboard" aria-label="Toggle Left Professional Dashboard">
-            <span class="slider round"></span>
-          </label>
-        </div>
-      </div>
-
-      <!-- 17. Left Gaming Video -->
-      <div class="feature-item">
-        <div class="feature-meta">
-          <span class="feature-icon">👾</span>
-          <div class="feature-title" data-i18n="itemGamingVideo">Gaming Video</div>
-        </div>
-        <div class="feature-action">
-          <span class="action-icon action-status-icon" id="status_hideLeftGamingVideo">🐵</span>
-          <label class="switch">
-            <input type="checkbox" id="hideLeftGamingVideo" aria-label="Toggle Left Gaming Video">
-            <span class="slider round"></span>
-          </label>
-        </div>
-      </div>
-
-      <!-- 18. Left Ads Manager -->
-      <div class="feature-item">
-        <div class="feature-meta">
-          <span class="feature-icon">📊</span>
-          <div class="feature-title" data-i18n="itemAdsManager">Ads Manager</div>
-        </div>
-        <div class="feature-action">
-          <span class="action-icon action-status-icon" id="status_hideLeftAdsManager">🐵</span>
-          <label class="switch">
-            <input type="checkbox" id="hideLeftAdsManager" aria-label="Toggle Left Ads Manager">
-            <span class="slider round"></span>
-          </label>
-        </div>
-      </div>
-
-      <!-- 19. Left Messenger -->
-      <div class="feature-item">
-        <div class="feature-meta">
-          <span class="feature-icon">💬</span>
-          <div class="feature-title" data-i18n="itemMessenger">Messenger</div>
-        </div>
-        <div class="feature-action">
-          <span class="action-icon action-status-icon" id="status_hideLeftMessenger">🐵</span>
-          <label class="switch">
-            <input type="checkbox" id="hideLeftMessenger" aria-label="Toggle Left Messenger">
-            <span class="slider round"></span>
-          </label>
-        </div>
-      </div>
-
-      <!-- 20. Left Messenger Kids -->
-      <div class="feature-item">
-        <div class="feature-meta">
-          <span class="feature-icon">🧒</span>
-          <div class="feature-title" data-i18n="itemMessengerKids">Messenger Kids</div>
-        </div>
-        <div class="feature-action">
-          <span class="action-icon action-status-icon" id="status_hideLeftMessengerKids">🐵</span>
-          <label class="switch">
-            <input type="checkbox" id="hideLeftMessengerKids" aria-label="Toggle Left Messenger Kids">
-            <span class="slider round"></span>
-          </label>
-        </div>
-      </div>
-
-      <!-- 21. Left Meta Quest -->
-      <div class="feature-item">
-        <div class="feature-meta">
-          <span class="feature-icon">🥽</span>
-          <div class="feature-title" data-i18n="itemMetaQuest">Meta Quest</div>
-        </div>
-        <div class="feature-action">
-          <span class="action-icon action-status-icon" id="status_hideLeftMetaQuest">🐵</span>
-          <label class="switch">
-            <input type="checkbox" id="hideLeftMetaQuest" aria-label="Toggle Left Meta Quest">
-            <span class="slider round"></span>
-          </label>
-        </div>
-      </div>
-
-      <!-- 22. Left Fundraisers -->
-      <div class="feature-item">
-        <div class="feature-meta">
-          <span class="feature-icon">🎗️</span>
-          <div class="feature-title" data-i18n="itemFundraisers">Fundraisers</div>
-        </div>
-        <div class="feature-action">
-          <span class="action-icon action-status-icon" id="status_hideLeftFundraisers">🐵</span>
-          <label class="switch">
-            <input type="checkbox" id="hideLeftFundraisers" aria-label="Toggle Left Fundraisers">
-            <span class="slider round"></span>
-          </label>
-        </div>
-      </div>
+      </section>
 
     </div>
   </div>

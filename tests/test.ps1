@@ -51,10 +51,10 @@ if (Test-Path $optionsHtmlPath) {
 $defaultsPath = Join-Path $rootDir "src/shared/defaults.js"
 if (Test-Path $defaultsPath) {
     $defaultsText = Get-Content $defaultsPath -Raw
-    $hideKeys = [regex]::Matches($defaultsText, '(hide[A-Za-z0-9]+)\s*:') | ForEach-Object { $_.Groups[1].Value }
+    $showKeys = [regex]::Matches($defaultsText, '(show[A-Za-z0-9]+)\s*:') | ForEach-Object { $_.Groups[1].Value }
     
-    $fixedKeys = @('hideLeftProfile', 'hideLeftFeeds')
-    $configurableKeys = $hideKeys | Where-Object { $fixedKeys -notcontains $_ }
+    $fixedKeys = @('showLeftProfile', 'showLeftFeeds')
+    $configurableKeys = $showKeys | Where-Object { $fixedKeys -notcontains $_ }
     $missingInHtml = @()
     foreach ($key in $configurableKeys) {
         if ($htmlContent -notmatch "id=`"$key`"") {

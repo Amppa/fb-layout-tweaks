@@ -4,7 +4,6 @@
   --bg-card-hover: #222228;
   --accent-color: #0ea5e9;
   --accent-gradient: linear-gradient(135deg, #0ea5e9 0%, #38bdf8 100%);
-  --accent-shadow: rgba(14, 165, 233, 0.3);
   --text-primary: #f0f0f2;
   --text-secondary: #909099;
   --divider: rgba(255, 255, 255, 0.08);
@@ -45,18 +44,11 @@ body {
 }
 
 .logo-badge {
-  background: var(--accent-gradient);
-  color: #ffffff;
-  font-weight: 800;
-  font-size: 14px;
-  letter-spacing: 0.5px;
   width: 34px;
   height: 34px;
   border-radius: 9px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 2px 8px var(--accent-shadow);
+  object-fit: cover;
+  display: block;
   flex-shrink: 0;
 }
 

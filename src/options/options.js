@@ -1,5 +1,6 @@
 /**
  * FB Layout Tweaks - Options Page
+ * Pill grid semantics: checked = visible (show* keys, true = visible).
  * Shared i18n helpers come from src/shared/i18n.js; default settings come from
  * src/shared/defaults.js (both are loaded by options.html).
  */
@@ -75,16 +76,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   });
 
-  function updateStatusIcon(checkbox) {
-    if (!checkbox || !checkbox.id) return;
-    const iconEl = document.getElementById(`status_${checkbox.id}`);
-    if (iconEl) {
-      iconEl.textContent = checkbox.checked ? '🙈' : '🐵';
-      iconEl.title = checkbox.checked ? (getMsg('hintHidden') || '已隱藏') : (getMsg('hintVisible') || '正常顯示');
-    }
-  }
-
-  // Load initial settings
+  // Load initial settings (single-user: legacy hide* keys are ignored)
   const data = await chrome.storage.local.get('settings');
   const settings = data.settings || {};
 
@@ -92,9 +84,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   for (const [key, checkbox] of Object.entries(switches)) {
     if (checkbox) {
-      const defaultValue = DEFAULTS[key] !== undefined ? DEFAULTS[key] : false;
+      const defaultValue = DEFAULTS[key] !== undefined ? DEFAULTS[key] : true;
       checkbox.checked = settings[key] !== undefined ? settings[key] : defaultValue;
-      updateStatusIcon(checkbox);
     }
   }
 
@@ -109,11 +100,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   }
 
-  // Handle individual switches
+  // Handle individual pills (checked = visible)
   for (const [key, checkbox] of Object.entries(switches)) {
     if (checkbox) {
       checkbox.addEventListener('change', async () => {
-        updateStatusIcon(checkbox);
         const { settings: current } = await chrome.storage.local.get('settings');
         const updated = { ...current, [key]: checkbox.checked };
         await chrome.storage.local.set({ settings: updated });
@@ -121,48 +111,50 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   }
 
-  const topKeys = ['hideTopReels', 'hideTopMarketplace', 'hideTopGroups', 'hideTopGaming'];
-  const leftKeys = Object.keys(switches).filter(k => k.startsWith('hideLeft'));
+  const topKeys = ['showTopReels', 'showTopMarketplace', 'showTopGroups', 'showTopGaming'];
+  const leftKeys = Object.keys(switches).filter(k => k.startsWith('showLeft'));
 
   // Section-Level Quick Actions (Top Navigation & Left Sidebar)
   async function applySectionValues(keys, value) {
     const { settings: current } = await chrome.storage.local.get('settings');
     const updated = { ...current };
     keys.forEach(key => {
-      if (switches[key]) {
-        switches[key].checked = value;
-        updateStatusIcon(switches[key]);
-      }
+      if (switches[key]) switches[key].checked = value;
       updated[key] = value;
     });
     await chrome.storage.local.set({ settings: updated });
   }
 
+  // Remove legacy hide* keys left over from the pre-pill schema.
+  function stripLegacyKeys(obj) {
+    for (const key of Object.keys(obj)) {
+      if (key.startsWith('hide')) delete obj[key];
+    }
+    return obj;
+  }
+
   async function resetSection(keys, extraPatch = {}) {
     const { settings: current } = await chrome.storage.local.get('settings');
-    const updated = { ...current, ...extraPatch };
+    const updated = stripLegacyKeys({ ...(current || {}), ...extraPatch });
     keys.forEach(key => {
-      const defVal = Boolean(DEFAULTS[key]);
-      if (switches[key]) {
-        switches[key].checked = defVal;
-        updateStatusIcon(switches[key]);
-      }
+      const defVal = DEFAULTS[key] !== undefined ? Boolean(DEFAULTS[key]) : true;
+      if (switches[key]) switches[key].checked = defVal;
       updated[key] = defVal;
     });
     await chrome.storage.local.set({ settings: updated });
   }
 
-  // Top Navigation Actions
+  // Top Navigation Actions (Hide All = unchecked, Show All = checked)
   if (btnTopReset) {
     btnTopReset.addEventListener('click', () => resetSection(topKeys));
   }
 
   if (btnTopHideAll) {
-    btnTopHideAll.addEventListener('click', () => applySectionValues(topKeys, true));
+    btnTopHideAll.addEventListener('click', () => applySectionValues(topKeys, false));
   }
 
   if (btnTopShowAll) {
-    btnTopShowAll.addEventListener('click', () => applySectionValues(topKeys, false));
+    btnTopShowAll.addEventListener('click', () => applySectionValues(topKeys, true));
   }
 
   // Left Sidebar Actions
@@ -210,16 +202,15 @@ document.addEventListener('DOMContentLoaded', async () => {
       applyLeftWidthUI(DEFAULTS.leftWidth);
       if (switches.hoverExpandLeftRail) {
         switches.hoverExpandLeftRail.checked = Boolean(DEFAULTS.hoverExpandLeftRail);
-        updateStatusIcon(switches.hoverExpandLeftRail);
       }
     });
   }
 
   if (btnLeftHideAll) {
-    btnLeftHideAll.addEventListener('click', () => applySectionValues(leftKeys, true));
+    btnLeftHideAll.addEventListener('click', () => applySectionValues(leftKeys, false));
   }
 
   if (btnLeftShowAll) {
-    btnLeftShowAll.addEventListener('click', () => applySectionValues(leftKeys, false));
+    btnLeftShowAll.addEventListener('click', () => applySectionValues(leftKeys, true));
   }
 });
