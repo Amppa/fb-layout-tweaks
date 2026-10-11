@@ -1,0 +1,34 @@
+# .github/workflows/release.yml
+# Builds Chrome + Firefox zips and attaches them to a GitHub Release.
+# Trigger: push a version tag, e.g. git push origin v1.2.1
+# No secrets needed: uses the built-in GITHUB_TOKEN.
+
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Run unit tests
+        run: node --test tests/*.test.js
+
+      - name: Build Chrome + Firefox zips
+        run: node scripts/package.js --target all
+
+      - name: Create GitHub Release with zips
+        run: gh release create "${{ github.ref_name }}" --title "${{ github.ref_name }}" --generate-notes release/*.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
