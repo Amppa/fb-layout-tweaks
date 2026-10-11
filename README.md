@@ -1,56 +1,45 @@
-# FB Layout Tweaks — Minimal Sidebar & Top Navigation
+# FB Layout Tweaks
 
-A sleek, ultra-lightweight Google Chrome extension (Manifest V3) that declutters Facebook by hiding unwanted navigation items, sidebar icons, and distraction tabs with zero layout shift.
+A lightweight Chrome extension (Manifest V3) that declutters Facebook desktop navigation with zero layout shift.
 
-Designed with a modern dark frosted aesthetic, FB Layout Tweaks gives you complete granular control over your Facebook desktop workspace.
+## Key Features
 
----
-
-## Features
-
-- **Instant Zero-FOUC Hiding**: Injected at `document_start` using HTML root CSS class tokens to ensure elements never flash or jump on page load.
-- **Top Navigation Controls**:
-  - **Home**: Always visible core navigation anchor.
-  - **4 Granular Toggles**: Reels, Marketplace (default hidden), Groups, and Gaming (default hidden).
-- **Left Sidebar Controls**:
-  - **Essential Fixed Items**: Profile and Feeds remain permanently visible as core daily essentials.
-  - **20 Granular Toggles**: Friends, Groups, Marketplace, Reels, Memories, Saved, Pages, Events, Birthdays, Gaming, Gaming Video, Meta AI, Messenger, Ads Manager, Recent Ad Activity, Professional Dashboard, Messenger Kids, Meta Quest, Fundraisers, and Orders & Payments.
-  - **Icon-Only Sidebar**: Optional hover-to-expand rail mode.
-- **Independent Section-Level Actions**: Each navigation section features its own dedicated `Recommended`, `Hide All`, and `Show All` action buttons directly aligned to section headers.
-- **Sleek Minimal Popup**: A compact toolbar popup with a built-in master enable/disable switch and quick access to the Options page.
-- **Multi-Language Support (i18n)**: Fully localized in English and Traditional Chinese, matching native Facebook terminology.
-- **Real-Time Synchronization**: All toggle changes apply instantly across open Facebook tabs without requiring page reloads.
+- **Declutter Navigation**: Hide unwanted items in both Top Navigation and Left Sidebar with instant zero-FOUC hiding.
+- **Icon-Only Sidebar**: Shrink the left sidebar into an icon-only rail (72px) that smoothly expands on hover without shifting the main feed.
+- **Instant Sync**: All settings update across open Facebook tabs in real time without reloading.
 
 ---
 
-## Navigation & Defaults
+## How to Use
 
-| Section | Item | Status / Default |
-| :--- | :--- | :--- |
-| **Top Navigation** | Home | **Always Shown** (Fixed) |
-| | Reels, Groups | Shown by default |
-| | Marketplace, Gaming | **Hidden by default** |
-| **Left Sidebar** | Profile, Feeds | **Always Shown** (Fixed) |
-| | Friends, Groups | Shown by default |
-| | Marketplace, Reels, Memories, Saved, Pages, Events, Birthdays, Gaming, Gaming Video, Meta AI, Messenger, Ads Manager, Recent Ad Activity, Professional Dashboard, Messenger Kids, Meta Quest, Fundraisers, Orders & Payments | **Hidden by default** |
+### 1. Toolbar Popup (Quick Controls)
+Click the extension icon in your Chrome toolbar to:
+- Turn the extension on or off with the master toggle.
+- Quickly toggle **Top Navigation Items**, **Left Sidebar Items**, or **Left Sidebar Icon-only** mode.
+- Click **Detailed Settings** to open the full options dashboard.
+
+### 2. Options Page (Granular Settings)
+Right-click the extension icon and select **Options** (or click **Detailed Settings** from the popup):
+- **Top Navigation Items**: Show or hide individual items (Reels, Marketplace, Groups, Gaming).
+- **Left Sidebar Items**: Fine-tune 20+ sidebar shortcuts. Use **Recommended**, **Hide All**, or **Show All** to quickly batch-configure.
+- **Left Sidebar Behavior**: Toggle the icon-only hover expand mode.
+- **Language Switch**: Switch between English and Traditional Chinese (繁體中文).
 
 ---
 
 ## Installation
 
-1. Clone or download this repository to your local computer.
-2. Open Google Chrome and navigate to `chrome://extensions`.
-3. Toggle on **Developer mode** in the upper right corner.
-4. Click **Load unpacked** in the top left.
-5. Select the project root folder (`fb-layout-tweaks`).
-6. Open or refresh Facebook to enjoy a decluttered, focused browsing experience!
+1. Clone or download this repository.
+2. In Google Chrome, go to `chrome://extensions/`.
+3. Enable **Developer mode** in the top-right corner.
+4. Click **Load unpacked** and select the `fb-layout-tweaks` directory.
+5. Open [Facebook](https://www.facebook.com) to enjoy your clean layout!
 
 ---
 
-## Documentation & Architecture
+## Technical Documentation
 
-- **[DEVELOPMENT.md](DEVELOPMENT.md)**: Engineering logics, command runbooks, feature implementation checklist, and TODOs.
-- **[ARCHITECTURE.md](ARCHITECTURE.md)**: Feature and directory map, context boundaries, storage sync, and targeting mechanisms.
-- **[AGENTS.md](AGENTS.md)**: AI behavioral contract, git workflow, and surgical discipline.
+- **[ARCHITECTURE.md](ARCHITECTURE.md)**: Feature and directory map, storage sync, and injection mechanism.
+- **[DEVELOPMENT.md](DEVELOPMENT.md)**: Engineering runbook, coding standards, and implementation checklist.
 
 
