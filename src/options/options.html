@@ -98,34 +98,7 @@
           </div>
         </div>
 
-        <!-- Icon-only Sidebar: feature switch (toggle, not a visibility pill) -->
-        <div class="feature-item">
-          <div class="feature-meta">
-            <span class="feature-icon">✨</span>
-            <div class="feature-title" data-i18n="itemHoverExpandLeftRail">Icon-only Sidebar (Floating labels on hover)</div>
-          </div>
-          <div class="feature-action">
-            <label class="switch">
-              <input type="checkbox" id="hoverExpandLeftRail" aria-label="Toggle Icon-only Sidebar Floating labels on hover">
-              <span class="slider round"></span>
-            </label>
-          </div>
-        </div>
-
-        <!-- Left Sidebar Width Controller -->
-        <div class="width-control-card">          <div class="width-control-header">
-            <div class="width-control-label">
-              <span class="feature-icon">↔️</span>
-              <span data-i18n="labelLeftWidth">Sidebar Width</span>
-            </div>
-            <span class="width-value-badge" id="leftWidthValue">360px</span>
-          </div>
-          <div class="width-slider-row">
-            <input type="range" id="leftWidthSlider" min="0" max="360" step="10" value="360" class="width-slider" aria-label="Left Sidebar Width">
-          </div>
-        </div>
-
-        <!-- Pill grid: checked = visible -->
+        <!-- Pill grid: checked = visible (directly under header so Recommended stays close) -->
         <div class="pill-grid">
           <span class="pill pill-locked" title="固定顯示（鎖定）" data-i18n-title="badgeAlwaysShown">
             <span class="pill-icon">👤</span>
@@ -237,6 +210,35 @@
             <span class="pill-icon">🎗️</span>
             <span class="pill-label" data-i18n="itemFundraisers">Fundraisers</span>
           </label>
+        </div>
+
+        <hr class="section-divider">
+
+        <!-- Icon-only Sidebar: feature switch (toggle, not a visibility pill) -->
+        <div class="feature-item">
+          <div class="feature-meta">
+            <span class="feature-icon">✨</span>
+            <div class="feature-title" data-i18n="itemHoverExpandLeftRail">Icon-only Sidebar (Floating labels on hover)</div>
+          </div>
+          <div class="feature-action">
+            <label class="switch">
+              <input type="checkbox" id="hoverExpandLeftRail" aria-label="Toggle Icon-only Sidebar Floating labels on hover">
+              <span class="slider round"></span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Left Sidebar Width Controller -->
+        <div class="width-control-card">          <div class="width-control-header">
+            <div class="width-control-label">
+              <span class="feature-icon">↔️</span>
+              <span data-i18n="labelLeftWidth">Sidebar Width</span>
+            </div>
+            <span class="width-value-badge" id="leftWidthValue">360px</span>
+          </div>
+          <div class="width-slider-row">
+            <input type="range" id="leftWidthSlider" min="0" max="360" step="10" value="360" class="width-slider" aria-label="Left Sidebar Width">
+          </div>
         </div>
 
       </section>

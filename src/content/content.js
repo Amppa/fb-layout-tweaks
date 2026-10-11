@@ -115,120 +115,68 @@
       currentSettings = { ...baseDefaults, ...(changes.settings.newValue || {}) };
       applyUiCleanClasses(currentSettings);
       if (!currentSettings.hoverExpandLeftRail) {
-        hideBadges();
+        setRailExpanded(false);
       }
     }
   });
 
-  // Floating Individual Badges Manager (Clean & Displayed Together)
-  let badgesContainer = null;
-  let hoverTimer = null;
-  let isBadgesVisible = false;
+  // Button-Targeted Hover Expand Manager (Zero-Pixel Guessing, Clean Flyout)
+  let expandTimer = null;
+  let collapseTimer = null;
+  let isRailExpanded = false;
 
-  function ensureBadgesContainer() {
-    if (badgesContainer && document.body.contains(badgesContainer)) return badgesContainer;
-    badgesContainer = document.getElementById('fb-layout-tweaks-floating-badges');
-    if (!badgesContainer) {
-      badgesContainer = document.createElement('div');
-      badgesContainer.id = 'fb-layout-tweaks-floating-badges';
-      document.body.appendChild(badgesContainer);
-    }
-    return badgesContainer;
+  function setRailExpanded(expanded) {
+    if (isRailExpanded === expanded) return;
+    isRailExpanded = expanded;
+    document.documentElement.classList.toggle('fb-layout-tweaks-rail-expanded', expanded);
   }
 
-  function hideBadges() {
-    if (badgesContainer) {
-      badgesContainer.textContent = '';
-    }
-    isBadgesVisible = false;
-  }
-
-  function renderFloatingBadges() {
-    const container = ensureBadgesContainer();
-    const leftNav = document.querySelector('[data-pagelet="LeftRail"], div[role="navigation"]:not(header *):not([role="banner"] *):not([data-pagelet="Header"] *)');
-    if (!leftNav) return;
-
-    const items = leftNav.querySelectorAll('a[role="link"], div[role="button"]');
-    const fragment = document.createDocumentFragment();
-    const seenTitles = new Set();
-
-    for (const el of items) {
-      if (el.offsetParent === null) continue;
-      const rect = el.getBoundingClientRect();
-      if (rect.height === 0 || rect.width === 0 || rect.bottom <= 0 || rect.top >= window.innerHeight) continue;
-
-      let title = '';
-      const textSpans = el.querySelectorAll('span');
-      for (const span of textSpans) {
-        if (span.children.length === 0 && span.textContent.trim()) {
-          title = span.textContent.trim();
-          break;
-        }
-      }
-      if (!title) {
-        title = el.getAttribute('aria-label') || '';
-      }
-      title = title.trim();
-      if (!title || seenTitles.has(title)) continue;
-      seenTitles.add(title);
-
-      const pill = document.createElement('div');
-      pill.className = 'fb-layout-tweaks-badge-pill';
-      pill.textContent = title;
-
-      // Accurately align badge vertical center with item center
-      const topPos = rect.top + (rect.height - 30) / 2;
-      pill.style.top = `${Math.round(topPos)}px`;
-      pill.style.left = `${Math.round(rect.right)}px`;
-
-      pill.addEventListener('click', (e) => {
-        e.preventDefault();
-        el.click();
-      });
-
-      fragment.appendChild(pill);
-    }
-
-    container.textContent = '';
-    container.appendChild(fragment);
-    isBadgesVisible = true;
-  }
-
-  function isInsideLeftRail(e) {
-    return e.clientX <= 76;
-  }
-
-  function isOverBadge(e) {
-    return Boolean(e.target && e.target.closest && e.target.closest('.fb-layout-tweaks-badge-pill'));
-  }
-
-  document.addEventListener('mousemove', (e) => {
+  function handleButtonHover(e) {
     if (!currentSettings || currentSettings.enabled === false || !currentSettings.hoverExpandLeftRail) {
-      if (isBadgesVisible) hideBadges();
+      if (isRailExpanded) setRailExpanded(false);
       return;
     }
 
-    if (isInsideLeftRail(e) || isOverBadge(e)) {
-      if (!isBadgesVisible) {
-        if (!hoverTimer) {
-          hoverTimer = setTimeout(() => {
-            renderFloatingBadges();
-            hoverTimer = null;
-          }, 50);
-        }
+    const target = e.target;
+    if (!target || !target.closest) return;
+
+    // Check if mouse is directly over any left navigation button / link / item
+    const isOverItem = Boolean(target.closest(
+      '[data-pagelet="LeftRail"] :is(a, [role="button"], [role="listitem"], li), div[role="navigation"]:not(header *):not([role="banner"] *):not([data-pagelet="Header"] *) :is(a, [role="button"], [role="listitem"], li)'
+    ));
+
+    // When already expanded, allow smooth navigation within the expanded left rail container
+    const isOverRail = isRailExpanded && Boolean(target.closest(
+      '[data-pagelet="LeftRail"], div[role="navigation"]:not(header *):not([role="banner"] *):not([data-pagelet="Header"] *)'
+    ));
+
+    if (isOverItem || isOverRail) {
+      if (collapseTimer) {
+        clearTimeout(collapseTimer);
+        collapseTimer = null;
+      }
+      if (!isRailExpanded && !expandTimer) {
+        // Fast 40ms debounce to avoid accidental triggers when cursor quickly sweeps across
+        expandTimer = setTimeout(() => {
+          setRailExpanded(true);
+          expandTimer = null;
+        }, 40);
       }
     } else {
-      if (hoverTimer) {
-        clearTimeout(hoverTimer);
-        hoverTimer = null;
+      if (expandTimer) {
+        clearTimeout(expandTimer);
+        expandTimer = null;
       }
-      if (isBadgesVisible) {
-        hideBadges();
+      if (isRailExpanded && !collapseTimer) {
+        // Smooth 160ms grace period so cursor navigating between items won't jitter
+        collapseTimer = setTimeout(() => {
+          setRailExpanded(false);
+          collapseTimer = null;
+        }, 160);
       }
     }
-  });
+  }
 
-  window.addEventListener('scroll', () => {
-    if (isBadgesVisible) hideBadges();
-  }, { passive: true });
+  document.addEventListener('mouseover', handleButtonHover, { passive: true });
 })();
+

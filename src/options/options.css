@@ -186,6 +186,13 @@ body {
   color: #ffffff;
 }
 
+/* Horizontal divider inside section cards (Left Sidebar: pills / Icon-only / Width) */
+.section-divider {
+  border: none;
+  border-top: 1px solid var(--divider);
+  margin: 10px 4px;
+}
+
 /* Width Control Card */
 .width-control-card {
   background: rgba(255, 255, 255, 0.03);
