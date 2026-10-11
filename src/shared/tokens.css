@@ -1,0 +1,26 @@
+/**
+ * FB Layout Tweaks - Shared Design Tokens
+ * Single source of truth for extension page theming, shared by the popup
+ * and options pages (via <link> tag, before the page stylesheet).
+ * Content scripts (src/content/content.css) must NOT use these tokens:
+ * injected page styles use Facebook's own variables instead.
+ */
+
+:root {
+  --bg-primary: #0e0e10;
+  --bg-card: #18181c;
+  --bg-card-hover: #222228;
+  --accent-color: #0ea5e9;
+  --accent-color-dark: #0750a3;
+
+  --text-primary: #f0f0f2;
+  --text-secondary: #909099;
+  --white: #ffffff;
+  --divider: rgba(255, 255, 255, 0.08);
+  --surface-overlay: rgba(255, 255, 255, 0.05);
+  --btn-bg: rgba(255, 255, 255, 0.04);
+  --btn-bg-hover: rgba(255, 255, 255, 0.08);
+  --border-hover: rgba(255, 255, 255, 0.25);
+  --overlay-strong: rgba(255, 255, 255, 0.15);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
