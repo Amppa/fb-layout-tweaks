@@ -114,7 +114,7 @@
         const headings = rail.querySelectorAll('h3');
         for (const h of headings) {
           const title = h.textContent.replace(/[\u200b-\u200f\ufeff]/g, '').trim().toLowerCase();
-          if (title !== 'sponsored' && title !== '贊助') continue;
+          if (title !== 'sponsored' && !title.startsWith('贊助')) continue;
           let node = h.parentElement;
           let section = null;
           for (let depth = 0; depth < 15 && node && node !== rail; depth++) {
