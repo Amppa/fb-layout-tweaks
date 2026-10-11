@@ -6,6 +6,9 @@
 
 self.DEFAULT_SETTINGS = {
   enabled: true,
+  // Section masters (popup quick toggles, true = declutter active)
+  trimTopNav: true,
+  trimLeftItems: true,
   // Section: Left Sidebar (Curated clean defaults, true = visible)
   showLeftProfile: true,
   showLeftFriends: true,

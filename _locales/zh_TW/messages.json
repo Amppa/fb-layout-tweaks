@@ -16,8 +16,29 @@
   "popupToggleTitle": {
     "message": "開關套件功能"
   },
-  "popupOpenSettings": {
-    "message": "選項"
+  "popupMaster": {
+    "message": "總開關"
+  },
+  "popupTrimTopTitle": {
+    "message": "頂部導覽列精簡"
+  },
+  "popupTrimTopSub": {
+    "message": "Top Navigation"
+  },
+  "popupTrimLeftTitle": {
+    "message": "左側按鈕精簡"
+  },
+  "popupTrimLeftSub": {
+    "message": "Left Sidebar Items"
+  },
+  "popupMiniTitle": {
+    "message": "圖示模式"
+  },
+  "popupMiniSub": {
+    "message": "Icon-only"
+  },
+  "popupDetailSettings": {
+    "message": "詳細項目設定"
   },
   "optionsTitle": {
     "message": "FB Layout Tweaks 設定"

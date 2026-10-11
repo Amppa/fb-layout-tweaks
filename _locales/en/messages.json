@@ -16,8 +16,29 @@
   "popupToggleTitle": {
     "message": "Toggle Extension"
   },
-  "popupOpenSettings": {
-    "message": "Options"
+  "popupMaster": {
+    "message": "Master"
+  },
+  "popupTrimTopTitle": {
+    "message": "Top Navigation"
+  },
+  "popupTrimTopSub": {
+    "message": "頂部導覽列精簡"
+  },
+  "popupTrimLeftTitle": {
+    "message": "Left Sidebar Items"
+  },
+  "popupTrimLeftSub": {
+    "message": "左側按鈕精簡"
+  },
+  "popupMiniTitle": {
+    "message": "Icon-only"
+  },
+  "popupMiniSub": {
+    "message": "圖示模式"
+  },
+  "popupDetailSettings": {
+    "message": "Detailed Settings"
   },
   "optionsTitle": {
     "message": "FB Layout Tweaks Options"
