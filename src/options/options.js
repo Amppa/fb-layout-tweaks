@@ -160,48 +160,13 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   // Left Sidebar Actions
-  // Left Sidebar Width Controls
-  const leftWidthSlider = document.getElementById('leftWidthSlider');
-  const leftWidthValue = document.getElementById('leftWidthValue');
-
-  function applyLeftWidthUI(widthVal) {
-    const w = parseInt(widthVal, 10);
-    const validW = Number.isInteger(w) ? Math.max(0, Math.min(360, w)) : 360;
-    if (leftWidthSlider) {
-      leftWidthSlider.value = validW;
-    }
-    if (leftWidthValue) leftWidthValue.textContent = `${validW}px`;
-  }
-
-  const initialLeftWidth = settings.leftWidth !== undefined ? settings.leftWidth : DEFAULTS.leftWidth;
-  applyLeftWidthUI(initialLeftWidth);
-
-  async function saveLeftWidth(widthVal) {
-    const w = parseInt(widthVal, 10);
-    const validW = Number.isInteger(w) ? Math.max(0, Math.min(360, w)) : 360;
-    applyLeftWidthUI(validW);
-    const { settings: current } = await chrome.storage.local.get('settings');
-    const updated = { ...current, leftWidth: validW };
-    await chrome.storage.local.set({ settings: updated });
-  }
-
-  if (leftWidthSlider) {
-    leftWidthSlider.addEventListener('input', () => {
-      applyLeftWidthUI(leftWidthSlider.value);
-    });
-    leftWidthSlider.addEventListener('change', () => {
-      saveLeftWidth(leftWidthSlider.value);
-    });
-  }
 
   if (btnLeftReset) {
     btnLeftReset.addEventListener('click', async () => {
-      // Recommended also restores the default left sidebar width and hover-expand setting.
+      // Recommended also restores the default hover-expand setting.
       await resetSection(leftKeys, {
-        leftWidth: DEFAULTS.leftWidth,
         hoverExpandLeftRail: DEFAULTS.hoverExpandLeftRail
       });
-      applyLeftWidthUI(DEFAULTS.leftWidth);
       if (switches.hoverExpandLeftRail) {
         switches.hoverExpandLeftRail.checked = Boolean(DEFAULTS.hoverExpandLeftRail);
       }

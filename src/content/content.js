@@ -33,13 +33,6 @@
     const isHoverExpand = isMasterEnabled && Boolean(settings.hoverExpandLeftRail);
     root.classList.toggle('fb-layout-tweaks-hover-expand-left-rail', isHoverExpand);
 
-    const widthVal = parseInt(settings.leftWidth, 10);
-    if (isMasterEnabled && !isHoverExpand && Number.isInteger(widthVal) && widthVal < 360) {
-      root.style.setProperty('--fb-layout-tweaks-left-width', `${Math.max(0, widthVal)}px`);
-    } else {
-      root.style.removeProperty('--fb-layout-tweaks-left-width');
-    }
-
     if (isMasterEnabled && settings.showLeftAdsManager === false) {
       triggerThrottledScan();
     }

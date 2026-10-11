@@ -30,7 +30,6 @@ self.DEFAULT_SETTINGS = {
   showLeftFundraisers: false,
   showLeftOrdersPayments: false,
   hoverExpandLeftRail: false,
-  leftWidth: 360,
   // Section: Top Navigation (true = visible)
   showTopReels: true,
   showTopMarketplace: false,

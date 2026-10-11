@@ -4,44 +4,6 @@
  */
 
 /* ==========================================================================
-   Left Sidebar Width & Deep Layout Override
-   ========================================================================== */
-
-html[style*="--fb-layout-tweaks-left-width"] :is([data-pagelet="LeftRail"], div[role="navigation"]:not(header *):not([role="banner"] *):not([data-pagelet="Header"] *)),
-html[style*="--fb-layout-tweaks-left-width"] :is([data-pagelet="LeftRail"], div[role="navigation"]:not(header *):not([role="banner"] *):not([data-pagelet="Header"] *)) * {
-  box-sizing: border-box !important;
-}
-
-/* Force container and all direct wrap layers to adopt target width and clear min-width */
-html[style*="--fb-layout-tweaks-left-width"] :is([data-pagelet="LeftRail"], div[role="navigation"]:not(header *):not([role="banner"] *):not([data-pagelet="Header"] *)),
-html[style*="--fb-layout-tweaks-left-width"] :is([data-pagelet="LeftRail"], div[role="navigation"]:not(header *):not([role="banner"] *):not([data-pagelet="Header"] *)) > div,
-html[style*="--fb-layout-tweaks-left-width"] :is([data-pagelet="LeftRail"], div[role="navigation"]:not(header *):not([role="banner"] *):not([data-pagelet="Header"] *)) [role="navigation"] {
-  width: var(--fb-layout-tweaks-left-width) !important;
-  max-width: var(--fb-layout-tweaks-left-width) !important;
-  min-width: 0 !important;
-  flex-basis: var(--fb-layout-tweaks-left-width) !important;
-  overflow-x: hidden !important;
-  transition: width 0.15s ease, flex-basis 0.15s ease !important;
-}
-
-html[style*="--fb-layout-tweaks-left-width: 0px"] :is([data-pagelet="LeftRail"], div[role="navigation"]:not(header *):not([role="banner"] *):not([data-pagelet="Header"] *)) {
-  display: none !important;
-}
-
-/* Clear min-width on all lists and items inside the left rail so they can shrink freely */
-html[style*="--fb-layout-tweaks-left-width"] :is([data-pagelet="LeftRail"], div[role="navigation"]:not(header *):not([role="banner"] *):not([data-pagelet="Header"] *)) :is(ul, ol, li, div[role="listitem"], a, [role="button"]) {
-  min-width: 0 !important;
-  max-width: 100% !important;
-}
-
-/* Prevent label texts from pushing container width out */
-html[style*="--fb-layout-tweaks-left-width"] :is([data-pagelet="LeftRail"], div[role="navigation"]:not(header *):not([role="banner"] *):not([data-pagelet="Header"] *)) span {
-  overflow: hidden !important;
-  text-overflow: ellipsis !important;
-  white-space: nowrap !important;
-}
-
-/* ==========================================================================
    Icon-Only Left Sidebar & Flyout Drawer (Instagram Style)
    ========================================================================== */
 

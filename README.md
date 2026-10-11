@@ -15,7 +15,7 @@ Designed with a modern dark frosted aesthetic, FB Layout Tweaks gives you comple
 - **Left Sidebar Controls**:
   - **Essential Fixed Items**: Profile and Feeds remain permanently visible as core daily essentials.
   - **20 Granular Toggles**: Friends, Groups, Marketplace, Reels, Memories, Saved, Pages, Events, Birthdays, Gaming, Gaming Video, Meta AI, Messenger, Ads Manager, Recent Ad Activity, Professional Dashboard, Messenger Kids, Meta Quest, Fundraisers, and Orders & Payments.
-  - **Icon-Only Sidebar & Width Slider**: Optional hover-to-expand rail mode and customizable sidebar width slider (0–360px).
+  - **Icon-Only Sidebar**: Optional hover-to-expand rail mode.
 - **Independent Section-Level Actions**: Each navigation section features its own dedicated `Recommended`, `Hide All`, and `Show All` action buttons directly aligned to section headers.
 - **Sleek Minimal Popup**: A compact toolbar popup with a built-in master enable/disable switch and quick access to the Options page.
 - **Multi-Language Support (i18n)**: Fully localized in English and Traditional Chinese, matching native Facebook terminology.
