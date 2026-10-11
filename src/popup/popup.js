@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   if (versionEl) versionEl.textContent = chrome.runtime.getManifest().version;
 
   // Section quick toggles (ids match settings keys)
-  const sectionKeys = ['trimTopNav', 'trimLeftItems', 'hoverExpandLeftRail'];
+  const sectionKeys = ['hoverExpandLeftRail', 'trimRightRail'];
   const sectionToggles = {};
   sectionKeys.forEach(key => {
     sectionToggles[key] = document.getElementById(key);
@@ -18,11 +18,12 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // Load settings & locale: do not auto-detect system language, default to 'en'
   const { settings } = await chrome.storage.local.get('settings');
-  const prefLocale = settings?.locale || 'en';
+  const mergedSettings = { ...DEFAULT_SETTINGS, ...(settings || {}) };
+  const prefLocale = mergedSettings.locale || 'en';
   await loadLocaleMessages(prefLocale);
   applyI18n();
   if (enableToggle) {
-    enableToggle.checked = settings?.enabled !== false;
+    enableToggle.checked = mergedSettings.enabled !== false;
 
     enableToggle.addEventListener('change', async () => {
       const data = await chrome.storage.local.get('settings');
@@ -32,11 +33,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   }
 
-  // Handle section toggles (unchecked = restore native section)
+  // Handle section toggles
   for (const key of sectionKeys) {
     const toggle = sectionToggles[key];
     if (toggle) {
-      toggle.checked = settings?.[key] !== false;
+      toggle.checked = Boolean(mergedSettings[key]);
       toggle.addEventListener('change', async () => {
         const data = await chrome.storage.local.get('settings');
         const current = data.settings || {};

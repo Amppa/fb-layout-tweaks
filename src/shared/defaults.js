@@ -9,6 +9,11 @@ self.DEFAULT_SETTINGS = {
   // Section masters (popup quick toggles, true = declutter active)
   trimTopNav: true,
   trimLeftItems: true,
+  trimRightRail: true,
+  // Section: Right Sidebar (true = visible; UI checkboxes are inverted: checked = hidden)
+  showRightSponsored: false,
+  showRightBirthdays: true,
+  showRightMetaAI: true,
   // Section: Left Sidebar (Curated clean defaults, true = visible)
   showLeftProfile: true,
   showLeftFriends: true,

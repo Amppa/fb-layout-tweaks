@@ -16,14 +16,11 @@
   "popupToggleTitle": {
     "message": "開關套件功能"
   },
-  "popupTrimTopTitle": {
-    "message": "頂部導覽項目"
+  "popupMinimizeLeft": {
+    "message": "左側欄最小化"
   },
-  "popupTrimLeftTitle": {
-    "message": "左側邊欄項目"
-  },
-  "popupMiniTitle": {
-    "message": "左側邊欄純圖示"
+  "popupMinimizeRight": {
+    "message": "右側欄最小化"
   },
   "popupDetailSettings": {
     "message": "詳細項目設定"
@@ -43,14 +40,20 @@
   "statusDisabled": {
     "message": "已停用"
   },
+  "cardTopNav": {
+    "message": "頂部欄"
+  },
+  "cardLeftSidebar": {
+    "message": "左側欄"
+  },
+  "cardRightSidebar": {
+    "message": "右側欄"
+  },
   "groupTopNav": {
-    "message": "頂部導覽項目"
+    "message": "頂部欄項目設定"
   },
   "groupLeftSidebar": {
-    "message": "左側邊欄項目"
-  },
-  "groupSidebarBehavior": {
-    "message": "左側邊欄行為"
+    "message": "左側欄項目設定"
   },
   "langToggleTitle": {
     "message": "切換語言"
@@ -155,9 +158,33 @@
     "message": "電玩遊戲影片"
   },
   "itemHoverExpandLeftRail": {
-    "message": "純圖示側邊欄"
+    "message": "最小化"
+  },
+  "itemMinimizeRightRail": {
+    "message": "最小化"
+  },
+  "itemHideRightSponsored": {
+    "message": "隱藏 Sponsored"
+  },
+  "itemHideRightBirthdays": {
+    "message": "隱藏生日"
+  },
+  "itemHideRightMetaAI": {
+    "message": "隱藏 Meta AI"
   },
   "descHoverExpandLeftRail": {
     "message": "收合為純圖示，滑鼠懸停時展開完整選單"
+  },
+  "descMinimizeRightRail": {
+    "message": "收合為大頭貼圖示列，滑鼠懸停時展開完整名單"
+  },
+  "descHideRightSponsored": {
+    "message": "隱藏右側欄的贊助區塊"
+  },
+  "descHideRightBirthdays": {
+    "message": "隱藏右側欄的生日區塊"
+  },
+  "descHideRightMetaAI": {
+    "message": "隱藏右側欄的 Meta AI 聊天"
   }
 }

@@ -29,37 +29,25 @@
     <div class="sections">
       <div class="section-row">
         <div class="row-meta">
-          <span class="row-icon">🧭</span>
-          <div>
-            <div class="row-title" data-i18n="popupTrimTopTitle">Top Navigation Items</div>
-          </div>
-        </div>
-        <label class="switch">
-          <input type="checkbox" id="trimTopNav" aria-label="Toggle Top Navigation declutter">
-          <span class="slider round"></span>
-        </label>
-      </div>
-      <div class="section-row">
-        <div class="row-meta">
-          <span class="row-icon">📑</span>
-          <div>
-            <div class="row-title" data-i18n="popupTrimLeftTitle">Left Sidebar Items</div>
-          </div>
-        </div>
-        <label class="switch">
-          <input type="checkbox" id="trimLeftItems" aria-label="Toggle Left Sidebar declutter">
-          <span class="slider round"></span>
-        </label>
-      </div>
-      <div class="section-row">
-        <div class="row-meta">
           <span class="row-icon">⚡</span>
           <div>
-            <div class="row-title" data-i18n="popupMiniTitle">Left Sidebar Icon-only</div>
+            <div class="row-title" data-i18n="popupMinimizeLeft">Minimize Left Sidebar</div>
           </div>
         </div>
         <label class="switch">
-          <input type="checkbox" id="hoverExpandLeftRail" aria-label="Toggle Left Sidebar Icon-only">
+          <input type="checkbox" id="hoverExpandLeftRail" aria-label="Toggle Left Sidebar minimize">
+          <span class="slider round"></span>
+        </label>
+      </div>
+      <div class="section-row">
+        <div class="row-meta">
+          <span class="row-icon">💬</span>
+          <div>
+            <div class="row-title" data-i18n="popupMinimizeRight">Minimize Right Sidebar</div>
+          </div>
+        </div>
+        <label class="switch">
+          <input type="checkbox" id="trimRightRail" aria-label="Toggle Right Sidebar minimize">
           <span class="slider round"></span>
         </label>
       </div>
@@ -71,6 +59,7 @@
     </button>
     <div class="version-footer">v<span id="popupVersion"></span></div>
   </div>
+  <script src="../shared/defaults.js"></script>
   <script src="../shared/i18n.js"></script>
   <script src="popup.js"></script>
 </body>

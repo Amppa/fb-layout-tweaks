@@ -38,9 +38,14 @@
       <!-- Card: Top Navigation Items -->
       <section class="section-card">
 
+        <!-- Card Header: Top Bar -->
+        <div class="card-header">
+          <div class="card-title" data-i18n="cardTopNav">Top Bar</div>
+        </div>
+
         <!-- Group: Top Navigation Items -->
         <div class="group-header">
-          <div class="group-title" data-i18n="groupTopNav">Top Navigation Items</div>
+          <div class="group-title" data-i18n="groupTopNav">Top Bar Item Settings</div>
           <div class="group-actions">
             <button class="btn-action" id="btnTopReset" data-i18n="btnRecommended" data-i18n-title="btnTopResetTitle"
               title="Restore recommended top navigation defaults">Recommended</button>
@@ -89,9 +94,14 @@
       <!-- Card: Left Sidebar Items -->
       <section class="section-card">
 
+        <!-- Card Header: Left Sidebar -->
+        <div class="card-header">
+          <div class="card-title" data-i18n="cardLeftSidebar">Left Sidebar</div>
+        </div>
+
         <!-- Group: Left Sidebar Items -->
         <div class="group-header">
-          <div class="group-title" data-i18n="groupLeftSidebar">Left Sidebar Items</div>
+          <div class="group-title" data-i18n="groupLeftSidebar">Left Sidebar Item Settings</div>
           <div class="group-actions">
             <button class="btn-action" id="btnLeftReset" data-i18n="btnRecommended" data-i18n-title="btnLeftResetTitle"
               title="Restore recommended left sidebar defaults">Recommended</button>
@@ -220,28 +230,98 @@
           </label>
         </div>
 
-      </section>
+        <div class="feature-divider" role="separator"></div>
 
-      <!-- Card: Left Sidebar Behavior -->
-      <section class="section-card">
-
-        <!-- Group: Left Sidebar Behavior -->
-        <div class="group-header">
-          <div class="group-title" data-i18n="groupSidebarBehavior">Left Sidebar Behavior</div>
-        </div>
-
-        <!-- Icon-only Sidebar: feature switch -->
+        <!-- Minimize: feature switch -->
         <div class="feature-item">
           <div class="feature-meta">
             <span class="feature-icon">⚡</span>
             <div>
-              <div class="feature-title" data-i18n="itemHoverExpandLeftRail">Icon-only Sidebar</div>
+              <div class="feature-title" data-i18n="itemHoverExpandLeftRail">Minimize</div>
               <div class="feature-desc" data-i18n="descHoverExpandLeftRail">Shrink to icon rail and expand when hovered</div>
             </div>
           </div>
           <div class="feature-action">
             <label class="switch">
               <input type="checkbox" id="hoverExpandLeftRail" aria-label="Toggle Left Sidebar Icon-only">
+              <span class="slider round"></span>
+            </label>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- Card: Right Sidebar -->
+      <section class="section-card">
+
+        <!-- Card Header: Right Sidebar -->
+        <div class="card-header">
+          <div class="card-title" data-i18n="cardRightSidebar">Right Sidebar</div>
+        </div>
+
+        <!-- Minimize: feature switch -->
+        <div class="feature-item">
+          <div class="feature-meta">
+            <span class="feature-icon">💬</span>
+            <div>
+              <div class="feature-title" data-i18n="itemMinimizeRightRail">Minimize</div>
+              <div class="feature-desc" data-i18n="descMinimizeRightRail">Shrink contacts to avatar rail and expand when hovered</div>
+            </div>
+          </div>
+          <div class="feature-action">
+            <label class="switch">
+              <input type="checkbox" id="trimRightRail" aria-label="Toggle Right Sidebar minimize">
+              <span class="slider round"></span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Hide Sponsored: feature switch (checked = hidden) -->
+        <div class="feature-item">
+          <div class="feature-meta">
+            <span class="feature-icon">📢</span>
+            <div>
+              <div class="feature-title" data-i18n="itemHideRightSponsored">Hide Sponsored</div>
+              <div class="feature-desc" data-i18n="descHideRightSponsored">Hide the sponsored section in the right sidebar</div>
+            </div>
+          </div>
+          <div class="feature-action">
+            <label class="switch">
+              <input type="checkbox" id="showRightSponsored" aria-label="Toggle hiding right sidebar sponsored">
+              <span class="slider round"></span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Hide Birthdays: feature switch (checked = hidden) -->
+        <div class="feature-item">
+          <div class="feature-meta">
+            <span class="feature-icon">🎂</span>
+            <div>
+              <div class="feature-title" data-i18n="itemHideRightBirthdays">Hide Birthdays</div>
+              <div class="feature-desc" data-i18n="descHideRightBirthdays">Hide the birthdays section in the right sidebar</div>
+            </div>
+          </div>
+          <div class="feature-action">
+            <label class="switch">
+              <input type="checkbox" id="showRightBirthdays" aria-label="Toggle hiding right sidebar birthdays">
+              <span class="slider round"></span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Hide Meta AI: feature switch (checked = hidden) -->
+        <div class="feature-item">
+          <div class="feature-meta">
+            <span class="feature-icon">🤖</span>
+            <div>
+              <div class="feature-title" data-i18n="itemHideRightMetaAI">Hide Meta AI</div>
+              <div class="feature-desc" data-i18n="descHideRightMetaAI">Hide the Meta AI chat in the right sidebar</div>
+            </div>
+          </div>
+          <div class="feature-action">
+            <label class="switch">
+              <input type="checkbox" id="showRightMetaAI" aria-label="Toggle hiding right sidebar Meta AI">
               <span class="slider round"></span>
             </label>
           </div>

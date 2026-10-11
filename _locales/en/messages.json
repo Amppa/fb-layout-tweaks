@@ -16,14 +16,11 @@
   "popupToggleTitle": {
     "message": "Toggle Extension"
   },
-  "popupTrimTopTitle": {
-    "message": "Top Navigation Items"
+  "popupMinimizeLeft": {
+    "message": "Minimize Left Sidebar"
   },
-  "popupTrimLeftTitle": {
-    "message": "Left Sidebar Items"
-  },
-  "popupMiniTitle": {
-    "message": "Left Sidebar Icon-only"
+  "popupMinimizeRight": {
+    "message": "Minimize Right Sidebar"
   },
   "popupDetailSettings": {
     "message": "Detailed Settings"
@@ -43,14 +40,20 @@
   "statusDisabled": {
     "message": "Disabled"
   },
+  "cardTopNav": {
+    "message": "Top Bar"
+  },
+  "cardLeftSidebar": {
+    "message": "Left Sidebar"
+  },
+  "cardRightSidebar": {
+    "message": "Right Sidebar"
+  },
   "groupTopNav": {
-    "message": "Top Navigation Items"
+    "message": "Top Bar Item Settings"
   },
   "groupLeftSidebar": {
-    "message": "Left Sidebar Items"
-  },
-  "groupSidebarBehavior": {
-    "message": "Left Sidebar Behavior"
+    "message": "Left Sidebar Item Settings"
   },
   "langToggleTitle": {
     "message": "Switch language"
@@ -155,9 +158,33 @@
     "message": "Gaming Video"
   },
   "itemHoverExpandLeftRail": {
-    "message": "Icon-only Sidebar"
+    "message": "Minimize"
+  },
+  "itemMinimizeRightRail": {
+    "message": "Minimize"
+  },
+  "itemHideRightSponsored": {
+    "message": "Hide Sponsored"
+  },
+  "itemHideRightBirthdays": {
+    "message": "Hide Birthdays"
+  },
+  "itemHideRightMetaAI": {
+    "message": "Hide Meta AI"
   },
   "descHoverExpandLeftRail": {
     "message": "Shrink to icon rail and expand when hovered"
+  },
+  "descMinimizeRightRail": {
+    "message": "Shrink contacts to avatar rail and expand when hovered"
+  },
+  "descHideRightSponsored": {
+    "message": "Hide the sponsored section in the right sidebar"
+  },
+  "descHideRightBirthdays": {
+    "message": "Hide the birthdays section in the right sidebar"
+  },
+  "descHideRightMetaAI": {
+    "message": "Hide the Meta AI chat in the right sidebar"
   }
 }

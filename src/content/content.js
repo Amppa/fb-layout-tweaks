@@ -11,6 +11,7 @@
     // Maps show* settings keys to hide-based fb-layout-tweaks-* CSS tokens
     // (content.css rules suppress elements when the hide token is present).
     if (key === 'showLeftMetaAI') return 'fb-layout-tweaks-hide-left-metaai';
+    if (key === 'showRightMetaAI') return 'fb-layout-tweaks-hide-right-metaai';
     return 'fb-layout-tweaks-' + key.replace(/^show/, 'hide').replace(/([A-Z])/g, '-$1').toLowerCase();
   }
 
@@ -24,12 +25,15 @@
     // Section masters from popup: a trimmed-off section restores native items.
     const trimTopNav = isMasterEnabled && settings.trimTopNav !== false;
     const trimLeftItems = isMasterEnabled && settings.trimLeftItems !== false;
+    const trimRightRail = isMasterEnabled && settings.trimRightRail !== false;
 
     for (const [key, value] of Object.entries(settings)) {
       if (!key.startsWith('show')) continue;
       // Fixed anchor (Profile) has no hide rule.
       if (key === 'showLeftProfile') continue;
-      const sectionActive = key.startsWith('showTop') ? trimTopNav : trimLeftItems;
+      const sectionActive = key.startsWith('showTop') ? trimTopNav
+        : key.startsWith('showRight') ? trimRightRail
+        : trimLeftItems;
       const className = getUiCleanClassName(key);
       const isHidden = sectionActive && value === false;
       root.classList.toggle(className, isHidden);
@@ -37,8 +41,13 @@
 
     const isHoverExpand = isMasterEnabled && Boolean(settings.hoverExpandLeftRail);
     root.classList.toggle('fb-layout-tweaks-hover-expand-left-rail', isHoverExpand);
+    root.classList.toggle('fb-layout-tweaks-hover-expand-right-rail', trimRightRail);
 
     if (isMasterEnabled && settings.showLeftAdsManager === false) {
+      triggerThrottledScan();
+    }
+
+    if (trimRightRail && (settings.showRightSponsored === false || settings.showRightBirthdays === false || settings.showRightMetaAI === false)) {
       triggerThrottledScan();
     }
   }
@@ -77,6 +86,77 @@
     }
   }
 
+  function isRightRailActive() {
+    if (!currentSettings) return false;
+    return currentSettings.enabled !== false && currentSettings.trimRightRail !== false;
+  }
+
+  function scanRightRailDynamicItems() {
+    try {
+      if (!isRightRailActive()) return;
+      const rail = document.getElementById('right_rail_container')
+        || document.querySelector('div[role="complementary"]');
+      if (!rail) return;
+
+      // Sponsored: heading-text anchor only (no stable link). Walk up from the
+      // heading while the ancestor holds a single h3; the first multi-h3
+      // ancestor is the section boundary, so the last single-h3 node is the
+      // Sponsored section root. Aborts at rail/depth cap to avoid over-hiding.
+      if (currentSettings.showRightSponsored === false) {
+        const headings = rail.querySelectorAll('h3');
+        for (const h of headings) {
+          const title = h.textContent.replace(/[\u200b-\u200f\ufeff]/g, '').trim().toLowerCase();
+          if (title !== 'sponsored' && title !== '贊助') continue;
+          let node = h.parentElement;
+          let section = null;
+          for (let depth = 0; depth < 15 && node && node !== rail; depth++) {
+            if (node.querySelectorAll(':scope h3').length > 1) break;
+            section = node;
+            node = node.parentElement;
+          }
+          if (section && node && node !== rail) {
+            section.classList.add('fb-layout-tweaks-hide-right-sponsored-node');
+          }
+        }
+      }
+
+      // Birthdays: hide the whole section (heading + row). Anchor on the stable
+      // /events/birthdays/ link, then walk up to the smallest ancestor holding an h3.
+      if (currentSettings.showRightBirthdays === false) {
+        const links = rail.querySelectorAll('a[href*="/events/birthdays/"]');
+        for (const el of links) {
+          let node = el.parentElement;
+          while (node && node !== rail) {
+            const heading = node.querySelector(':scope h3');
+            if (heading) {
+              const title = heading.textContent.trim().toLowerCase();
+              if (title === 'birthdays' || title === '生日') {
+                node.classList.add('fb-layout-tweaks-hide-right-birthdays-node');
+              }
+              break;
+            }
+            node = node.parentElement;
+          }
+        }
+      }
+
+      // Meta AI row fallback (primary rule is static CSS on the aria-label icon).
+      if (currentSettings.showRightMetaAI === false) {
+        const spans = rail.querySelectorAll('span');
+        for (const span of spans) {
+          const hasName = Array.from(span.childNodes).some(
+            n => n.nodeType === Node.TEXT_NODE && n.textContent.trim() === 'Meta AI'
+          );
+          if (!hasName) continue;
+          const row = span.closest('li');
+          if (row) row.classList.add('fb-layout-tweaks-hide-right-metaai-node');
+        }
+      }
+    } catch (e) {
+      // Non-fatal
+    }
+  }
+
   let scanScheduled = false;
   function triggerThrottledScan() {
     if (scanScheduled) return;
@@ -84,6 +164,7 @@
     requestAnimationFrame(() => {
       scanScheduled = false;
       scanLeftRailDynamicItems();
+      scanRightRailDynamicItems();
     });
   }
 
@@ -114,6 +195,9 @@
       applyUiCleanClasses(currentSettings);
       if (!currentSettings.hoverExpandLeftRail) {
         setRailExpanded(false);
+      }
+      if (!currentSettings.trimRightRail) {
+        setRightRailExpanded(false);
       }
     }
   });
@@ -176,5 +260,64 @@
   }
 
   document.addEventListener('mouseover', handleButtonHover, { passive: true });
+
+  // Right Rail Hover Expand Manager (mirrors left rail, anchored on complementary rail)
+  let rightExpandTimer = null;
+  let rightCollapseTimer = null;
+  let isRightRailExpanded = false;
+
+  function setRightRailExpanded(expanded) {
+    if (isRightRailExpanded === expanded) return;
+    isRightRailExpanded = expanded;
+    document.documentElement.classList.toggle('fb-layout-tweaks-right-rail-expanded', expanded);
+  }
+
+  function handleRightRailHover(e) {
+    if (!currentSettings || currentSettings.enabled === false || currentSettings.trimRightRail === false) {
+      if (isRightRailExpanded) setRightRailExpanded(false);
+      return;
+    }
+
+    const target = e.target;
+    if (!target || !target.closest) return;
+
+    const railSelector = '#right_rail_container, div[role="complementary"]';
+
+    // Check if mouse is directly over any right rail contact row / button / link
+    const isOverItem = Boolean(target.closest(
+      '#right_rail_container :is(a, [role="button"], [role="listitem"], li), div[role="complementary"] :is(a, [role="button"], [role="listitem"], li)'
+    ));
+
+    // When already expanded, allow smooth navigation within the expanded rail container
+    const isOverRail = isRightRailExpanded && Boolean(target.closest(railSelector));
+
+    if (isOverItem || isOverRail) {
+      if (rightCollapseTimer) {
+        clearTimeout(rightCollapseTimer);
+        rightCollapseTimer = null;
+      }
+      if (!isRightRailExpanded && !rightExpandTimer) {
+        // Instant microtask response on direct item hover for zero perceived latency
+        rightExpandTimer = setTimeout(() => {
+          setRightRailExpanded(true);
+          rightExpandTimer = null;
+        }, 0);
+      }
+    } else {
+      if (rightExpandTimer) {
+        clearTimeout(rightExpandTimer);
+        rightExpandTimer = null;
+      }
+      if (isRightRailExpanded && !rightCollapseTimer) {
+        // Crisp 120ms grace period so cursor navigating between items won't jitter
+        rightCollapseTimer = setTimeout(() => {
+          setRightRailExpanded(false);
+          rightCollapseTimer = null;
+        }, 120);
+      }
+    }
+  }
+
+  document.addEventListener('mouseover', handleRightRailHover, { passive: true });
 })();
 

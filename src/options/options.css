@@ -143,21 +143,35 @@ body {
   gap: 2px;
 }
 
-/* Group Header */
-.group-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 8px;
-  padding: 0 4px 10px;
+/* Card Header */
+.card-header {
+  padding: 2px 4px 10px;
   border-bottom: 1px solid var(--divider);
+  margin-bottom: 8px;
 }
 
-.group-title {
+.card-title {
   font-size: 16px;
   font-weight: 700;
   letter-spacing: -0.2px;
   color: var(--text-primary);
+}
+
+/* Group Header (Sub-head inside card) */
+.group-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 8px;
+  padding: 2px 4px 6px;
+}
+
+.group-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary);
 }
 
 .group-actions {
@@ -225,6 +239,12 @@ body {
   color: var(--text-secondary);
   line-height: 1.4;
   margin-top: 2px;
+}
+
+/* Divider between pill grid and feature switches within a card */
+.feature-divider {
+  border-top: 1px solid var(--divider);
+  margin: 10px 4px 2px;
 }
 
 .feature-action {

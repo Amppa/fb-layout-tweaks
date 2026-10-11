@@ -1,6 +1,7 @@
 /**
  * FB Layout Tweaks - Options Page
  * Pill grid semantics: checked = visible (show* keys, true = visible).
+ * Right sidebar hide switches are inverted: checked = hidden, stored value negated.
  * Shared i18n helpers come from src/shared/i18n.js; default settings come from
  * src/shared/defaults.js (both are loaded by options.html).
  */
@@ -29,6 +30,17 @@ document.addEventListener('DOMContentLoaded', async () => {
   document.querySelectorAll('#uiCleanList input[type="checkbox"]').forEach(input => {
     if (input.id) switches[input.id] = input;
   });
+
+  // Hide switches (right sidebar): checkbox checked = hidden, stored show* value negated.
+  const INVERTED_KEYS = new Set(['showRightSponsored', 'showRightBirthdays', 'showRightMetaAI']);
+
+  function toUIChecked(key, storedValue) {
+    return INVERTED_KEYS.has(key) ? !storedValue : storedValue;
+  }
+
+  function toStoredValue(key, uiChecked) {
+    return INVERTED_KEYS.has(key) ? !uiChecked : uiChecked;
+  }
 
   const pillGrids = Array.from(document.querySelectorAll('.pill-grid'));
   pillGrids.forEach(grid => {
@@ -114,7 +126,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   for (const [key, checkbox] of Object.entries(switches)) {
     if (checkbox) {
       const defaultValue = DEFAULTS[key] !== undefined ? DEFAULTS[key] : true;
-      checkbox.checked = settings[key] !== undefined ? settings[key] : defaultValue;
+      const stored = settings[key] !== undefined ? settings[key] : defaultValue;
+      checkbox.checked = toUIChecked(key, stored);
     }
   }
   sortAllPillGrids();
@@ -130,12 +143,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   }
 
-  // Handle individual pills (checked = visible)
+  // Handle individual pills (checked = visible, except INVERTED_KEYS)
   for (const [key, checkbox] of Object.entries(switches)) {
     if (checkbox) {
       checkbox.addEventListener('change', async () => {
         const { settings: current } = await chrome.storage.local.get('settings');
-        const updated = { ...current, [key]: checkbox.checked };
+        const updated = { ...current, [key]: toStoredValue(key, checkbox.checked) };
         await chrome.storage.local.set({ settings: updated });
         sortAllPillGrids();
       });
@@ -202,7 +215,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const next = changes.settings.newValue;
     if (typeof next.enabled === 'boolean') updateMasterUI(next.enabled);
     for (const [key, checkbox] of Object.entries(switches)) {
-      if (checkbox && typeof next[key] === 'boolean') checkbox.checked = next[key];
+      if (checkbox && typeof next[key] === 'boolean') checkbox.checked = toUIChecked(key, next[key]);
     }
     sortAllPillGrids();
   });

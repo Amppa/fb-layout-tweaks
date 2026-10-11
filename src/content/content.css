@@ -127,7 +127,6 @@ html.fb-layout-tweaks-hover-expand-left-rail.fb-layout-tweaks-rail-expanded :is(
   div:has(> :is(h2, h3, [role="heading"]))
 ):not(:has(svg, img, [role="img"], i)) :is(span, a, [role="button"]) {
   opacity: 1 !important;
-  color: inherit !important;
   overflow: visible !important;
   pointer-events: auto !important;
   transition: opacity 0.12s ease !important;
@@ -296,5 +295,146 @@ html.fb-layout-tweaks-hide-top-groups :is(header, [role="banner"], [data-pagelet
 /* Gaming */
 html.fb-layout-tweaks-hide-top-gaming :is(header, [role="banner"], [data-pagelet="Header"]) :is(li, div[role="tab"]):has(a[href*="/gaming"]),
 html.fb-layout-tweaks-hide-top-gaming :is(header, [role="banner"], [data-pagelet="Header"]) a[href*="/gaming"] {
+  display: none !important;
+}
+
+/* ==========================================================================
+   Icon-Only Right Sidebar & Flyout Drawer (mirrors left rail, opens leftward)
+   Anchor: #right_rail_container with div[role="complementary"] fallback.
+   ========================================================================== */
+
+/* 1. Base Spacer in Document Flow (STRICT 72px AT ALL TIMES - NEVER RESIZES OR PUSHES FEED) */
+html.fb-layout-tweaks-hover-expand-right-rail :is(#right_rail_container, div[role="complementary"]),
+html.fb-layout-tweaks-hover-expand-right-rail.fb-layout-tweaks-right-rail-expanded :is(#right_rail_container, div[role="complementary"]) {
+  width: 72px !important;
+  max-width: 72px !important;
+  min-width: 72px !important;
+  flex-basis: 72px !important;
+  flex-shrink: 0 !important;
+  box-sizing: border-box !important;
+}
+
+/* 2. Floating Visual Drawer (position: fixed overlay - NEVER PUSHES FEED) */
+html.fb-layout-tweaks-hover-expand-right-rail :is(#right_rail_container, div[role="complementary"]) > div {
+  position: fixed !important;
+  top: 56px !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  height: calc(100vh - 56px) !important;
+  width: 72px !important;
+  max-width: 72px !important;
+  min-width: 72px !important;
+  box-sizing: border-box !important;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+  z-index: 100 !important;
+  will-change: width !important;
+  transition: width 0.15s cubic-bezier(0, 0, 0.2, 1) !important;
+}
+
+/* Clear min-width on descendants so items fit cleanly into 72px rail */
+html.fb-layout-tweaks-hover-expand-right-rail :is(#right_rail_container, div[role="complementary"]) :is(ul, ol, li, div[role="listitem"], a, [role="button"]) {
+  min-width: 0 !important;
+  box-sizing: border-box !important;
+}
+
+/* Collapsed: Hide contact names without touching avatar spans */
+html.fb-layout-tweaks-hover-expand-right-rail:not(.fb-layout-tweaks-right-rail-expanded) :is(#right_rail_container, div[role="complementary"]) :is(a, [role="button"]) span:not(:has(svg, img, i, [role="img"])) {
+  opacity: 0 !important;
+  max-width: 0 !important;
+  display: inline-block !important;
+  overflow: hidden !important;
+  white-space: nowrap !important;
+  transition: opacity 0.1s ease !important;
+}
+
+/* Collapsed: Keep section headings (Sponsored / Birthdays / Contacts / Group chats) on a natural single line */
+html.fb-layout-tweaks-hover-expand-right-rail:not(.fb-layout-tweaks-right-rail-expanded) :is(#right_rail_container, div[role="complementary"]) :is(
+  h2, h3, [role="heading"],
+  div:has(> :is(h2, h3, [role="heading"]))
+):not(:has(svg, img, [role="img"], i)) {
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  box-sizing: border-box !important;
+}
+
+/* Collapsed: Make heading text & header icon buttons transparent while preserving natural 1-line height */
+html.fb-layout-tweaks-hover-expand-right-rail:not(.fb-layout-tweaks-right-rail-expanded) :is(#right_rail_container, div[role="complementary"]) :is(
+  h2, h3, [role="heading"],
+  div:has(> :is(h2, h3, [role="heading"]))
+):not(:has(svg, img, [role="img"], i)) :is(span, a, [role="button"]) {
+  opacity: 0 !important;
+  color: transparent !important;
+  display: block !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: clip !important;
+  pointer-events: none !important;
+  transition: opacity 0.1s ease !important;
+}
+
+/* 3. Flyout Expanded State (Floating strictly on top of middle content) */
+html.fb-layout-tweaks-hover-expand-right-rail.fb-layout-tweaks-right-rail-expanded :is(#right_rail_container, div[role="complementary"]) > div {
+  position: fixed !important;
+  top: 56px !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  height: calc(100vh - 56px) !important;
+  width: 288px !important;
+  max-width: 288px !important;
+  min-width: 288px !important;
+  z-index: 1000 !important;
+  background: var(--surface-background, #242526) !important;
+  box-shadow: -4px 0 16px rgba(0, 0, 0, 0.3) !important;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+}
+
+/* Expanded: Show text labels smoothly without clipping */
+html.fb-layout-tweaks-hover-expand-right-rail.fb-layout-tweaks-right-rail-expanded :is(#right_rail_container, div[role="complementary"]) :is(a, [role="button"]) span:not(:has(svg, img, i, [role="img"])) {
+  opacity: 1 !important;
+  max-width: none !important;
+  overflow: visible !important;
+  transition: opacity 0.12s ease !important;
+}
+
+/* Expanded: Maintain natural section heading height */
+html.fb-layout-tweaks-hover-expand-right-rail.fb-layout-tweaks-right-rail-expanded :is(#right_rail_container, div[role="complementary"]) :is(
+  h2, h3, [role="heading"],
+  div:has(> :is(h2, h3, [role="heading"]))
+):not(:has(svg, img, [role="img"], i)) {
+  white-space: nowrap !important;
+  overflow: visible !important;
+  box-sizing: border-box !important;
+}
+
+/* Expanded: Fade in section heading text and header buttons smoothly */
+html.fb-layout-tweaks-hover-expand-right-rail.fb-layout-tweaks-right-rail-expanded :is(#right_rail_container, div[role="complementary"]) :is(
+  h2, h3, [role="heading"],
+  div:has(> :is(h2, h3, [role="heading"]))
+):not(:has(svg, img, [role="img"], i)) :is(span, a, [role="button"]) {
+  opacity: 1 !important;
+  overflow: visible !important;
+  pointer-events: auto !important;
+  transition: opacity 0.12s ease !important;
+}
+
+/* ==========================================================================
+   Right Sidebar Per-Section Hide Rules (gated by showRight* settings)
+   ========================================================================== */
+
+/* Sponsored section (whole block incl. heading, marked by dynamic scanner) */
+html.fb-layout-tweaks-hide-right-sponsored .fb-layout-tweaks-hide-right-sponsored-node {
+  display: none !important;
+}
+
+/* Birthdays section (whole block incl. heading, marked by dynamic scanner) */
+html.fb-layout-tweaks-hide-right-birthdays .fb-layout-tweaks-hide-right-birthdays-node {
+  display: none !important;
+}
+
+/* Meta AI contact row: stable aria-label icon anchor + scanner fallback node */
+html.fb-layout-tweaks-hide-right-metaai :is(#right_rail_container, div[role="complementary"]) li:has(i[aria-label*="Meta AI" i]),
+html.fb-layout-tweaks-hide-right-metaai .fb-layout-tweaks-hide-right-metaai-node {
   display: none !important;
 }
