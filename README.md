@@ -29,7 +29,10 @@ Right-click the extension icon and select **Options** (or click **Detailed Setti
 
 ## Installation
 
-1. Clone or download this repository.
+1. Clone this repository:
+   ```bash
+   git clone https://github.com/Amppa/fb-layout-tweaks.git
+   ```
 2. In Google Chrome, go to `chrome://extensions/`.
 3. Enable **Developer mode** in the top-right corner.
 4. Click **Load unpacked** and select the `fb-layout-tweaks` directory.
