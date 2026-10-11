@@ -2,18 +2,25 @@
  * FB Layout Tweaks - Shared Default Settings
  * Single source of truth shared by the service worker (via importScripts)
  * and extension pages (via <script> tag).
+ *
+ * Settings are authored in three section groups (TOP / LEFT / RIGHT) and
+ * flattened into DEFAULT_SETTINGS. Storage and all consumers use the flat
+ * shape, so grouping is organizational only (no migration needed).
  */
 
-self.DEFAULT_SETTINGS = {
-  enabled: true,
-  // Section masters (popup quick toggles, true = declutter active)
+self.TOP_SETTINGS = {
+  // Section master (popup quick toggle, true = declutter active)
   trimTopNav: true,
+  // Section: Top Navigation (true = visible)
+  showTopReels: true,
+  showTopMarketplace: false,
+  showTopGroups: true,
+  showTopGaming: false
+};
+
+self.LEFT_SETTINGS = {
+  // Section master (popup quick toggle, true = declutter active)
   trimLeftItems: true,
-  trimRightRail: true,
-  // Section: Right Sidebar (true = visible; UI checkboxes are inverted: checked = hidden)
-  showRightSponsored: false,
-  showRightBirthdays: true,
-  showRightMetaAI: true,
   // Section: Left Sidebar (Curated clean defaults, true = visible)
   showLeftProfile: true,
   showLeftFriends: true,
@@ -37,10 +44,21 @@ self.DEFAULT_SETTINGS = {
   showLeftMetaQuest: false,
   showLeftFundraisers: false,
   showLeftOrdersPayments: false,
-  hoverExpandLeftRail: false,
-  // Section: Top Navigation (true = visible)
-  showTopReels: true,
-  showTopMarketplace: false,
-  showTopGroups: true,
-  showTopGaming: false
+  hoverExpandLeftRail: false
+};
+
+self.RIGHT_SETTINGS = {
+  // Section master (popup quick toggle, true = declutter active)
+  trimRightRail: true,
+  // Section: Right Sidebar (true = visible; UI checkboxes are inverted: checked = hidden)
+  showRightSponsored: false,
+  showRightBirthdays: true,
+  showRightMetaAI: true
+};
+
+self.DEFAULT_SETTINGS = {
+  enabled: true,
+  ...self.TOP_SETTINGS,
+  ...self.LEFT_SETTINGS,
+  ...self.RIGHT_SETTINGS
 };
