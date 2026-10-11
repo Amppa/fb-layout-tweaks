@@ -60,11 +60,11 @@ graph TD
 2. Both `content.css` and `content.js` execute before DOM tree painting begins.
 3. `content.js` queries `chrome.storage.local` immediately and applies CSS token classes directly to `document.documentElement` (`<html>`):
    ```javascript
-   root.classList.toggle('fb-diet-hide-left-gaming', isEnabled);
+   root.classList.toggle('fb-layout-tweaks-hide-left-gaming', isEnabled);
    ```
 4. `content.css` suppresses elements purely through declarative descendant selectors:
    ```css
-   html.fb-diet-hide-left-gaming div[role="navigation"] a[href*="/gaming/"] {
+   html.fb-layout-tweaks-hide-left-gaming div[role="navigation"] a[href*="/gaming/"] {
      display: none !important;
    }
    ```
@@ -73,4 +73,4 @@ graph TD
 ### Dual-Layer Targeting: Static Selectors + Dynamic Scanner
 Facebook uses compiled React components with dynamic, hashed classes (`.x193iq5w`).
 - **Primary Layer (Attribute & URL Matching)**: Matches stable attributes such as `href*="/friends/"`, `href*="/marketplace/"`, SVG paths, or `aria-label`.
-- **Secondary Layer (Dynamic Text Scanner)**: Lazy-loaded or dynamic items (e.g., **Ads Manager** nested under "See More") receive `.fb-diet-hide-left-ads-manager-node` via a throttled scanner (`requestAnimationFrame`) triggered by `MutationObserver`.
+- **Secondary Layer (Dynamic Text Scanner)**: Lazy-loaded or dynamic items (e.g., **Ads Manager** nested under "See More") receive `.fb-layout-tweaks-hide-left-ads-manager-node` via a throttled scanner (`requestAnimationFrame`) triggered by `MutationObserver`.

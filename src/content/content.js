@@ -8,10 +8,10 @@
   let currentSettings = null;
 
   function getUiCleanClassName(key) {
-    // Maps show* keys to the stable fb-diet-hide-* CSS tokens (content.css
-    // keeps hide-based class names to avoid a full stylesheet rename).
-    if (key === 'showLeftMetaAI') return 'fb-diet-hide-left-metaai';
-    return 'fb-diet-' + key.replace(/^show/, 'hide').replace(/([A-Z])/g, '-$1').toLowerCase();
+    // Maps show* settings keys to hide-based fb-layout-tweaks-* CSS tokens
+    // (content.css rules suppress elements when the hide token is present).
+    if (key === 'showLeftMetaAI') return 'fb-layout-tweaks-hide-left-metaai';
+    return 'fb-layout-tweaks-' + key.replace(/^show/, 'hide').replace(/([A-Z])/g, '-$1').toLowerCase();
   }
 
   function applyUiCleanClasses(settings) {
@@ -58,7 +58,7 @@
         );
         for (const el of candidates) {
           const row = el.closest('li, div[role="listitem"], div[role="button"], div[data-visualcompletion]') || el;
-          row.classList.add('fb-diet-hide-left-ads-manager-node');
+          row.classList.add('fb-layout-tweaks-hide-left-ads-manager-node');
         }
 
         const spans = document.querySelectorAll('span');
@@ -67,7 +67,7 @@
             const text = span.textContent.trim();
             if (text === '廣告管理員' || text.toLowerCase() === 'ads manager') {
               const row = span.closest('li, div[role="listitem"], div[role="button"], div[data-visualcompletion]') || span.closest('a') || span;
-              row.classList.add('fb-diet-hide-left-ads-manager-node');
+              row.classList.add('fb-layout-tweaks-hide-left-ads-manager-node');
             }
           }
         }
