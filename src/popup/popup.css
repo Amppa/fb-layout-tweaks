@@ -3,7 +3,13 @@
   --accent-color: #0ea5e9;
   --text-primary: #f0f0f2;
   --text-secondary: #909099;
+  --white: #ffffff;
   --divider: rgba(255, 255, 255, 0.08);
+  --btn-bg: rgba(255, 255, 255, 0.04);
+  --btn-bg-hover: rgba(255, 255, 255, 0.08);
+  --border-hover: rgba(255, 255, 255, 0.25);
+  --overlay-strong: rgba(255, 255, 255, 0.15);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
 }
 
 * {
@@ -132,7 +138,7 @@ body {
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(255, 255, 255, 0.15);
+  background-color: var(--overlay-strong);
   transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -143,9 +149,9 @@ body {
   width: 14px;
   left: 3px;
   bottom: 3px;
-  background-color: #ffffff;
+  background-color: var(--white);
   transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  box-shadow: var(--shadow-sm);
 }
 
 .slider.round {
@@ -165,7 +171,7 @@ input:checked + .slider:before {
 }
 
 .settings-btn {
-  background: rgba(255, 255, 255, 0.04);
+  background: var(--btn-bg);
   border: 1px solid var(--divider);
   color: var(--text-primary);
   font-size: 13px;
@@ -187,9 +193,9 @@ input:checked + .slider:before {
 }
 
 .settings-btn:hover {
-  background: rgba(255, 255, 255, 0.1);
-  border-color: rgba(255, 255, 255, 0.2);
-  color: #ffffff;
+  background: var(--btn-bg-hover);
+  border-color: var(--border-hover);
+  color: var(--white);
 }
 
 .settings-btn:active {

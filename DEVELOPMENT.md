@@ -53,7 +53,7 @@ powershell -ExecutionPolicy Bypass -File scripts/package.ps1
 
 ### UI & Design Tokens
 - **No Magic Numbers**: Colors, dimensions, and theme variables belong in CSS custom properties (`:root`).
-- **Synchronized Theme Variables**: Keep theme variables aligned between `src/popup/popup.css` and `src/options/options.css` (`--bg-primary`, `--bg-card`, `--text-primary`, `--divider`, `--accent-color`).
+- **Synchronized Theme Variables**: Keep theme variables aligned between `src/popup/popup.css` and `src/options/options.css` (`--bg-primary`, `--bg-card`, `--text-primary`, `--text-secondary`, `--white`, `--divider`, `--accent-color`, `--btn-bg`, `--btn-bg-hover`, `--border-hover`, `--overlay-strong`, `--shadow-sm`).
 - **Reuse Existing Components**: Use existing classes (`.action-btn`, `.pill`, `.switch`, `.badge-fixed`) rather than inventing parallel styles.
 
 ### Internationalization (i18n) Logic
