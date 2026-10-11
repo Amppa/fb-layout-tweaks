@@ -38,9 +38,9 @@ powershell -ExecutionPolicy Bypass -File scripts/package.ps1
 - **Safe Read**: Always provide fallbacks: `chrome.storage.local.get({ settings: DEFAULT_SETTINGS }, callback)`.
 - **Granular Write**: Write merged updates directly to the `settings` object in `chrome.storage.local`.
 - **Live Sync**: Rely on `chrome.storage.onChanged` across options, popup, and content scripts instead of point-to-point runtime messaging.
-- **Key-to-Class Mapping**: Per-item settings keys use `show*` convention (e.g. `showLeftGaming`, `showTopReels`). Section masters use `trim*` convention (`trimTopNav`, `trimLeftItems`); a trimmed-off section restores native items regardless of pills. Content script maps `false` values to `fb-diet-hide-*` root classes via `getUiCleanClassName(key)`:
-  - `showLeftMetaAI` -> `fb-diet-hide-left-metaai`
-  - General pattern: `show*` -> `hide*` -> kebab-case (`showLeftGaming` -> `fb-diet-hide-left-gaming`).
+- **Key-to-Class Mapping**: Per-item settings keys use `show*` convention (e.g. `showLeftGaming`, `showTopReels`). Section masters use `trim*` convention (`trimTopNav`, `trimLeftItems`); a trimmed-off section restores native items regardless of pills. Content script maps `false` values to `fb-layout-tweaks-hide-*` root classes via `getUiCleanClassName(key)`:
+  - `showLeftMetaAI` -> `fb-layout-tweaks-hide-left-metaai`
+  - General pattern: `show*` -> `hide*` -> kebab-case (`showLeftGaming` -> `fb-layout-tweaks-hide-left-gaming`).
 
 ### Performance & Timing Logics
 - **Zero-FOUC Execution**: Content scripts run at `document_start` to apply root CSS tokens before first paint.
@@ -49,7 +49,7 @@ powershell -ExecutionPolicy Bypass -File scripts/package.ps1
 ### Selector Resilience & Scoped Rules
 - **No Transient Hashed Classes**: Never bind hide rules to transient hashed CSS classes (e.g. `.x193iq5w`).
 - **Semantic Anchors**: Match semantic URLs (`href*="/friends/"`), stable ARIA attributes (`aria-label`), SVG icons, or dynamic text detection.
-- **Strictly Scoped**: All hiding rules in `src/content/content.css` must be scoped under root classes (e.g., `html.fb-diet-hide-left-gaming div[role="navigation"] ...`) to avoid unintended side effects.
+- **Strictly Scoped**: All hiding rules in `src/content/content.css` must be scoped under root classes (e.g., `html.fb-layout-tweaks-hide-left-gaming div[role="navigation"] ...`) to avoid unintended side effects.
 
 ### UI & Design Tokens
 - **No Magic Numbers**: Colors, dimensions, and theme variables belong in CSS custom properties (`:root`).
@@ -79,7 +79,7 @@ powershell -ExecutionPolicy Bypass -File scripts/package.ps1
 When introducing a new setting or navigation item to hide, update in this order:
 
 1. [ ] **Defaults** (`src/shared/defaults.js`): Register `show*` key & initial fallback boolean in `DEFAULT_SETTINGS`.
-2. [ ] **Content CSS** (`src/content/content.css`): Add scoped hiding rule under `html.fb-diet-hide-<name>`.
+2. [ ] **Content CSS** (`src/content/content.css`): Add scoped hiding rule under `html.fb-layout-tweaks-hide-<name>`.
 3. [ ] **Options UI** (`src/options/options.html` + `src/options/options.js`):
    - Add pill `<label class="pill">` with `<input type="checkbox" id="show..." aria-label="...">` and `data-i18n`.
    - *Top Nav boundary*: If adding a **Top Navigation** item, also register the key in the `topKeys` array in `src/options/options.js` so section quick actions (`Recommended`, `Hide All`, `Show All`) include it.

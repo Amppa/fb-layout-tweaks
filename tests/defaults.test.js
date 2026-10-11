@@ -90,3 +90,12 @@ test('All production icons exist (16, 32, 48, 128px)', () => {
     assert.ok(stats.size > 0, `icons/icon${size}.png should not be empty`);
   }
 });
+
+test('Popup section masters have linked switches in options.html', () => {
+  const optionsHtmlPath = path.join(ROOT_DIR, 'src', 'options', 'options.html');
+  const html = fs.readFileSync(optionsHtmlPath, 'utf8');
+
+  for (const key of ['trimTopNav', 'trimLeftItems']) {
+    assert.ok(html.includes(`id="${key}"`), `options.html should contain a switch with id="${key}"`);
+  }
+});

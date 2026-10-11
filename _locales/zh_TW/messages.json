@@ -16,17 +16,14 @@
   "popupToggleTitle": {
     "message": "開關套件功能"
   },
-  "popupMaster": {
-    "message": "總開關"
-  },
   "popupTrimTopTitle": {
-    "message": "頂部導覽列精簡"
+    "message": "頂部導覽項目"
   },
   "popupTrimLeftTitle": {
-    "message": "左側按鈕精簡"
+    "message": "左側邊欄項目"
   },
   "popupMiniTitle": {
-    "message": "圖示模式"
+    "message": "左側邊欄純圖示"
   },
   "popupDetailSettings": {
     "message": "詳細項目設定"
@@ -47,10 +44,13 @@
     "message": "已停用"
   },
   "groupTopNav": {
-    "message": "頂部導覽列"
+    "message": "頂部導覽項目"
   },
   "groupLeftSidebar": {
-    "message": "左側邊欄"
+    "message": "左側邊欄項目"
+  },
+  "groupSidebarBehavior": {
+    "message": "左側邊欄行為"
   },
   "langToggleTitle": {
     "message": "切換語言"
@@ -154,13 +154,10 @@
   "itemGamingVideo": {
     "message": "電玩遊戲影片"
   },
-  "hintHidden": {
-    "message": "已隱藏 (遮眼)"
-  },
-  "hintVisible": {
-    "message": "正常顯示"
-  },
   "itemHoverExpandLeftRail": {
-    "message": "純圖示側邊欄（懸停浮動標籤）"
+    "message": "純圖示側邊欄"
+  },
+  "descHoverExpandLeftRail": {
+    "message": "收合為純圖示，滑鼠懸停時展開完整選單"
   }
 }

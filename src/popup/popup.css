@@ -1,9 +1,6 @@
 :root {
   --bg-primary: #0e0e10;
-  --bg-card: #18181c;
-  --bg-card-hover: #222228;
   --accent-color: #0ea5e9;
-  --accent-gradient: linear-gradient(135deg, #0ea5e9 0%, #38bdf8 100%);
   --text-primary: #f0f0f2;
   --text-secondary: #909099;
   --divider: rgba(255, 255, 255, 0.08);
@@ -57,7 +54,7 @@ body {
 .title {
   font-size: 15px;
   font-weight: 700;
-  color: #f8fafc;
+  color: var(--text-primary);
   line-height: 1.2;
 }
 
@@ -69,14 +66,7 @@ body {
 .master-wrap {
   display: flex;
   align-items: center;
-  gap: 8px;
   flex-shrink: 0;
-}
-
-.master-label {
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--text-secondary);
 }
 
 /* Section quick toggles */
@@ -167,7 +157,7 @@ body {
 }
 
 input:checked + .slider {
-  background: var(--accent-gradient);
+  background: var(--accent-color);
 }
 
 input:checked + .slider:before {

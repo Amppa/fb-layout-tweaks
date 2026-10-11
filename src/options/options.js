@@ -36,7 +36,6 @@ document.addEventListener('DOMContentLoaded', async () => {
       const activeText = getMsg('statusActive') || 'Active';
       const disabledText = getMsg('statusDisabled') || 'Disabled';
       masterStatus.textContent = isEnabled ? activeText : disabledText;
-      masterStatus.style.color = 'var(--text-secondary)';
     }
     if (isEnabled) {
       if (uiCleanList) uiCleanList.classList.remove('disabled');
@@ -127,17 +126,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     await chrome.storage.local.set({ settings: updated });
   }
 
-  // Remove legacy hide* keys left over from the pre-pill schema.
-  function stripLegacyKeys(obj) {
-    for (const key of Object.keys(obj)) {
-      if (key.startsWith('hide')) delete obj[key];
-    }
-    return obj;
-  }
-
   async function resetSection(keys, extraPatch = {}) {
     const { settings: current } = await chrome.storage.local.get('settings');
-    const updated = stripLegacyKeys({ ...(current || {}), ...extraPatch });
+    const updated = { ...(current || {}), ...extraPatch };
     keys.forEach(key => {
       const defVal = DEFAULTS[key] !== undefined ? Boolean(DEFAULTS[key]) : true;
       if (switches[key]) switches[key].checked = defVal;
@@ -162,15 +153,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Left Sidebar Actions
 
   if (btnLeftReset) {
-    btnLeftReset.addEventListener('click', async () => {
-      // Recommended also restores the default hover-expand setting.
-      await resetSection(leftKeys, {
-        hoverExpandLeftRail: DEFAULTS.hoverExpandLeftRail
-      });
-      if (switches.hoverExpandLeftRail) {
-        switches.hoverExpandLeftRail.checked = Boolean(DEFAULTS.hoverExpandLeftRail);
-      }
-    });
+    btnLeftReset.addEventListener('click', () => resetSection(leftKeys));
   }
 
   if (btnLeftHideAll) {
@@ -180,4 +163,14 @@ document.addEventListener('DOMContentLoaded', async () => {
   if (btnLeftShowAll) {
     btnLeftShowAll.addEventListener('click', () => applySectionValues(leftKeys, true));
   }
+
+  // Live sync states when popup (or another context) changes settings.
+  chrome.storage.onChanged.addListener((changes, area) => {
+    if (area !== 'local' || !changes.settings?.newValue) return;
+    const next = changes.settings.newValue;
+    if (typeof next.enabled === 'boolean') updateMasterUI(next.enabled);
+    for (const [key, checkbox] of Object.entries(switches)) {
+      if (checkbox && typeof next[key] === 'boolean') checkbox.checked = next[key];
+    }
+  });
 });

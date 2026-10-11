@@ -11,7 +11,7 @@ Quick-reference map to help developers and AI assistants navigate features to th
 | **Host DOM & Injected UI** | `src/content/` | Injected into Facebook (`https://www.facebook.com/*`); Zero-FOUC root class injector (`content.js`) and scoped declarative CSS hiding rules (`content.css`). |
 | **Background Service Worker** | `src/background/` | Manifest V3 service worker (`background.js`); installation lifecycle & `DEFAULT_SETTINGS` initialization in `chrome.storage.local`. |
 | **Toolbar Quick Panel** | `src/popup/` | Ephemeral browser action panel (`popup.html` / `popup.js` / `popup.css`); master ON/OFF toggle, section quick toggles (`trimTopNav`, `trimLeftItems`, `hoverExpandLeftRail`), jump to options. |
-| **Extension Settings Page** | `src/options/` | Full-tab configuration center (`options.html` / `options.js` / `options.css`); granular toggles for Top Nav & Left Sidebar, section actions (`Recommended`, `Hide All`, `Show All`). |
+| **Extension Settings Page** | `src/options/` | Full-tab configuration center (`options.html` / `options.js` / `options.css`); granular toggles for Top Nav & Left Sidebar, section master switches linked to popup (`trimTopNav`, `trimLeftItems`), section actions (`Recommended`, `Hide All`, `Show All`). |
 | **Shared Foundations** | `src/shared/` | Cross-context utilities: state defaults (`defaults.js`), i18n localization helper (`i18n.js`). |
 | **Localization Dictionaries** | `_locales/` | Native Chrome i18n dictionaries: English fallback (`_locales/en/messages.json`) and Traditional Chinese (`_locales/zh_TW/messages.json`). |
 | **Icons & Brand Artwork** | `icons/`, `design/` | Production PNGs (`icons/`: 16, 32, 48, 128px) vs master SVG and design assets (`design/`). |
@@ -60,11 +60,11 @@ graph TD
 2. Both `content.css` and `content.js` execute before DOM tree painting begins.
 3. `content.js` queries `chrome.storage.local` immediately and applies CSS token classes directly to `document.documentElement` (`<html>`):
    ```javascript
-   root.classList.toggle('fb-diet-hide-left-gaming', isEnabled);
+   root.classList.toggle('fb-layout-tweaks-hide-left-gaming', isEnabled);
    ```
 4. `content.css` suppresses elements purely through declarative descendant selectors:
    ```css
-   html.fb-diet-hide-left-gaming div[role="navigation"] a[href*="/gaming/"] {
+   html.fb-layout-tweaks-hide-left-gaming div[role="navigation"] a[href*="/gaming/"] {
      display: none !important;
    }
    ```
@@ -73,4 +73,4 @@ graph TD
 ### Dual-Layer Targeting: Static Selectors + Dynamic Scanner
 Facebook uses compiled React components with dynamic, hashed classes (`.x193iq5w`).
 - **Primary Layer (Attribute & URL Matching)**: Matches stable attributes such as `href*="/friends/"`, `href*="/marketplace/"`, SVG paths, or `aria-label`.
-- **Secondary Layer (Dynamic Text Scanner)**: Lazy-loaded or dynamic items (e.g., **Ads Manager** nested under "See More") receive `.fb-diet-hide-left-ads-manager-node` via a throttled scanner (`requestAnimationFrame`) triggered by `MutationObserver`.
+- **Secondary Layer (Dynamic Text Scanner)**: Lazy-loaded or dynamic items (e.g., **Ads Manager** nested under "See More") receive `.fb-layout-tweaks-hide-left-ads-manager-node` via a throttled scanner (`requestAnimationFrame`) triggered by `MutationObserver`.
