@@ -30,6 +30,34 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (input.id) switches[input.id] = input;
   });
 
+  const pillGrids = Array.from(document.querySelectorAll('.pill-grid'));
+  pillGrids.forEach(grid => {
+    Array.from(grid.children).forEach((pill, index) => {
+      pill.dataset.originalOrder = String(index);
+    });
+  });
+
+  function isPillSelected(pill) {
+    if (pill.classList.contains('pill-locked')) return true;
+    const input = pill.querySelector('input[type="checkbox"]');
+    return input ? input.checked : false;
+  }
+
+  function sortPillGrid(grid) {
+    const pills = Array.from(grid.children);
+    pills.sort((a, b) => {
+      const selA = isPillSelected(a) ? 0 : 1;
+      const selB = isPillSelected(b) ? 0 : 1;
+      if (selA !== selB) return selA - selB;
+      return Number(a.dataset.originalOrder || 0) - Number(b.dataset.originalOrder || 0);
+    });
+    pills.forEach(pill => grid.appendChild(pill));
+  }
+
+  function sortAllPillGrids() {
+    pillGrids.forEach(sortPillGrid);
+  }
+
   function updateMasterUI(isEnabled) {
     if (masterToggle) masterToggle.checked = isEnabled;
     if (masterStatus) {
@@ -89,6 +117,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       checkbox.checked = settings[key] !== undefined ? settings[key] : defaultValue;
     }
   }
+  sortAllPillGrids();
 
   // Handle Master toggle
   if (masterToggle) {
@@ -108,6 +137,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         const { settings: current } = await chrome.storage.local.get('settings');
         const updated = { ...current, [key]: checkbox.checked };
         await chrome.storage.local.set({ settings: updated });
+        sortAllPillGrids();
       });
     }
   }
@@ -124,6 +154,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       updated[key] = value;
     });
     await chrome.storage.local.set({ settings: updated });
+    sortAllPillGrids();
   }
 
   async function resetSection(keys, extraPatch = {}) {
@@ -135,6 +166,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       updated[key] = defVal;
     });
     await chrome.storage.local.set({ settings: updated });
+    sortAllPillGrids();
   }
 
   // Top Navigation Actions (Hide All = unchecked, Show All = checked)
@@ -172,5 +204,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     for (const [key, checkbox] of Object.entries(switches)) {
       if (checkbox && typeof next[key] === 'boolean') checkbox.checked = next[key];
     }
+    sortAllPillGrids();
   });
 });
