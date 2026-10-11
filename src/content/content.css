@@ -304,8 +304,8 @@ html.fb-layout-tweaks-hide-top-gaming :is(header, [role="banner"], [data-pagelet
    ========================================================================== */
 
 /* 1. Base Spacer in Document Flow (STRICT 72px AT ALL TIMES - NEVER RESIZES OR PUSHES FEED) */
-html.fb-layout-tweaks-hover-expand-right-rail :is(#right_rail_container, div[role="complementary"]),
-html.fb-layout-tweaks-hover-expand-right-rail.fb-layout-tweaks-right-rail-expanded :is(#right_rail_container, div[role="complementary"]) {
+html.fb-layout-tweaks-hover-expand-right-rail :is([data-pagelet="RightRail"], [data-pagelet="RightRail"] div[role="complementary"], div[role="complementary"][data-pagelet="RightRail"], #right_rail_container):not([role="dialog"] *):not([aria-modal="true"] *):not([role="main"] *):not([data-pagelet*="Photo"] *):not([data-pagelet*="Media"] *):not([data-pagelet*="Tahoe"] *),
+html.fb-layout-tweaks-hover-expand-right-rail.fb-layout-tweaks-right-rail-expanded :is([data-pagelet="RightRail"], [data-pagelet="RightRail"] div[role="complementary"], div[role="complementary"][data-pagelet="RightRail"], #right_rail_container):not([role="dialog"] *):not([aria-modal="true"] *):not([role="main"] *):not([data-pagelet*="Photo"] *):not([data-pagelet*="Media"] *):not([data-pagelet*="Tahoe"] *) {
   width: 72px !important;
   max-width: 72px !important;
   min-width: 72px !important;
@@ -315,7 +315,7 @@ html.fb-layout-tweaks-hover-expand-right-rail.fb-layout-tweaks-right-rail-expand
 }
 
 /* 2. Floating Visual Drawer (position: fixed overlay - NEVER PUSHES FEED) */
-html.fb-layout-tweaks-hover-expand-right-rail :is(#right_rail_container, div[role="complementary"]) > div {
+html.fb-layout-tweaks-hover-expand-right-rail :is([data-pagelet="RightRail"] div[role="complementary"], div[role="complementary"][data-pagelet="RightRail"], [data-pagelet="RightRail"]:not(:has(div[role="complementary"])), #right_rail_container):not([role="dialog"] *):not([aria-modal="true"] *):not([role="main"] *):not([data-pagelet*="Photo"] *):not([data-pagelet*="Media"] *):not([data-pagelet*="Tahoe"] *) > div {
   position: fixed !important;
   top: 56px !important;
   right: 0 !important;
@@ -333,13 +333,13 @@ html.fb-layout-tweaks-hover-expand-right-rail :is(#right_rail_container, div[rol
 }
 
 /* Clear min-width on descendants so items fit cleanly into 72px rail */
-html.fb-layout-tweaks-hover-expand-right-rail :is(#right_rail_container, div[role="complementary"]) :is(ul, ol, li, div[role="listitem"], a, [role="button"]) {
+html.fb-layout-tweaks-hover-expand-right-rail :is([data-pagelet="RightRail"], #right_rail_container):not([role="dialog"] *):not([aria-modal="true"] *):not([role="main"] *):not([data-pagelet*="Photo"] *):not([data-pagelet*="Media"] *):not([data-pagelet*="Tahoe"] *) :is(ul, ol, li, div[role="listitem"], a, [role="button"]) {
   min-width: 0 !important;
   box-sizing: border-box !important;
 }
 
 /* Collapsed: Hide contact names without touching avatar spans */
-html.fb-layout-tweaks-hover-expand-right-rail:not(.fb-layout-tweaks-right-rail-expanded) :is(#right_rail_container, div[role="complementary"]) :is(a, [role="button"]) span:not(:has(svg, img, i, [role="img"])) {
+html.fb-layout-tweaks-hover-expand-right-rail:not(.fb-layout-tweaks-right-rail-expanded) :is([data-pagelet="RightRail"], #right_rail_container):not([role="dialog"] *):not([aria-modal="true"] *):not([role="main"] *):not([data-pagelet*="Photo"] *):not([data-pagelet*="Media"] *):not([data-pagelet*="Tahoe"] *) :is(a, [role="button"]) span:not(:has(svg, img, i, [role="img"])) {
   opacity: 0 !important;
   max-width: 0 !important;
   display: inline-block !important;
@@ -349,7 +349,7 @@ html.fb-layout-tweaks-hover-expand-right-rail:not(.fb-layout-tweaks-right-rail-e
 }
 
 /* Collapsed: Keep section headings (Sponsored / Birthdays / Contacts / Group chats) on a natural single line */
-html.fb-layout-tweaks-hover-expand-right-rail:not(.fb-layout-tweaks-right-rail-expanded) :is(#right_rail_container, div[role="complementary"]) :is(
+html.fb-layout-tweaks-hover-expand-right-rail:not(.fb-layout-tweaks-right-rail-expanded) :is([data-pagelet="RightRail"], #right_rail_container):not([role="dialog"] *):not([aria-modal="true"] *):not([role="main"] *):not([data-pagelet*="Photo"] *):not([data-pagelet*="Media"] *):not([data-pagelet*="Tahoe"] *) :is(
   h2, h3, [role="heading"],
   div:has(> :is(h2, h3, [role="heading"]))
 ):not(:has(svg, img, [role="img"], i)) {
@@ -359,7 +359,7 @@ html.fb-layout-tweaks-hover-expand-right-rail:not(.fb-layout-tweaks-right-rail-e
 }
 
 /* Collapsed: Make heading text & header icon buttons transparent while preserving natural 1-line height */
-html.fb-layout-tweaks-hover-expand-right-rail:not(.fb-layout-tweaks-right-rail-expanded) :is(#right_rail_container, div[role="complementary"]) :is(
+html.fb-layout-tweaks-hover-expand-right-rail:not(.fb-layout-tweaks-right-rail-expanded) :is([data-pagelet="RightRail"], #right_rail_container):not([role="dialog"] *):not([aria-modal="true"] *):not([role="main"] *):not([data-pagelet*="Photo"] *):not([data-pagelet*="Media"] *):not([data-pagelet*="Tahoe"] *) :is(
   h2, h3, [role="heading"],
   div:has(> :is(h2, h3, [role="heading"]))
 ):not(:has(svg, img, [role="img"], i)) :is(span, a, [role="button"]) {
@@ -374,7 +374,7 @@ html.fb-layout-tweaks-hover-expand-right-rail:not(.fb-layout-tweaks-right-rail-e
 }
 
 /* Collapsed: Hide Contacts header icon buttons (search + more options) without layout shift */
-html.fb-layout-tweaks-hover-expand-right-rail:not(.fb-layout-tweaks-right-rail-expanded) :is(#right_rail_container, div[role="complementary"]) :is(
+html.fb-layout-tweaks-hover-expand-right-rail:not(.fb-layout-tweaks-right-rail-expanded) :is([data-pagelet="RightRail"], #right_rail_container):not([role="dialog"] *):not([aria-modal="true"] *):not([role="main"] *):not([data-pagelet*="Photo"] *):not([data-pagelet*="Media"] *):not([data-pagelet*="Tahoe"] *) :is(
   div[data-focus-target="right_rail"],
   div[aria-haspopup="menu"][role="button"]
 ) {
@@ -384,7 +384,7 @@ html.fb-layout-tweaks-hover-expand-right-rail:not(.fb-layout-tweaks-right-rail-e
 }
 
 /* 3. Flyout Expanded State (Floating strictly on top of middle content) */
-html.fb-layout-tweaks-hover-expand-right-rail.fb-layout-tweaks-right-rail-expanded :is(#right_rail_container, div[role="complementary"]) > div {
+html.fb-layout-tweaks-hover-expand-right-rail.fb-layout-tweaks-right-rail-expanded :is([data-pagelet="RightRail"] div[role="complementary"], div[role="complementary"][data-pagelet="RightRail"], [data-pagelet="RightRail"]:not(:has(div[role="complementary"])), #right_rail_container):not([role="dialog"] *):not([aria-modal="true"] *):not([role="main"] *):not([data-pagelet*="Photo"] *):not([data-pagelet*="Media"] *):not([data-pagelet*="Tahoe"] *) > div {
   position: fixed !important;
   top: 56px !important;
   right: 0 !important;
@@ -401,7 +401,7 @@ html.fb-layout-tweaks-hover-expand-right-rail.fb-layout-tweaks-right-rail-expand
 }
 
 /* Expanded: Show text labels smoothly without clipping */
-html.fb-layout-tweaks-hover-expand-right-rail.fb-layout-tweaks-right-rail-expanded :is(#right_rail_container, div[role="complementary"]) :is(a, [role="button"]) span:not(:has(svg, img, i, [role="img"])) {
+html.fb-layout-tweaks-hover-expand-right-rail.fb-layout-tweaks-right-rail-expanded :is([data-pagelet="RightRail"], #right_rail_container):not([role="dialog"] *):not([aria-modal="true"] *):not([role="main"] *):not([data-pagelet*="Photo"] *):not([data-pagelet*="Media"] *):not([data-pagelet*="Tahoe"] *) :is(a, [role="button"]) span:not(:has(svg, img, i, [role="img"])) {
   opacity: 1 !important;
   max-width: none !important;
   overflow: visible !important;
@@ -409,7 +409,7 @@ html.fb-layout-tweaks-hover-expand-right-rail.fb-layout-tweaks-right-rail-expand
 }
 
 /* Expanded: Maintain natural section heading height */
-html.fb-layout-tweaks-hover-expand-right-rail.fb-layout-tweaks-right-rail-expanded :is(#right_rail_container, div[role="complementary"]) :is(
+html.fb-layout-tweaks-hover-expand-right-rail.fb-layout-tweaks-right-rail-expanded :is([data-pagelet="RightRail"], #right_rail_container):not([role="dialog"] *):not([aria-modal="true"] *):not([role="main"] *):not([data-pagelet*="Photo"] *):not([data-pagelet*="Media"] *):not([data-pagelet*="Tahoe"] *) :is(
   h2, h3, [role="heading"],
   div:has(> :is(h2, h3, [role="heading"]))
 ):not(:has(svg, img, [role="img"], i)) {
@@ -419,7 +419,7 @@ html.fb-layout-tweaks-hover-expand-right-rail.fb-layout-tweaks-right-rail-expand
 }
 
 /* Expanded: Fade in section heading text and header buttons smoothly */
-html.fb-layout-tweaks-hover-expand-right-rail.fb-layout-tweaks-right-rail-expanded :is(#right_rail_container, div[role="complementary"]) :is(
+html.fb-layout-tweaks-hover-expand-right-rail.fb-layout-tweaks-right-rail-expanded :is([data-pagelet="RightRail"], #right_rail_container):not([role="dialog"] *):not([aria-modal="true"] *):not([role="main"] *):not([data-pagelet*="Photo"] *):not([data-pagelet*="Media"] *):not([data-pagelet*="Tahoe"] *) :is(
   h2, h3, [role="heading"],
   div:has(> :is(h2, h3, [role="heading"]))
 ):not(:has(svg, img, [role="img"], i)) :is(span, a, [role="button"]) {

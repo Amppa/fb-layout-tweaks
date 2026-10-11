@@ -95,8 +95,12 @@
     try {
       if (!isRightRailActive()) return;
       const rail = document.getElementById('right_rail_container')
-        || document.querySelector('div[role="complementary"]');
+        || document.querySelector('[data-pagelet="RightRail"] div[role="complementary"]')
+        || document.querySelector('div[role="complementary"][data-pagelet="RightRail"]')
+        || document.querySelector('[data-pagelet="RightRail"]')
+        || document.querySelector('div[role="complementary"]:not([role="dialog"] *):not([aria-modal="true"] *):not([role="main"] *):not([data-pagelet*="Photo"] *):not([data-pagelet*="Media"] *)');
       if (!rail) return;
+      if (rail.closest('[role="dialog"], [aria-modal="true"], [role="main"], [data-pagelet*="Photo"], [data-pagelet*="Media"], [data-pagelet*="Tahoe"]')) return;
 
       // Sponsored: heading-text anchor only (no stable link). Walk up from the
       // heading while the ancestor holds a single h3; the first multi-h3
@@ -272,6 +276,19 @@
     document.documentElement.classList.toggle('fb-layout-tweaks-right-rail-expanded', expanded);
   }
 
+  const RIGHT_RAIL_EXCLUDE_ANCESTORS = '[role="dialog"], [aria-modal="true"], [role="main"], [data-pagelet*="Photo"], [data-pagelet*="Media"], [data-pagelet*="Tahoe"]';
+
+  function getRightRailContainer(node) {
+    if (!node || !node.closest) return null;
+    const rail = node.closest('#right_rail_container, [data-pagelet="RightRail"], div[role="complementary"]');
+    if (!rail) return null;
+    if (rail.closest(RIGHT_RAIL_EXCLUDE_ANCESTORS)) return null;
+    if (!rail.closest('#right_rail_container, [data-pagelet="RightRail"]')) {
+      return null;
+    }
+    return rail;
+  }
+
   function handleRightRailHover(e) {
     if (!currentSettings || currentSettings.enabled === false || currentSettings.trimRightRail === false) {
       if (isRightRailExpanded) setRightRailExpanded(false);
@@ -281,15 +298,24 @@
     const target = e.target;
     if (!target || !target.closest) return;
 
-    const railSelector = '#right_rail_container, div[role="complementary"]';
+    const rail = getRightRailContainer(target);
+    if (!rail) {
+      if (rightExpandTimer) {
+        clearTimeout(rightExpandTimer);
+        rightExpandTimer = null;
+      }
+      if (isRightRailExpanded && !rightCollapseTimer) {
+        rightCollapseTimer = setTimeout(() => {
+          setRightRailExpanded(false);
+          rightCollapseTimer = null;
+        }, 120);
+      }
+      return;
+    }
 
     // Check if mouse is directly over any right rail contact row / button / link
-    const isOverItem = Boolean(target.closest(
-      '#right_rail_container :is(a, [role="button"], [role="listitem"], li), div[role="complementary"] :is(a, [role="button"], [role="listitem"], li)'
-    ));
-
-    // When already expanded, allow smooth navigation within the expanded rail container
-    const isOverRail = isRightRailExpanded && Boolean(target.closest(railSelector));
+    const isOverItem = Boolean(target.closest(':is(a, [role="button"], [role="listitem"], li)'));
+    const isOverRail = isRightRailExpanded;
 
     if (isOverItem || isOverRail) {
       if (rightCollapseTimer) {
