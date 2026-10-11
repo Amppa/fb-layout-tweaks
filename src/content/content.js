@@ -156,11 +156,11 @@
         collapseTimer = null;
       }
       if (!isRailExpanded && !expandTimer) {
-        // Fast 40ms debounce to avoid accidental triggers when cursor quickly sweeps across
+        // Instant microtask response on direct item hover for zero perceived latency
         expandTimer = setTimeout(() => {
           setRailExpanded(true);
           expandTimer = null;
-        }, 40);
+        }, 0);
       }
     } else {
       if (expandTimer) {
@@ -168,11 +168,11 @@
         expandTimer = null;
       }
       if (isRailExpanded && !collapseTimer) {
-        // Smooth 160ms grace period so cursor navigating between items won't jitter
+        // Crisp 120ms grace period so cursor navigating between items won't jitter
         collapseTimer = setTimeout(() => {
           setRailExpanded(false);
           collapseTimer = null;
-        }, 160);
+        }, 120);
       }
     }
   }

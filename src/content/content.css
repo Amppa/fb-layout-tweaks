@@ -70,7 +70,8 @@ html.fb-layout-tweaks-hover-expand-left-rail :is([data-pagelet="LeftRail"], div[
   overflow-x: hidden !important;
   overflow-y: auto !important;
   z-index: 100 !important;
-  transition: width 0.22s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s ease, background 0.2s ease !important;
+  will-change: width !important;
+  transition: width 0.15s cubic-bezier(0, 0, 0.2, 1) !important;
 }
 
 /* Clear min-width on descendants so items fit cleanly into 72px rail */
@@ -86,7 +87,44 @@ html.fb-layout-tweaks-hover-expand-left-rail:not(.fb-layout-tweaks-rail-expanded
   display: inline-block !important;
   overflow: hidden !important;
   white-space: nowrap !important;
-  transition: opacity 0.15s ease !important;
+  transition: opacity 0.1s ease !important;
+}
+
+/* Collapsed: Keep section heading on a natural single line (no hardcoded pixels, scales with font size) */
+html.fb-layout-tweaks-hover-expand-left-rail:not(.fb-layout-tweaks-rail-expanded) :is([data-pagelet="LeftRail"], div[role="navigation"]:not(header *):not([role="banner"] *):not([data-pagelet="Header"] *)) :is(
+  h2, h3, [role="heading"],
+  div:has(> :is(h2, h3, [role="heading"])),
+  div:has(> span[style*="-webkit-line-clamp"])
+):not(:has(svg, img, [role="img"], i)) {
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  box-sizing: border-box !important;
+}
+
+/* Collapsed: Make heading text & edit button transparent while preserving its natural 1-line height */
+html.fb-layout-tweaks-hover-expand-left-rail:not(.fb-layout-tweaks-rail-expanded) :is([data-pagelet="LeftRail"], div[role="navigation"]:not(header *):not([role="banner"] *):not([data-pagelet="Header"] *)) :is(
+  h2, h3, [role="heading"],
+  div:has(> :is(h2, h3, [role="heading"])),
+  div:has(> span[style*="-webkit-line-clamp"])
+):not(:has(svg, img, [role="img"], i)) :is(span, a, [role="button"]) {
+  opacity: 0 !important;
+  color: transparent !important;
+  display: block !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: clip !important;
+  -webkit-line-clamp: unset !important;
+  pointer-events: none !important;
+  transition: opacity 0.1s ease !important;
+}
+
+/* Collapsed: Hide bottom legal footer (Privacy, Terms, Cookies...) to eliminate multi-line vertical clutter */
+html.fb-layout-tweaks-hover-expand-left-rail:not(.fb-layout-tweaks-rail-expanded) :is([data-pagelet="LeftRail"], div[role="navigation"]:not(header *):not([role="banner"] *):not([data-pagelet="Header"] *)) :is(
+  footer,
+  [role="contentinfo"],
+  div:not(:has(ul, [role="list"], [role="listitem"])):has(a[href*="privacy"], a[href*="policies"], a[href*="cookies"], a[href*="/terms/"])
+) {
+  display: none !important;
 }
 
 /* 3. Flyout Expanded State (Floating strictly on top of middle content) */
@@ -100,10 +138,8 @@ html.fb-layout-tweaks-hover-expand-left-rail.fb-layout-tweaks-rail-expanded :is(
   max-width: 288px !important;
   min-width: 288px !important;
   z-index: 1000 !important;
-  background: rgba(24, 25, 26, 0.98) !important;
-  backdrop-filter: blur(16px) !important;
-  -webkit-backdrop-filter: blur(16px) !important;
-  box-shadow: 6px 0 28px rgba(0, 0, 0, 0.5) !important;
+  background: var(--surface-background, #242526) !important;
+  box-shadow: 4px 0 16px rgba(0, 0, 0, 0.3) !important;
   overflow-x: hidden !important;
   overflow-y: auto !important;
 }
@@ -116,7 +152,36 @@ html.fb-layout-tweaks-hover-expand-left-rail.fb-layout-tweaks-rail-expanded :is(
   overflow: hidden !important;
   text-overflow: ellipsis !important;
   white-space: nowrap !important;
-  transition: opacity 0.15s ease 0.05s !important;
+  transition: opacity 0.12s ease !important;
+}
+
+/* Expanded: Maintain identical single-line height without pixel lock */
+html.fb-layout-tweaks-hover-expand-left-rail.fb-layout-tweaks-rail-expanded :is([data-pagelet="LeftRail"], div[role="navigation"]:not(header *):not([role="banner"] *):not([data-pagelet="Header"] *)) :is(
+  h2, h3, [role="heading"],
+  div:has(> :is(h2, h3, [role="heading"])),
+  div:has(> span[style*="-webkit-line-clamp"])
+):not(:has(svg, img, [role="img"], i)) {
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  box-sizing: border-box !important;
+}
+
+/* Expanded: Fade in section heading text and edit button smoothly */
+html.fb-layout-tweaks-hover-expand-left-rail.fb-layout-tweaks-rail-expanded :is([data-pagelet="LeftRail"], div[role="navigation"]:not(header *):not([role="banner"] *):not([data-pagelet="Header"] *)) :is(
+  h2, h3, [role="heading"],
+  div:has(> :is(h2, h3, [role="heading"])),
+  div:has(> span[style*="-webkit-line-clamp"])
+):not(:has(svg, img, [role="img"], i)) :is(span, a, [role="button"]) {
+  opacity: 1 !important;
+  color: inherit !important;
+  max-width: 220px !important;
+  display: inline-block !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+  -webkit-line-clamp: unset !important;
+  pointer-events: auto !important;
+  transition: opacity 0.12s ease !important;
 }
 
 /* 4. Middle Feed Expansion (Allocate freed space to main feed) */
