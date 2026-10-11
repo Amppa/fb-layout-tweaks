@@ -18,15 +18,57 @@
           <div class="subtitle" data-i18n="popupSubtitle">Minimal Facebook Sidebar</div>
         </div>
       </div>
-      <label class="switch" data-i18n-title="popupToggleTitle" title="Toggle Extension">
-        <input type="checkbox" id="enableToggle" aria-label="Toggle FB Layout Tweaks">
-        <span class="slider round"></span>
-      </label>
+      <div class="master-wrap">
+        <span class="master-label" data-i18n="popupMaster">Master</span>
+        <label class="switch" data-i18n-title="popupToggleTitle" title="Toggle Extension">
+          <input type="checkbox" id="enableToggle" aria-label="Toggle FB Layout Tweaks">
+          <span class="slider round"></span>
+        </label>
+      </div>
+    </div>
+
+    <div class="sections">
+      <div class="section-row">
+        <div class="row-meta">
+          <span class="row-icon">🧭</span>
+          <div>
+            <div class="row-title" data-i18n="popupTrimTopTitle">Top Navigation</div>
+          </div>
+        </div>
+        <label class="switch">
+          <input type="checkbox" id="trimTopNav" aria-label="Toggle Top Navigation declutter">
+          <span class="slider round"></span>
+        </label>
+      </div>
+      <div class="section-row">
+        <div class="row-meta">
+          <span class="row-icon">📑</span>
+          <div>
+            <div class="row-title" data-i18n="popupTrimLeftTitle">Left Sidebar Items</div>
+          </div>
+        </div>
+        <label class="switch">
+          <input type="checkbox" id="trimLeftItems" aria-label="Toggle Left Sidebar declutter">
+          <span class="slider round"></span>
+        </label>
+      </div>
+      <div class="section-row">
+        <div class="row-meta">
+          <span class="row-icon">⚡</span>
+          <div>
+            <div class="row-title" data-i18n="popupMiniTitle">Icon-only</div>
+          </div>
+        </div>
+        <label class="switch">
+          <input type="checkbox" id="hoverExpandLeftRail" aria-label="Toggle Icon-only Sidebar">
+          <span class="slider round"></span>
+        </label>
+      </div>
     </div>
 
     <button class="settings-btn" id="openSettingsBtn">
       <span class="btn-icon">⚙️</span>
-      <span data-i18n="popupOpenSettings">Options</span>
+      <span data-i18n="popupDetailSettings">Detailed Settings</span>
     </button>
     <div class="version-footer">v<span id="popupVersion"></span></div>
   </div>

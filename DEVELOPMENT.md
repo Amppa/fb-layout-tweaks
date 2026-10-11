@@ -38,7 +38,7 @@ powershell -ExecutionPolicy Bypass -File scripts/package.ps1
 - **Safe Read**: Always provide fallbacks: `chrome.storage.local.get({ settings: DEFAULT_SETTINGS }, callback)`.
 - **Granular Write**: Write merged updates directly to the `settings` object in `chrome.storage.local`.
 - **Live Sync**: Rely on `chrome.storage.onChanged` across options, popup, and content scripts instead of point-to-point runtime messaging.
-- **Key-to-Class Mapping**: Settings keys use `show*` convention (e.g. `showLeftGaming`, `showTopReels`). Content script maps `false` values to `fb-diet-hide-*` root classes via `getUiCleanClassName(key)`:
+- **Key-to-Class Mapping**: Per-item settings keys use `show*` convention (e.g. `showLeftGaming`, `showTopReels`). Section masters use `trim*` convention (`trimTopNav`, `trimLeftItems`); a trimmed-off section restores native items regardless of pills. Content script maps `false` values to `fb-diet-hide-*` root classes via `getUiCleanClassName(key)`:
   - `showLeftMetaAI` -> `fb-diet-hide-left-metaai`
   - General pattern: `show*` -> `hide*` -> kebab-case (`showLeftGaming` -> `fb-diet-hide-left-gaming`).
 

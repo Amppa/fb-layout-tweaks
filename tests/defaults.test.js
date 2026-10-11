@@ -19,6 +19,8 @@ test('DEFAULT_SETTINGS contains required core keys and valid types', () => {
   assert.ok(defaults, 'DEFAULT_SETTINGS must be defined on globalThis/self');
   assert.strictEqual(typeof defaults.enabled, 'boolean', 'enabled should be boolean');
   assert.strictEqual(typeof defaults.hoverExpandLeftRail, 'boolean', 'hoverExpandLeftRail should be boolean');
+  assert.strictEqual(typeof defaults.trimTopNav, 'boolean', 'trimTopNav should be boolean');
+  assert.strictEqual(typeof defaults.trimLeftItems, 'boolean', 'trimLeftItems should be boolean');
 
   // Verify all show* keys are booleans
   const showKeys = Object.keys(defaults).filter(k => k.startsWith('show'));

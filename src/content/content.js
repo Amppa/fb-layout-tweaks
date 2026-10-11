@@ -21,12 +21,17 @@
 
     const isMasterEnabled = settings.enabled !== false;
 
+    // Section masters from popup: a trimmed-off section restores native items.
+    const trimTopNav = isMasterEnabled && settings.trimTopNav !== false;
+    const trimLeftItems = isMasterEnabled && settings.trimLeftItems !== false;
+
     for (const [key, value] of Object.entries(settings)) {
       if (!key.startsWith('show')) continue;
       // Fixed anchor (Profile) has no hide rule.
       if (key === 'showLeftProfile') continue;
+      const sectionActive = key.startsWith('showTop') ? trimTopNav : trimLeftItems;
       const className = getUiCleanClassName(key);
-      const isHidden = isMasterEnabled && value === false;
+      const isHidden = sectionActive && value === false;
       root.classList.toggle(className, isHidden);
     }
 

@@ -16,8 +16,20 @@
   "popupToggleTitle": {
     "message": "Toggle Extension"
   },
-  "popupOpenSettings": {
-    "message": "Options"
+  "popupMaster": {
+    "message": "Master"
+  },
+  "popupTrimTopTitle": {
+    "message": "Top Navigation"
+  },
+  "popupTrimLeftTitle": {
+    "message": "Left Sidebar Items"
+  },
+  "popupMiniTitle": {
+    "message": "Icon-only"
+  },
+  "popupDetailSettings": {
+    "message": "Detailed Settings"
   },
   "optionsTitle": {
     "message": "FB Layout Tweaks Options"
