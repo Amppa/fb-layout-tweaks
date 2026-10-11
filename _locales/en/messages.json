@@ -154,12 +154,6 @@
   "itemGamingVideo": {
     "message": "Gaming Video"
   },
-  "hintHidden": {
-    "message": "Hidden"
-  },
-  "hintVisible": {
-    "message": "Visible"
-  },
   "itemHoverExpandLeftRail": {
     "message": "Icon-only Sidebar"
   },

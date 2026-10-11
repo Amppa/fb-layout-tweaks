@@ -154,12 +154,6 @@
   "itemGamingVideo": {
     "message": "電玩遊戲影片"
   },
-  "hintHidden": {
-    "message": "已隱藏 (遮眼)"
-  },
-  "hintVisible": {
-    "message": "正常顯示"
-  },
   "itemHoverExpandLeftRail": {
     "message": "純圖示側邊欄"
   },

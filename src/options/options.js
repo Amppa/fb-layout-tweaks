@@ -36,7 +36,6 @@ document.addEventListener('DOMContentLoaded', async () => {
       const activeText = getMsg('statusActive') || 'Active';
       const disabledText = getMsg('statusDisabled') || 'Disabled';
       masterStatus.textContent = isEnabled ? activeText : disabledText;
-      masterStatus.style.color = 'var(--text-secondary)';
     }
     if (isEnabled) {
       if (uiCleanList) uiCleanList.classList.remove('disabled');
@@ -127,17 +126,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     await chrome.storage.local.set({ settings: updated });
   }
 
-  // Remove legacy hide* keys left over from the pre-pill schema.
-  function stripLegacyKeys(obj) {
-    for (const key of Object.keys(obj)) {
-      if (key.startsWith('hide')) delete obj[key];
-    }
-    return obj;
-  }
-
   async function resetSection(keys, extraPatch = {}) {
     const { settings: current } = await chrome.storage.local.get('settings');
-    const updated = stripLegacyKeys({ ...(current || {}), ...extraPatch });
+    const updated = { ...(current || {}), ...extraPatch };
     keys.forEach(key => {
       const defVal = DEFAULTS[key] !== undefined ? Boolean(DEFAULTS[key]) : true;
       if (switches[key]) switches[key].checked = defVal;
