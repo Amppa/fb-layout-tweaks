@@ -55,8 +55,7 @@ html.fb-layout-tweaks-hover-expand-left-rail:not(.fb-layout-tweaks-rail-expanded
 /* Collapsed: Keep section heading on a natural single line (no hardcoded pixels, scales with font size) */
 html.fb-layout-tweaks-hover-expand-left-rail:not(.fb-layout-tweaks-rail-expanded) :is([data-pagelet="LeftRail"], div[role="navigation"]:not(header *):not([role="banner"] *):not([data-pagelet="Header"] *)) :is(
   h2, h3, [role="heading"],
-  div:has(> :is(h2, h3, [role="heading"])),
-  div:has(> span[style*="-webkit-line-clamp"])
+  div:has(> :is(h2, h3, [role="heading"]))
 ):not(:has(svg, img, [role="img"], i)) {
   white-space: nowrap !important;
   overflow: hidden !important;
@@ -66,8 +65,7 @@ html.fb-layout-tweaks-hover-expand-left-rail:not(.fb-layout-tweaks-rail-expanded
 /* Collapsed: Make heading text & edit button transparent while preserving its natural 1-line height */
 html.fb-layout-tweaks-hover-expand-left-rail:not(.fb-layout-tweaks-rail-expanded) :is([data-pagelet="LeftRail"], div[role="navigation"]:not(header *):not([role="banner"] *):not([data-pagelet="Header"] *)) :is(
   h2, h3, [role="heading"],
-  div:has(> :is(h2, h3, [role="heading"])),
-  div:has(> span[style*="-webkit-line-clamp"])
+  div:has(> :is(h2, h3, [role="heading"]))
 ):not(:has(svg, img, [role="img"], i)) :is(span, a, [role="button"]) {
   opacity: 0 !important;
   color: transparent !important;
@@ -75,7 +73,6 @@ html.fb-layout-tweaks-hover-expand-left-rail:not(.fb-layout-tweaks-rail-expanded
   white-space: nowrap !important;
   overflow: hidden !important;
   text-overflow: clip !important;
-  -webkit-line-clamp: unset !important;
   pointer-events: none !important;
   transition: opacity 0.1s ease !important;
 }
@@ -106,42 +103,32 @@ html.fb-layout-tweaks-hover-expand-left-rail.fb-layout-tweaks-rail-expanded :is(
   overflow-y: auto !important;
 }
 
-/* Expanded: Show text labels smoothly */
+/* Expanded: Show text labels smoothly without clipping */
 html.fb-layout-tweaks-hover-expand-left-rail.fb-layout-tweaks-rail-expanded :is([data-pagelet="LeftRail"], div[role="navigation"]:not(header *):not([role="banner"] *):not([data-pagelet="Header"] *)) :is(a, [role="button"]) span:not(:has(svg, img, i, [role="img"])) {
   opacity: 1 !important;
-  max-width: 220px !important;
-  display: inline-block !important;
-  overflow: hidden !important;
-  text-overflow: ellipsis !important;
-  white-space: nowrap !important;
+  max-width: none !important;
+  overflow: visible !important;
   transition: opacity 0.12s ease !important;
 }
 
-/* Expanded: Maintain identical single-line height without pixel lock */
+/* Expanded: Maintain natural section heading height */
 html.fb-layout-tweaks-hover-expand-left-rail.fb-layout-tweaks-rail-expanded :is([data-pagelet="LeftRail"], div[role="navigation"]:not(header *):not([role="banner"] *):not([data-pagelet="Header"] *)) :is(
   h2, h3, [role="heading"],
-  div:has(> :is(h2, h3, [role="heading"])),
-  div:has(> span[style*="-webkit-line-clamp"])
+  div:has(> :is(h2, h3, [role="heading"]))
 ):not(:has(svg, img, [role="img"], i)) {
   white-space: nowrap !important;
-  overflow: hidden !important;
+  overflow: visible !important;
   box-sizing: border-box !important;
 }
 
 /* Expanded: Fade in section heading text and edit button smoothly */
 html.fb-layout-tweaks-hover-expand-left-rail.fb-layout-tweaks-rail-expanded :is([data-pagelet="LeftRail"], div[role="navigation"]:not(header *):not([role="banner"] *):not([data-pagelet="Header"] *)) :is(
   h2, h3, [role="heading"],
-  div:has(> :is(h2, h3, [role="heading"])),
-  div:has(> span[style*="-webkit-line-clamp"])
+  div:has(> :is(h2, h3, [role="heading"]))
 ):not(:has(svg, img, [role="img"], i)) :is(span, a, [role="button"]) {
   opacity: 1 !important;
   color: inherit !important;
-  max-width: 220px !important;
-  display: inline-block !important;
-  overflow: hidden !important;
-  text-overflow: ellipsis !important;
-  white-space: nowrap !important;
-  -webkit-line-clamp: unset !important;
+  overflow: visible !important;
   pointer-events: auto !important;
   transition: opacity 0.12s ease !important;
 }
