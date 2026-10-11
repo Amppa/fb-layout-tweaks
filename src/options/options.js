@@ -180,4 +180,14 @@ document.addEventListener('DOMContentLoaded', async () => {
   if (btnLeftShowAll) {
     btnLeftShowAll.addEventListener('click', () => applySectionValues(leftKeys, true));
   }
+
+  // Live sync states when popup (or another context) changes settings.
+  chrome.storage.onChanged.addListener((changes, area) => {
+    if (area !== 'local' || !changes.settings?.newValue) return;
+    const next = changes.settings.newValue;
+    if (typeof next.enabled === 'boolean') updateMasterUI(next.enabled);
+    for (const [key, checkbox] of Object.entries(switches)) {
+      if (checkbox && typeof next[key] === 'boolean') checkbox.checked = next[key];
+    }
+  });
 });
