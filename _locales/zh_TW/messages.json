@@ -195,5 +195,17 @@
   },
   "descLanguage": {
     "message": "選擇顯示語言"
+  },
+  "itemSidebarScope": {
+    "message": "側邊欄生效範圍"
+  },
+  "descSidebarScope": {
+    "message": "設定哪些頁面套用側邊欄最小化與隱藏（避免社團或專頁破版）"
+  },
+  "scopeHomeOnly": {
+    "message": "僅首頁與動態消息"
+  },
+  "scopeGlobal": {
+    "message": "Facebook 全域"
   }
 }

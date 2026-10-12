@@ -195,5 +195,17 @@
   },
   "descLanguage": {
     "message": "Choose display language"
+  },
+  "itemSidebarScope": {
+    "message": "Sidebar Scope"
+  },
+  "descSidebarScope": {
+    "message": "Choose which pages apply sidebar minimization and hiding"
+  },
+  "scopeHomeOnly": {
+    "message": "Feeds & Home Only"
+  },
+  "scopeGlobal": {
+    "message": "All Facebook Pages"
   }
 }

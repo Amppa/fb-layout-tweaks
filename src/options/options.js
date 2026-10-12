@@ -126,6 +126,16 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
   sortAllPillGrids();
 
+  const sidebarScopeSelect = document.getElementById('sidebarScope');
+  if (sidebarScopeSelect) {
+    sidebarScopeSelect.value = settings.sidebarScope || DEFAULTS.sidebarScope || 'homeOnly';
+    sidebarScopeSelect.addEventListener('change', async () => {
+      const { settings: current } = await chrome.storage.local.get('settings');
+      const updated = { ...current, sidebarScope: sidebarScopeSelect.value };
+      await chrome.storage.local.set({ settings: updated });
+    });
+  }
+
   // Handle Master toggle
   if (masterToggle) {
     masterToggle.addEventListener('change', async () => {
@@ -210,6 +220,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (typeof next.enabled === 'boolean') updateMasterUI(next.enabled);
     for (const [key, checkbox] of Object.entries(switches)) {
       if (checkbox && typeof next[key] === 'boolean') checkbox.checked = toUIChecked(key, next[key]);
+    }
+    if (sidebarScopeSelect && typeof next.sidebarScope === 'string') {
+      sidebarScopeSelect.value = next.sidebarScope;
     }
     sortAllPillGrids();
   });

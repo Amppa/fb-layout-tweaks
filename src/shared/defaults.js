@@ -58,6 +58,7 @@ self.RIGHT_SETTINGS = {
 
 self.DEFAULT_SETTINGS = {
   enabled: true,
+  sidebarScope: 'homeOnly',
   ...self.TOP_SETTINGS,
   ...self.LEFT_SETTINGS,
   ...self.RIGHT_SETTINGS
@@ -72,3 +73,18 @@ self.toUIChecked = function(key, storedValue) {
 self.toStoredValue = function(key, uiChecked) {
   return self.INVERTED_KEYS.has(key) ? !uiChecked : uiChecked;
 };
+
+self.isFeedPage = function(pathname) {
+  if (!pathname) return false;
+  const normalized = (pathname.length > 1 && pathname.endsWith('/'))
+    ? pathname.slice(0, -1)
+    : pathname;
+
+  if (normalized === '/' || normalized === '/index.php' || normalized === '/home.php') return true;
+  if (normalized === '/feed' || normalized.startsWith('/feed/')) return true;
+  if (normalized === '/groups/feed' || normalized.startsWith('/groups/feed/')) return true;
+  if (normalized === '/friends/feed' || normalized.startsWith('/friends/feed/')) return true;
+
+  return false;
+};
+

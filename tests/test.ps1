@@ -142,6 +142,24 @@ foreach ($k in $invertedKeys) {
 }
 Assert-Condition $invertValid "Inverted switch transformation logic maintains bidirectional round-trip consistency"
 
+# Test 7: Verify isFeedPage logic
+function Test-IsFeedPage($path) {
+    if (-not $path) { return $false }
+    $norm = if ($path.Length -gt 1 -and $path.EndsWith('/')) { $path.Substring(0, $path.Length - 1) } else { $path }
+    if ($norm -eq '/' -or $norm -eq '/index.php' -or $norm -eq '/home.php') { return $true }
+    if ($norm -eq '/feed' -or $norm.StartsWith('/feed/')) { return $true }
+    if ($norm -eq '/groups/feed' -or $norm.StartsWith('/groups/feed/')) { return $true }
+    if ($norm -eq '/friends/feed' -or $norm.StartsWith('/friends/feed/')) { return $true }
+    return $false
+}
+$isFeedValid = $true
+if (-not (Test-IsFeedPage '/')) { $isFeedValid = $false }
+if (-not (Test-IsFeedPage '/groups/feed/')) { $isFeedValid = $false }
+if (-not (Test-IsFeedPage '/friends/feed')) { $isFeedValid = $false }
+if (Test-IsFeedPage '/groups/12345/') { $isFeedValid = $false }
+if (Test-IsFeedPage '/marketplace/') { $isFeedValid = $false }
+Assert-Condition $isFeedValid "isFeedPage correctly distinguishes Home/Feeds from Groups and feature pages"
+
 Write-Host ""
 if ($failed -eq 0) {
     Write-Host "All $passed tests passed successfully!" -ForegroundColor Green

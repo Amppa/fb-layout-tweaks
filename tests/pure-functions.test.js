@@ -128,3 +128,33 @@ test('getMsg resolves messages in order: in-memory localeMessages -> chrome.i18n
   setLocaleMessages(null);
   assert.strictEqual(getMsg('greeting'), '');
 });
+
+test('isFeedPage correctly identifies feeds and home URLs vs non-feed pages', () => {
+  const { isFeedPage } = self;
+  assert.strictEqual(typeof isFeedPage, 'function', 'isFeedPage must be a function on self');
+
+  // Feed / Home URLs (Should return true)
+  assert.strictEqual(isFeedPage('/'), true);
+  assert.strictEqual(isFeedPage('/index.php'), true);
+  assert.strictEqual(isFeedPage('/home.php'), true);
+  assert.strictEqual(isFeedPage('/feed'), true);
+  assert.strictEqual(isFeedPage('/feed/'), true);
+  assert.strictEqual(isFeedPage('/groups/feed'), true);
+  assert.strictEqual(isFeedPage('/groups/feed/'), true);
+  assert.strictEqual(isFeedPage('/friends/feed'), true);
+  assert.strictEqual(isFeedPage('/friends/feed/'), true);
+
+  // Non-feed pages (Groups, Pages, Marketplace, Watch, Profile - Should return false)
+  assert.strictEqual(isFeedPage('/groups/12345678/'), false);
+  assert.strictEqual(isFeedPage('/groups/react_developers/'), false);
+  assert.strictEqual(isFeedPage('/groups/mygroup/permalink/999/'), false);
+  assert.strictEqual(isFeedPage('/marketplace/'), false);
+  assert.strictEqual(isFeedPage('/watch/'), false);
+  assert.strictEqual(isFeedPage('/gaming/'), false);
+  assert.strictEqual(isFeedPage('/messages/t/123/'), false);
+  assert.strictEqual(isFeedPage('/events/'), false);
+  assert.strictEqual(isFeedPage('/zuck/'), false);
+  assert.strictEqual(isFeedPage(''), false);
+  assert.strictEqual(isFeedPage(null), false);
+});
+

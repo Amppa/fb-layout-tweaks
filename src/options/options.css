@@ -375,6 +375,30 @@ input:checked+.slider:before {
   opacity: 0.85;
 }
 
+.select-dropdown {
+  background: var(--bg-card);
+  color: var(--text-primary);
+  border: 1px solid var(--border-hover);
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-size: 13px;
+  font-family: inherit;
+  outline: none;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.select-dropdown:hover {
+  background: var(--bg-card-hover);
+  border-color: var(--accent-color);
+}
+
+.select-dropdown:focus-visible {
+  border-color: var(--accent-color);
+  outline: 2px solid var(--accent-color);
+  outline-offset: 1px;
+}
+
 .version-footer {
   margin-top: 16px;
   font-size: 11px;

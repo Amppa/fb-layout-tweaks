@@ -21,11 +21,15 @@
     if (!root) return;
 
     const isMasterEnabled = settings.enabled !== false;
+    const isSidebarActive = isMasterEnabled && (
+      settings.sidebarScope === 'global' ||
+      (typeof self !== 'undefined' && self.isFeedPage ? self.isFeedPage(typeof window !== 'undefined' ? window.location.pathname : '') : true)
+    );
 
     // Section masters from popup: a trimmed-off section restores native items.
     const trimTopNav = isMasterEnabled && settings.trimTopNav !== false;
-    const trimLeftItems = isMasterEnabled && settings.trimLeftItems !== false;
-    const trimRightRail = isMasterEnabled && settings.trimRightRail !== false;
+    const trimLeftItems = isSidebarActive && settings.trimLeftItems !== false;
+    const trimRightRail = isSidebarActive && settings.trimRightRail !== false;
 
     for (const [key, value] of Object.entries(settings)) {
       if (!key.startsWith('show')) continue;
@@ -39,9 +43,16 @@
       root.classList.toggle(className, isHidden);
     }
 
-    const isHoverExpand = isMasterEnabled && Boolean(settings.hoverExpandLeftRail);
+    const isHoverExpand = isSidebarActive && Boolean(settings.hoverExpandLeftRail);
     root.classList.toggle('fb-layout-tweaks-hover-expand-left-rail', isHoverExpand);
     root.classList.toggle('fb-layout-tweaks-hover-expand-right-rail', trimRightRail);
+
+    if (!isHoverExpand && isRailExpanded) {
+      setRailExpanded(false);
+    }
+    if (!trimRightRail && isRightRailExpanded) {
+      setRightRailExpanded(false);
+    }
 
     if (isMasterEnabled) {
       tagRailContainers();
@@ -203,12 +214,26 @@
     }
   }
 
+  let lastPathname = typeof window !== 'undefined' ? window.location.pathname : '';
+
+  function checkUrlChange() {
+    if (typeof window === 'undefined') return;
+    const currentPath = window.location.pathname;
+    if (currentPath !== lastPathname) {
+      lastPathname = currentPath;
+      if (currentSettings) {
+        applyUiCleanClasses(currentSettings);
+      }
+    }
+  }
+
   let scanScheduled = false;
   function triggerThrottledScan() {
     if (scanScheduled) return;
     scanScheduled = true;
     requestAnimationFrame(() => {
       scanScheduled = false;
+      checkUrlChange();
       tagRailContainers();
       scanLeftRailDynamicItems();
       scanRightRailDynamicItems();
@@ -217,6 +242,15 @@
 
   // Load initial settings and set up observers when running in extension environment
   if (typeof chrome !== 'undefined' && chrome.storage && typeof document !== 'undefined') {
+    if (typeof window !== 'undefined') {
+      window.addEventListener('popstate', checkUrlChange);
+      if (window.navigation && window.navigation.addEventListener) {
+        window.navigation.addEventListener('navigate', () => {
+          setTimeout(checkUrlChange, 0);
+        });
+      }
+    }
+
     chrome.storage.local.get('settings', (data) => {
       const baseDefaults = (typeof DEFAULT_SETTINGS !== 'undefined' ? DEFAULT_SETTINGS : {});
       currentSettings = { ...baseDefaults, ...(data?.settings || {}) };
@@ -391,7 +425,10 @@
   }
 
   if (typeof module !== 'undefined' && module.exports) {
-    module.exports = { getUiCleanClassName };
+    module.exports = {
+      getUiCleanClassName,
+      isFeedPage: (typeof self !== 'undefined' && self.isFeedPage) || null
+    };
   }
 })();
 
