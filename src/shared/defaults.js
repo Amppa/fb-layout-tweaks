@@ -52,8 +52,8 @@ self.RIGHT_SETTINGS = {
   trimRightRail: true,
   // Section: Right Sidebar (true = visible; UI checkboxes are inverted: checked = hidden)
   showRightSponsored: false,
-  showRightBirthdays: true,
-  showRightMetaAI: true
+  showRightBirthdays: false,
+  showRightMetaAI: false
 };
 
 self.DEFAULT_SETTINGS = {
