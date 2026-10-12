@@ -64,6 +64,12 @@ body {
 /* Section quick toggles */
 .sections {
   border-bottom: 1px solid var(--divider);
+  transition: opacity 0.2s ease;
+}
+
+.sections.disabled {
+  opacity: 0.35;
+  pointer-events: none;
 }
 
 .section-row {

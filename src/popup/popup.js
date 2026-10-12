@@ -6,6 +6,7 @@
 document.addEventListener('DOMContentLoaded', async () => {
   const openBtn = document.getElementById('openSettingsBtn');
   const enableToggle = document.getElementById('enableToggle');
+  const sectionsEl = document.getElementById('popupSections');
   const versionEl = document.getElementById('popupVersion');
   if (versionEl) versionEl.textContent = chrome.runtime.getManifest().version;
 
@@ -22,6 +23,11 @@ document.addEventListener('DOMContentLoaded', async () => {
   const prefLocale = mergedSettings.locale || 'en';
   await loadLocaleMessages(prefLocale);
   applyI18n();
+
+  function updateMasterUI(isEnabled) {
+    if (sectionsEl) sectionsEl.classList.toggle('disabled', !isEnabled);
+  }
+  updateMasterUI(mergedSettings.enabled !== false);
   if (enableToggle) {
     enableToggle.checked = mergedSettings.enabled !== false;
 
@@ -29,6 +35,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       const data = await chrome.storage.local.get('settings');
       const current = data.settings || {};
       const updated = { ...current, enabled: enableToggle.checked };
+      updateMasterUI(enableToggle.checked);
       await chrome.storage.local.set({ settings: updated });
     });
   }
@@ -53,6 +60,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       const newSettings = changes.settings.newValue || {};
       if (typeof newSettings.enabled === 'boolean' && enableToggle) {
         enableToggle.checked = newSettings.enabled;
+        updateMasterUI(newSettings.enabled);
       }
       for (const key of sectionKeys) {
         if (typeof newSettings[key] === 'boolean' && sectionToggles[key]) {
