@@ -296,6 +296,16 @@
     document.documentElement.classList.toggle('fb-layout-tweaks-rail-expanded', expanded);
   }
 
+  const LEFT_RAIL_EXCLUDE_ANCESTORS = 'header *, [role="banner"] *, [data-pagelet="Header"] *';
+
+  function getLeftRailContainer(node) {
+    if (!node || !node.closest) return null;
+    const rail = node.closest('.fb-layout-tweaks-left-rail, [data-pagelet="LeftRail"], div[role="navigation"]');
+    if (!rail) return null;
+    if (rail.closest && rail.closest(LEFT_RAIL_EXCLUDE_ANCESTORS)) return null;
+    return rail;
+  }
+
   function handleButtonHover(e) {
     if (!currentSettings || currentSettings.enabled === false || !currentSettings.hoverExpandLeftRail) {
       if (isRailExpanded) setRailExpanded(false);
@@ -303,19 +313,31 @@
     }
 
     const target = e.target;
-    if (!target || !target.closest) return;
+    if (!target) return;
 
-    // Check if mouse is directly over any left navigation button / link / item
-    const isOverItem = Boolean(target.closest(
-      ':is(.fb-layout-tweaks-left-rail, [data-pagelet="LeftRail"]) :is(a, [role="button"], [role="listitem"], li)'
+    // Check DOM hierarchy (rail container or any button / link / listitem / text / overlay item)
+    const railContainer = getLeftRailContainer(target);
+    const isOverItem = Boolean(target.closest && target.closest(
+      ':is(.fb-layout-tweaks-left-rail, [data-pagelet="LeftRail"], div[role="navigation"]) :is(a, [role="button"], [role="listitem"], li, [data-visualcompletion])'
     ));
 
-    // When already expanded, allow smooth navigation within the expanded left rail container
-    const isOverRail = isRailExpanded && Boolean(target.closest(
-      '.fb-layout-tweaks-left-rail, [data-pagelet="LeftRail"]'
-    ));
+    // Dynamic physical bounding rect check:
+    // When rail is already expanded, dynamically measure the active drawer's right edge (no hardcoded width)
+    let isInsideDrawerBounds = false;
+    if (isRailExpanded) {
+      const activeRail = railContainer || document.querySelector('.fb-layout-tweaks-left-rail, [data-pagelet="LeftRail"], div[role="navigation"]:not(header *):not([role="banner"] *)');
+      if (activeRail) {
+        const drawer = activeRail.querySelector(':scope > div') || activeRail;
+        const rect = drawer.getBoundingClientRect();
+        if (typeof e.clientX === 'number' && e.clientX >= 0 && e.clientX <= (rect.right + 6) && e.clientY >= (rect.top - 6) && e.clientY <= (rect.bottom + 6)) {
+          isInsideDrawerBounds = true;
+        }
+      }
+    }
 
-    if (isOverItem || isOverRail) {
+    const isHoverActive = Boolean(railContainer || isOverItem || isInsideDrawerBounds);
+
+    if (isHoverActive) {
       if (collapseTimer) {
         clearTimeout(collapseTimer);
         collapseTimer = null;
@@ -333,17 +355,23 @@
         expandTimer = null;
       }
       if (isRailExpanded && !collapseTimer) {
-        // Crisp 120ms grace period so cursor navigating between items won't jitter
+        // Safe 280ms grace period so moving outside physical bounds won't flicker
         collapseTimer = setTimeout(() => {
           setRailExpanded(false);
           collapseTimer = null;
-        }, 120);
+        }, 280);
       }
     }
   }
 
   if (typeof document !== 'undefined') {
     document.addEventListener('mouseover', handleButtonHover, { passive: true });
+    document.addEventListener('mousemove', (e) => {
+      // High-performance: only check on mousemove when rail is currently expanded or hovering near left edge
+      if (isRailExpanded || (e.clientX <= 72 && currentSettings?.hoverExpandLeftRail)) {
+        handleButtonHover(e);
+      }
+    }, { passive: true });
   }
 
   // Right Rail Hover Expand Manager (mirrors left rail, anchored on complementary rail)
@@ -384,7 +412,7 @@
         rightCollapseTimer = setTimeout(() => {
           setRightRailExpanded(false);
           rightCollapseTimer = null;
-        }, 120);
+        }, 280);
       }
       return;
     }
@@ -411,11 +439,11 @@
         rightExpandTimer = null;
       }
       if (isRightRailExpanded && !rightCollapseTimer) {
-        // Crisp 120ms grace period so cursor navigating between items won't jitter
+        // Safe 280ms grace period so cursor navigating between items won't jitter
         rightCollapseTimer = setTimeout(() => {
           setRightRailExpanded(false);
           rightCollapseTimer = null;
-        }, 120);
+        }, 280);
       }
     }
   }
