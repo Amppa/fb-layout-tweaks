@@ -49,6 +49,9 @@
   "cardRightSidebar": {
     "message": "Right Sidebar"
   },
+  "cardGlobalSettings": {
+    "message": "Global Settings"
+  },
   "groupTopNav": {
     "message": "Top Bar Item Settings"
   },
@@ -186,5 +189,11 @@
   },
   "descHideRightMetaAI": {
     "message": "Hide the Meta AI chat in the right sidebar"
+  },
+  "itemLanguage": {
+    "message": "Language"
+  },
+  "descLanguage": {
+    "message": "Choose display language"
   }
 }

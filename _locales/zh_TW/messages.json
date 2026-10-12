@@ -49,6 +49,9 @@
   "cardRightSidebar": {
     "message": "右側欄"
   },
+  "cardGlobalSettings": {
+    "message": "全域設定"
+  },
   "groupTopNav": {
     "message": "頂部欄項目設定"
   },
@@ -186,5 +189,11 @@
   },
   "descHideRightMetaAI": {
     "message": "隱藏右側欄的 Meta AI 聊天"
+  },
+  "itemLanguage": {
+    "message": "語言"
+  },
+  "descLanguage": {
+    "message": "選擇顯示語言"
   }
 }
