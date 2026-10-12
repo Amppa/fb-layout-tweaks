@@ -412,7 +412,7 @@
         rightCollapseTimer = setTimeout(() => {
           setRightRailExpanded(false);
           rightCollapseTimer = null;
-        }, 120);
+        }, 280);
       }
       return;
     }
@@ -439,11 +439,11 @@
         rightExpandTimer = null;
       }
       if (isRightRailExpanded && !rightCollapseTimer) {
-        // Crisp 120ms grace period so cursor navigating between items won't jitter
+        // Safe 280ms grace period so cursor navigating between items won't jitter
         rightCollapseTimer = setTimeout(() => {
           setRightRailExpanded(false);
           rightCollapseTimer = null;
-        }, 120);
+        }, 280);
       }
     }
   }
