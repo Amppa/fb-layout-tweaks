@@ -23,22 +23,15 @@ node scripts/package.js --target all
 powershell -ExecutionPolicy Bypass -File scripts/package.ps1 -Target all
 # Targets: chrome (default, legacy name), firefox (gecko manifest patch), all
 
-### Release Flow (GitHub Release + Stores)
+### Release Flow (GitHub Release)
 ```bash
-# One-time setup: install GitHub CLI and log in
-winget install GitHub.cli
-gh auth login
-
 # Cut a release (version must match manifest.json)
 git tag -a v1.2.1 -m v1.2.1
 git push origin v1.2.1
 # → .github/workflows/release.yml tests, builds both zips,
 #   and creates the GitHub Release with zips attached.
 ```
-- **Chrome Web Store**: upload `release/fb-layout-tweaks-v<version>.zip` manually in the developer dashboard (per-version review required).
-- **Firefox AMO**: upload `release/fb-layout-tweaks-firefox-v<version>.zip` to addons.mozilla.org; Mozilla signs it after review (unsigned zips only run on Nightly/Dev). Override the placeholder ID via `FIREFOX_EXTENSION_ID` env before packaging if AMO assigns a different one.
-- `release/` is git-ignored: never commit zips, CI rebuilds them from the tag.
-```
+- `release/` is git-ignored: never commit zips; CI rebuilds them automatically from the tag.
 
 ### Local Extension Loading
 1. In Chrome, open `chrome://extensions/` and enable **Developer mode**.
