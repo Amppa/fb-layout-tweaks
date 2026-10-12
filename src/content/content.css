@@ -7,8 +7,9 @@
    Design Tokens & CSS Variables
    ========================================================================== */
 :root {
+  interpolate-size: allow-keywords;
   --fb-lt-rail-collapsed-width: 72px;
-  --fb-lt-rail-expanded-width: 288px;
+  --fb-lt-rail-expanded-width: max-content;
   --fb-lt-header-height: 56px;
   --fb-lt-rail-expand-transition: width 0.0s ease;
   --fb-lt-rail-collapse-transition: width 0.5s ease;
@@ -103,8 +104,8 @@ html.fb-layout-tweaks-hover-expand-right-rail.fb-layout-tweaks-right-rail-expand
   bottom: 0 !important;
   height: calc(100vh - var(--fb-lt-header-height)) !important;
   width: var(--fb-lt-rail-expanded-width) !important;
-  max-width: var(--fb-lt-rail-expanded-width) !important;
-  min-width: 0 !important;
+  max-width: min(var(--fb-lt-rail-expanded-width), 90vw) !important;
+  min-width: var(--fb-lt-rail-collapsed-width) !important;
   z-index: 1000 !important;
   background: var(--surface-background, #242526) !important;
   overflow-x: hidden !important;
