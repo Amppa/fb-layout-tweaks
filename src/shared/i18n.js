@@ -21,7 +21,7 @@ function getMsg(key) {
   if (localeMessages && localeMessages[key]?.message) {
     return localeMessages[key].message;
   }
-  return chrome.i18n.getMessage(key) || '';
+  return (typeof chrome !== 'undefined' && chrome.i18n?.getMessage ? chrome.i18n.getMessage(key) : '') || '';
 }
 
 function applyI18n() {
@@ -35,4 +35,14 @@ function applyI18n() {
     const msg = getMsg(key);
     if (msg) el.title = msg;
   });
+}
+
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = {
+    getMsg,
+    loadLocaleMessages,
+    applyI18n,
+    setLocaleMessages: (msgs) => { localeMessages = msgs; },
+    getLocaleMessages: () => localeMessages
+  };
 }

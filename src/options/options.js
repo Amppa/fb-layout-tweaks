@@ -32,15 +32,9 @@ document.addEventListener('DOMContentLoaded', async () => {
   });
 
   // Hide switches (right sidebar): checkbox checked = hidden, stored show* value negated.
-  const INVERTED_KEYS = new Set(['showRightSponsored', 'showRightBirthdays', 'showRightMetaAI']);
-
-  function toUIChecked(key, storedValue) {
-    return INVERTED_KEYS.has(key) ? !storedValue : storedValue;
-  }
-
-  function toStoredValue(key, uiChecked) {
-    return INVERTED_KEYS.has(key) ? !uiChecked : uiChecked;
-  }
+  const INVERTED_KEYS = (typeof self !== 'undefined' && self.INVERTED_KEYS) || new Set(['showRightSponsored', 'showRightBirthdays', 'showRightMetaAI']);
+  const toUIChecked = (typeof self !== 'undefined' && self.toUIChecked) || ((key, storedValue) => INVERTED_KEYS.has(key) ? !storedValue : storedValue);
+  const toStoredValue = (typeof self !== 'undefined' && self.toStoredValue) || ((key, uiChecked) => INVERTED_KEYS.has(key) ? !uiChecked : uiChecked);
 
   const pillGrids = Array.from(document.querySelectorAll('.pill-grid'));
   pillGrids.forEach(grid => {

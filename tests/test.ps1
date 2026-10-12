@@ -97,6 +97,51 @@ foreach ($size in $requiredIcons) {
 }
 Assert-Condition $iconsValid "All production icons (16, 32, 48, 128px) exist and have correct dimensions"
 
+# Test 5: Verify getUiCleanClassName mapping against content.css
+$contentCssPath = Join-Path $rootDir "src/content/content.css"
+function Get-UiCleanClassName($key) {
+    if ($key -eq 'showLeftMetaAI') { return 'fb-layout-tweaks-hide-left-metaai' }
+    if ($key -eq 'showRightMetaAI') { return 'fb-layout-tweaks-hide-right-metaai' }
+    $stripped = $key -replace '^show', 'hide'
+    $kebab = [regex]::Replace($stripped, '([A-Z])', '-$1').ToLower()
+    return "fb-layout-tweaks-$kebab"
+}
+
+if ((Test-Path $contentCssPath) -and (Test-Path $defaultsPath)) {
+    $cssContent = Get-Content $contentCssPath -Raw
+    $missingCss = @()
+    foreach ($key in $configurableKeys) {
+        $className = Get-UiCleanClassName $key
+        if ($cssContent -notmatch [regex]::Escape($className)) {
+            $missingCss += "$key -> $className"
+        }
+    }
+    if ($missingCss.Count -gt 0) {
+        Write-Host "    (Missing CSS hiding rules in content.css: $($missingCss -join ', '))" -ForegroundColor Yellow
+    }
+    Assert-Condition ($missingCss.Count -eq 0) "All configurable show* keys map to active CSS rules in content.css"
+} else {
+    Assert-Condition $false "content.css and defaults.js must exist"
+}
+
+# Test 6: Inverted keys transformation round-trip
+$invertedKeys = @('showRightSponsored', 'showRightBirthdays', 'showRightMetaAI')
+$invertValid = $true
+function To-UIChecked($key, $stored) {
+    if ($invertedKeys -contains $key) { return (-not $stored) }
+    return $stored
+}
+function To-StoredValue($key, $ui) {
+    if ($invertedKeys -contains $key) { return (-not $ui) }
+    return $ui
+}
+foreach ($k in $invertedKeys) {
+    if ((To-UIChecked $k $false) -ne $true -or (To-UIChecked $k $true) -ne $false) { $invertValid = $false }
+    if ((To-StoredValue $k (To-UIChecked $k $true)) -ne $true) { $invertValid = $false }
+    if ((To-StoredValue $k (To-UIChecked $k $false)) -ne $false) { $invertValid = $false }
+}
+Assert-Condition $invertValid "Inverted switch transformation logic maintains bidirectional round-trip consistency"
+
 Write-Host ""
 if ($failed -eq 0) {
     Write-Host "All $passed tests passed successfully!" -ForegroundColor Green

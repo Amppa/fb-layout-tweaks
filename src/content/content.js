@@ -215,39 +215,41 @@
     });
   }
 
-  // Load initial settings as early as possible with fallback to DEFAULT_SETTINGS
-  chrome.storage.local.get('settings', (data) => {
-    const baseDefaults = (typeof DEFAULT_SETTINGS !== 'undefined' ? DEFAULT_SETTINGS : {});
-    currentSettings = { ...baseDefaults, ...(data?.settings || {}) };
-    applyUiCleanClasses(currentSettings);
-  });
+  // Load initial settings and set up observers when running in extension environment
+  if (typeof chrome !== 'undefined' && chrome.storage && typeof document !== 'undefined') {
+    chrome.storage.local.get('settings', (data) => {
+      const baseDefaults = (typeof DEFAULT_SETTINGS !== 'undefined' ? DEFAULT_SETTINGS : {});
+      currentSettings = { ...baseDefaults, ...(data?.settings || {}) };
+      applyUiCleanClasses(currentSettings);
+    });
 
-  // Observe for dynamic content loads (e.g. "See More" bookmark expansion)
-  try {
-    const observer = new MutationObserver(() => {
-      if (currentSettings?.enabled !== false) {
-        triggerThrottledScan();
+    // Observe for dynamic content loads (e.g. "See More" bookmark expansion)
+    try {
+      const observer = new MutationObserver(() => {
+        if (currentSettings?.enabled !== false) {
+          triggerThrottledScan();
+        }
+      });
+      observer.observe(document.documentElement, { childList: true, subtree: true });
+    } catch (e) {
+      // Non-fatal
+    }
+
+    // Listen for realtime settings changes from Options page
+    chrome.storage.onChanged.addListener((changes, area) => {
+      if (area === 'local' && changes.settings) {
+        const baseDefaults = (typeof DEFAULT_SETTINGS !== 'undefined' ? DEFAULT_SETTINGS : {});
+        currentSettings = { ...baseDefaults, ...(changes.settings.newValue || {}) };
+        applyUiCleanClasses(currentSettings);
+        if (!currentSettings.hoverExpandLeftRail) {
+          setRailExpanded(false);
+        }
+        if (!currentSettings.trimRightRail) {
+          setRightRailExpanded(false);
+        }
       }
     });
-    observer.observe(document.documentElement, { childList: true, subtree: true });
-  } catch (e) {
-    // Non-fatal
   }
-
-  // Listen for realtime settings changes from Options page
-  chrome.storage.onChanged.addListener((changes, area) => {
-    if (area === 'local' && changes.settings) {
-      const baseDefaults = (typeof DEFAULT_SETTINGS !== 'undefined' ? DEFAULT_SETTINGS : {});
-      currentSettings = { ...baseDefaults, ...(changes.settings.newValue || {}) };
-      applyUiCleanClasses(currentSettings);
-      if (!currentSettings.hoverExpandLeftRail) {
-        setRailExpanded(false);
-      }
-      if (!currentSettings.trimRightRail) {
-        setRightRailExpanded(false);
-      }
-    }
-  });
 
   // Button-Targeted Hover Expand Manager (Zero-Pixel Guessing, Clean Flyout)
   let expandTimer = null;
@@ -306,7 +308,9 @@
     }
   }
 
-  document.addEventListener('mouseover', handleButtonHover, { passive: true });
+  if (typeof document !== 'undefined') {
+    document.addEventListener('mouseover', handleButtonHover, { passive: true });
+  }
 
   // Right Rail Hover Expand Manager (mirrors left rail, anchored on complementary rail)
   let rightExpandTimer = null;
@@ -382,6 +386,12 @@
     }
   }
 
-  document.addEventListener('mouseover', handleRightRailHover, { passive: true });
+  if (typeof document !== 'undefined') {
+    document.addEventListener('mouseover', handleRightRailHover, { passive: true });
+  }
+
+  if (typeof module !== 'undefined' && module.exports) {
+    module.exports = { getUiCleanClassName };
+  }
 })();
 

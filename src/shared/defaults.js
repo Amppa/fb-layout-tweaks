@@ -62,3 +62,13 @@ self.DEFAULT_SETTINGS = {
   ...self.LEFT_SETTINGS,
   ...self.RIGHT_SETTINGS
 };
+
+self.INVERTED_KEYS = new Set(['showRightSponsored', 'showRightBirthdays', 'showRightMetaAI']);
+
+self.toUIChecked = function(key, storedValue) {
+  return self.INVERTED_KEYS.has(key) ? !storedValue : storedValue;
+};
+
+self.toStoredValue = function(key, uiChecked) {
+  return self.INVERTED_KEYS.has(key) ? !uiChecked : uiChecked;
+};
