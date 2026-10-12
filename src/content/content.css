@@ -10,7 +10,8 @@
   --fb-lt-rail-collapsed-width: 72px;
   --fb-lt-rail-expanded-width: 288px;
   --fb-lt-header-height: 56px;
-  --fb-lt-rail-transition: width 0.15s cubic-bezier(0, 0, 0.2, 1);
+  --fb-lt-rail-expand-transition: width 0s;
+  --fb-lt-rail-collapse-transition: width 1s ease;
   --fb-lt-text-fade-in: opacity 0.12s ease;
   --fb-lt-text-fade-out: opacity 0.1s ease;
 }
@@ -47,7 +48,7 @@ html.fb-layout-tweaks-hover-expand-right-rail :is(.fb-layout-tweaks-right-rail, 
   overflow-y: auto !important;
   z-index: 100 !important;
   will-change: width !important;
-  transition: var(--fb-lt-rail-transition) !important;
+  transition: var(--fb-lt-rail-collapse-transition) !important;
 }
 
 /* Clear min-width on descendants so items fit cleanly into rail */
@@ -115,6 +116,7 @@ html.fb-layout-tweaks-hover-expand-right-rail.fb-layout-tweaks-right-rail-expand
   background: var(--surface-background, #242526) !important;
   overflow-x: hidden !important;
   overflow-y: auto !important;
+  transition: var(--fb-lt-rail-expand-transition) !important;
 }
 
 /* Expanded: Show text labels smoothly without clipping */
