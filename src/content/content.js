@@ -180,17 +180,24 @@
 
   function tagRailContainers() {
     try {
-      // Tag genuine Left Rail containers
+      // Tag genuine Left Rail containers (skip nested descendants)
       const leftCandidates = document.querySelectorAll(
         '[data-pagelet="LeftRail"], div[role="navigation"]:not(header *):not([role="banner"] *):not([data-pagelet="Header"] *)'
       );
       for (const el of leftCandidates) {
+        if (el.parentElement && el.parentElement.closest('[data-pagelet="LeftRail"], .fb-layout-tweaks-left-rail')) {
+          continue;
+        }
         if (!el.classList.contains('fb-layout-tweaks-left-rail')) {
           el.classList.add('fb-layout-tweaks-left-rail');
         }
+        let parent = el.parentElement;
+        if (parent && parent !== document.body && !parent.classList.contains('fb-layout-tweaks-left-rail-parent')) {
+          parent.classList.add('fb-layout-tweaks-left-rail-parent');
+        }
       }
 
-      // Tag genuine Right Rail containers (strictly excluding photo/dialog overlays)
+      // Tag genuine Right Rail containers (strictly excluding photo/dialog overlays and nested descendants)
       const rightCandidates = document.querySelectorAll(
         '#right_rail_container, [data-pagelet="RightRail"], div[role="complementary"]'
       );
@@ -199,14 +206,15 @@
           el.classList.remove('fb-layout-tweaks-right-rail');
           continue;
         }
-        if (
-          el.id === 'right_rail_container' ||
-          el.getAttribute('data-pagelet') === 'RightRail' ||
-          el.closest('#right_rail_container, [data-pagelet="RightRail"]')
-        ) {
-          if (!el.classList.contains('fb-layout-tweaks-right-rail')) {
-            el.classList.add('fb-layout-tweaks-right-rail');
-          }
+        if (el.parentElement && el.parentElement.closest('#right_rail_container, [data-pagelet="RightRail"], .fb-layout-tweaks-right-rail')) {
+          continue;
+        }
+        if (!el.classList.contains('fb-layout-tweaks-right-rail')) {
+          el.classList.add('fb-layout-tweaks-right-rail');
+        }
+        let parent = el.parentElement;
+        if (parent && parent !== document.body && !parent.classList.contains('fb-layout-tweaks-right-rail-parent')) {
+          parent.classList.add('fb-layout-tweaks-right-rail-parent');
         }
       }
     } catch (e) {
@@ -371,6 +379,9 @@
       if (isRailExpanded || (e.clientX <= 72 && currentSettings?.hoverExpandLeftRail)) {
         handleButtonHover(e);
       }
+      if (isRightRailExpanded || (typeof window !== 'undefined' && e.clientX >= (window.innerWidth - 72) && currentSettings?.trimRightRail)) {
+        handleRightRailHover(e);
+      }
     }, { passive: true });
   }
 
@@ -387,7 +398,7 @@
 
   function getRightRailContainer(node) {
     if (!node || !node.closest) return null;
-    const rail = node.closest('.fb-layout-tweaks-right-rail, #right_rail_container, [data-pagelet="RightRail"]');
+    const rail = node.closest('.fb-layout-tweaks-right-rail, #right_rail_container, [data-pagelet="RightRail"], div[role="complementary"]');
     if (!rail) return null;
     if (rail.closest(RIGHT_RAIL_EXCLUDE_ANCESTORS)) return null;
     return rail;

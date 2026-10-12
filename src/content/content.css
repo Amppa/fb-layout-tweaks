@@ -22,10 +22,10 @@
    ========================================================================== */
 
 /* 1. Base Spacer in Document Flow (Collapses flow width, never resizes or pushes feed) */
-html.fb-layout-tweaks-hover-expand-left-rail :is(.fb-layout-tweaks-left-rail, [data-pagelet="LeftRail"]),
-html.fb-layout-tweaks-hover-expand-left-rail.fb-layout-tweaks-rail-expanded :is(.fb-layout-tweaks-left-rail, [data-pagelet="LeftRail"]),
-html.fb-layout-tweaks-hover-expand-right-rail :is(.fb-layout-tweaks-right-rail, [data-pagelet="RightRail"], #right_rail_container):not([role="dialog"] *),
-html.fb-layout-tweaks-hover-expand-right-rail.fb-layout-tweaks-right-rail-expanded :is(.fb-layout-tweaks-right-rail, [data-pagelet="RightRail"], #right_rail_container):not([role="dialog"] *) {
+html.fb-layout-tweaks-hover-expand-left-rail :is(.fb-layout-tweaks-left-rail, [data-pagelet="LeftRail"]):not(:is(.fb-layout-tweaks-left-rail, [data-pagelet="LeftRail"]) *),
+html.fb-layout-tweaks-hover-expand-left-rail.fb-layout-tweaks-rail-expanded :is(.fb-layout-tweaks-left-rail, [data-pagelet="LeftRail"]):not(:is(.fb-layout-tweaks-left-rail, [data-pagelet="LeftRail"]) *),
+html.fb-layout-tweaks-hover-expand-right-rail :is(.fb-layout-tweaks-right-rail, [data-pagelet="RightRail"], #right_rail_container, div[role="complementary"]):not([role="dialog"] *):not(:is(.fb-layout-tweaks-right-rail, [data-pagelet="RightRail"], #right_rail_container, div[role="complementary"]) *),
+html.fb-layout-tweaks-hover-expand-right-rail.fb-layout-tweaks-right-rail-expanded :is(.fb-layout-tweaks-right-rail, [data-pagelet="RightRail"], #right_rail_container, div[role="complementary"]):not([role="dialog"] *):not(:is(.fb-layout-tweaks-right-rail, [data-pagelet="RightRail"], #right_rail_container, div[role="complementary"]) *) {
   width: var(--fb-lt-rail-collapsed-width) !important;
   max-width: var(--fb-lt-rail-collapsed-width) !important;
   min-width: var(--fb-lt-rail-collapsed-width) !important;
@@ -34,9 +34,38 @@ html.fb-layout-tweaks-hover-expand-right-rail.fb-layout-tweaks-right-rail-expand
   box-sizing: border-box !important;
 }
 
+/* Force left rail and its parent container to remain visible and stacked above feed */
+html.fb-layout-tweaks-hover-expand-left-rail :is(.fb-layout-tweaks-left-rail, [data-pagelet="LeftRail"], div[role="navigation"]:not(header *):not([role="banner"] *):not([data-pagelet="Header"] *)),
+html.fb-layout-tweaks-hover-expand-left-rail .fb-layout-tweaks-left-rail-parent {
+  display: flex !important;
+  visibility: visible !important;
+  position: relative !important;
+  z-index: 1050 !important;
+}
+
+html.fb-layout-tweaks-hover-expand-left-rail :is(.fb-layout-tweaks-left-rail, [data-pagelet="LeftRail"]) > div {
+  display: block !important;
+  visibility: visible !important;
+}
+
+/* Force right rail and its parent container to remain visible even on narrow responsive screen sizes */
+html.fb-layout-tweaks-hover-expand-right-rail :is(.fb-layout-tweaks-right-rail, [data-pagelet="RightRail"], #right_rail_container, div[role="complementary"]):not([role="dialog"] *),
+html.fb-layout-tweaks-hover-expand-right-rail .fb-layout-tweaks-right-rail-parent {
+  display: flex !important;
+  visibility: visible !important;
+  position: relative !important;
+  z-index: 1050 !important;
+}
+
+html.fb-layout-tweaks-hover-expand-right-rail :is(.fb-layout-tweaks-right-rail, [data-pagelet="RightRail"], #right_rail_container, div[role="complementary"]):not([role="dialog"] *) > div {
+  display: block !important;
+  visibility: visible !important;
+}
+
 /* 2. Floating Visual Drawer: Collapsed Base (position: fixed overlay - never pushes feed) */
 html.fb-layout-tweaks-hover-expand-left-rail :is(.fb-layout-tweaks-left-rail, [data-pagelet="LeftRail"])>div {
   position: fixed !important;
+  left: 0 !important;
   top: var(--fb-lt-header-height) !important;
   bottom: 0 !important;
   height: calc(100vh - var(--fb-lt-header-height)) !important;
@@ -45,15 +74,23 @@ html.fb-layout-tweaks-hover-expand-left-rail :is(.fb-layout-tweaks-left-rail, [d
   min-width: 0 !important;
   box-sizing: border-box !important;
   overflow-x: hidden !important;
-  overflow-y: auto !important;
-  z-index: 1000 !important;
+  overflow-y: hidden !important;
+  scrollbar-width: none !important;
+  z-index: 1050 !important;
   background: var(--surface-background, #242526) !important;
   will-change: width !important;
   transition: var(--fb-lt-rail-collapse-transition) !important;
 }
 
-html.fb-layout-tweaks-hover-expand-right-rail :is(.fb-layout-tweaks-right-rail, [data-pagelet="RightRail"], #right_rail_container):not([role="dialog"] *)>div {
+html.fb-layout-tweaks-hover-expand-left-rail :is(.fb-layout-tweaks-left-rail, [data-pagelet="LeftRail"])>div::-webkit-scrollbar,
+html.fb-layout-tweaks-hover-expand-right-rail :is(.fb-layout-tweaks-right-rail, [data-pagelet="RightRail"], #right_rail_container):not([role="dialog"] *)>div::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+}
+
+html.fb-layout-tweaks-hover-expand-right-rail :is(.fb-layout-tweaks-right-rail, [data-pagelet="RightRail"], #right_rail_container, div[role="complementary"]):not([role="dialog"] *)>div {
   position: fixed !important;
+  right: 0 !important;
   top: var(--fb-lt-header-height) !important;
   bottom: 0 !important;
   height: calc(100vh - var(--fb-lt-header-height)) !important;
@@ -62,8 +99,9 @@ html.fb-layout-tweaks-hover-expand-right-rail :is(.fb-layout-tweaks-right-rail, 
   min-width: 0 !important;
   box-sizing: border-box !important;
   overflow-x: hidden !important;
-  overflow-y: auto !important;
-  z-index: 1000 !important;
+  overflow-y: hidden !important;
+  scrollbar-width: none !important;
+  z-index: 1050 !important;
   background: var(--surface-background, #242526) !important;
   will-change: width !important;
   transition: var(--fb-lt-rail-collapse-transition) !important;
@@ -115,32 +153,36 @@ html.fb-layout-tweaks-hover-expand-right-rail:not(.fb-layout-tweaks-right-rail-e
 /* 3. Floating Visual Drawer: Expanded Base (Overlay on middle feed) */
 html.fb-layout-tweaks-hover-expand-left-rail.fb-layout-tweaks-rail-expanded :is(.fb-layout-tweaks-left-rail, [data-pagelet="LeftRail"])>div {
   position: fixed !important;
+  left: 0 !important;
   top: var(--fb-lt-header-height) !important;
   bottom: 0 !important;
   height: calc(100vh - var(--fb-lt-header-height)) !important;
   width: var(--fb-lt-left-rail-expanded-width) !important;
   max-width: var(--fb-lt-left-rail-expanded-width) !important;
   min-width: var(--fb-lt-rail-collapsed-width) !important;
-  z-index: 1000 !important;
+  z-index: 1100 !important;
   background: var(--surface-background, #242526) !important;
+  box-shadow: 4px 0 20px rgba(0, 0, 0, 0.35) !important;
   overflow-x: hidden !important;
   overflow-y: auto !important;
-  transition: var(--fb-lt-rail-expand-transition) !important;
+  transition: var(--fb-lt-rail-expand-transition), box-shadow 0.2s ease !important;
 }
 
-html.fb-layout-tweaks-hover-expand-right-rail.fb-layout-tweaks-right-rail-expanded :is(.fb-layout-tweaks-right-rail, [data-pagelet="RightRail"], #right_rail_container):not([role="dialog"] *)>div {
+html.fb-layout-tweaks-hover-expand-right-rail.fb-layout-tweaks-right-rail-expanded :is(.fb-layout-tweaks-right-rail, [data-pagelet="RightRail"], #right_rail_container, div[role="complementary"]):not([role="dialog"] *)>div {
   position: fixed !important;
+  right: 0 !important;
   top: var(--fb-lt-header-height) !important;
   bottom: 0 !important;
   height: calc(100vh - var(--fb-lt-header-height)) !important;
   width: var(--fb-lt-right-rail-expanded-width) !important;
   max-width: var(--fb-lt-right-rail-expanded-width) !important;
   min-width: var(--fb-lt-rail-collapsed-width) !important;
-  z-index: 1000 !important;
+  z-index: 1100 !important;
   background: var(--surface-background, #242526) !important;
+  box-shadow: -4px 0 20px rgba(0, 0, 0, 0.35) !important;
   overflow-x: hidden !important;
   overflow-y: auto !important;
-  transition: var(--fb-lt-rail-expand-transition) !important;
+  transition: var(--fb-lt-rail-expand-transition), box-shadow 0.2s ease !important;
 }
 
 /* Expanded: Ensure buttons, links, and listitems occupy the full drawer width for full hover overlay */
