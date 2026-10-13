@@ -6,7 +6,7 @@
 //   node scripts/package.js [--target chrome|firefox|all]
 //
 // Outputs (version read from manifest.json):
-//   chrome:  release/fb-layout-tweaks-v<version>.zip
+//   chrome:  release/fb-layout-tweaks-chrome-v<version>.zip
 //   firefox: release/fb-layout-tweaks-firefox-v<version>.zip
 //
 // The Firefox build stages the same files with a patched manifest that adds
@@ -68,34 +68,64 @@ function removeIfExists(p) {
 }
 
 // 4. Create ZIP archive using system utilities (cwd + relative items)
-function createZip(cwd, items, outPath) {
-  removeIfExists(outPath);
-  // Try tar (supported on Windows 10/11 build 17063+ and modern macOS/Linux)
+// NOTE: `tar -a` only writes a real zip when tar is bsdtar/libarchive
+// (Windows/macOS). GNU tar (Linux CI, git-bash) does not recognize the
+// .zip suffix and silently writes a plain ustar tar with exit code 0,
+// so tar must never be trusted blindly: every output is verified to
+// start with the ZIP magic bytes ("PK") before being accepted.
+function tarSupportsZip() {
   try {
-    execSync(`tar -a -cf "${outPath}" ${items.join(' ')}`, { cwd, stdio: 'pipe' });
-    return true;
+    const out = execSync('tar --version', { stdio: 'pipe' }).toString();
+    return /bsdtar|libarchive/i.test(out);
   } catch {
-    // Fallback for Windows if tar is unavailable: use PowerShell Compress-Archive
-    if (process.platform === 'win32') {
-      try {
-        const itemsList = items.map((i) => `'${i}'`).join(',');
-        const psCmd = `powershell -NoProfile -Command "Compress-Archive -Path ${itemsList} -DestinationPath '${outPath}' -Force"`;
-        execSync(psCmd, { cwd, stdio: 'pipe' });
-        return true;
-      } catch (psErr) {
-        console.error('PowerShell fallback failed:', psErr.message);
-        return false;
-      }
-    }
-    // Fallback for Unix: use zip command
-    try {
-      execSync(`zip -r "${outPath}" ${items.join(' ')}`, { cwd, stdio: 'pipe' });
-      return true;
-    } catch (zipErr) {
-      console.error('zip command fallback failed:', zipErr.message);
-      return false;
-    }
+    return false;
   }
+}
+
+function isRealZip(p) {
+  try {
+    const fd = fs.openSync(p, 'r');
+    const buf = Buffer.alloc(2);
+    fs.readSync(fd, buf, 0, 2, 0);
+    fs.closeSync(fd);
+    return buf[0] === 0x50 && buf[1] === 0x4b; // "PK"
+  } catch {
+    return false;
+  }
+}
+
+function tryStep(label, fn, outPath) {
+  removeIfExists(outPath);
+  try {
+    fn();
+  } catch (err) {
+    console.error(`  (${label} unavailable: ${String(err.message).split('\n')[0]})`);
+    return false;
+  }
+  if (fs.existsSync(outPath) && isRealZip(outPath)) return true;
+  // GNU tar fallback artifact: a mislabeled ustar must not survive.
+  removeIfExists(outPath);
+  console.error(`  (${label} did not produce a valid zip, trying next method)`);
+  return false;
+}
+
+function createZip(cwd, items, outPath) {
+  // `zip` is the correct tool for the job and ships on ubuntu-latest CI.
+  if (tryStep('zip', () => {
+    execSync(`zip -r "${outPath}" ${items.join(' ')}`, { cwd, stdio: 'pipe' });
+  }, outPath)) return true;
+  // bsdtar (Windows 10/11 17063+, macOS) writes real zips via -a.
+  if (tarSupportsZip() && tryStep('tar', () => {
+    execSync(`tar -a -cf "${outPath}" ${items.join(' ')}`, { cwd, stdio: 'pipe' });
+  }, outPath)) return true;
+  // Last resort on Windows: PowerShell Compress-Archive.
+  if (process.platform === 'win32' && tryStep('Compress-Archive', () => {
+    const itemsList = items.map((i) => `'${i}'`).join(',');
+    const psCmd = `powershell -NoProfile -Command "Compress-Archive -Path ${itemsList} -DestinationPath '${outPath}' -Force"`;
+    execSync(psCmd, { cwd, stdio: 'pipe' });
+  }, outPath)) return true;
+  console.error(`Failed to create a valid zip package at ${outPath}.`);
+  return false;
 }
 
 function report(zipFilePath) {
@@ -110,7 +140,7 @@ function report(zipFilePath) {
 // 5a. Chrome build (clean manifest, as-is)
 function buildChrome() {
   console.log(`Packaging ${slug} v${version} for Chrome...`);
-  const zipFilePath = path.join(RELEASE_DIR, `${slug}-v${version}.zip`);
+  const zipFilePath = path.join(RELEASE_DIR, `${slug}-chrome-v${version}.zip`);
   if (!createZip(ROOT_DIR, includeItems, zipFilePath) || !fs.existsSync(zipFilePath)) {
     console.error('Failed to create Chrome zip package.');
     process.exit(1);

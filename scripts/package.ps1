@@ -5,7 +5,7 @@
 #
 # Usage: powershell -ExecutionPolicy Bypass -File scripts/package.ps1 [-Target chrome|firefox|all]
 # Outputs:
-#   chrome:  release/fb-layout-tweaks-v<version>.zip
+#   chrome:  release/fb-layout-tweaks-chrome-v<version>.zip
 #   firefox: release/fb-layout-tweaks-firefox-v<version>.zip (manifest patched with gecko block)
 
 param(
@@ -33,6 +33,37 @@ if (-not (Test-Path $releaseDir)) {
     New-Item -ItemType Directory -Path $releaseDir | Out-Null
 }
 
+function Test-IsRealZip {
+    param([string]$ZipPath)
+
+    if (-not (Test-Path $ZipPath)) {
+        return $false
+    }
+    # A valid zip starts with the "PK" magic bytes. GNU tar (e.g. git-bash
+    # tar 1.35) ignores the .zip suffix for `tar -a` and silently writes a
+    # plain ustar tar, so every artifact must be verified, never trusted.
+    $stream = [System.IO.File]::OpenRead($ZipPath)
+    try {
+        $magic = New-Object byte[] 2
+        $read = $stream.Read($magic, 0, 2)
+        return ($read -eq 2 -and $magic[0] -eq 0x50 -and $magic[1] -eq 0x4B)
+    } finally {
+        $stream.Close()
+    }
+}
+
+function Test-TarSupportsZip {
+    # Only bsdtar/libarchive writes real zips via `tar -a`; GNU tar does not
+    # recognize .zip and silently emits ustar. A git-bash GNU tar may shadow
+    # the system bsdtar in PATH, so check the flavor before trusting tar.
+    try {
+        $ver = & tar.exe --version 2>$null | Out-String
+        return ($ver -match 'bsdtar|libarchive')
+    } catch {
+        return $false
+    }
+}
+
 function New-PackageZip {
     param([string]$SourceDir, [string]$ZipPath)
 
@@ -41,14 +72,19 @@ function New-PackageZip {
     }
 
     $tarCmd = Get-Command tar.exe -ErrorAction SilentlyContinue
-    if ($tarCmd) {
+    if ($tarCmd -and (Test-TarSupportsZip)) {
         Push-Location $SourceDir
         try {
             & tar.exe -a -cf $ZipPath manifest.json icons src _locales
         } finally {
             Pop-Location
         }
-    } else {
+    }
+    if (-not (Test-IsRealZip $ZipPath)) {
+        if (Test-Path $ZipPath) {
+            # Mislabeled ustar artifact: delete it, never ship it.
+            Remove-Item $ZipPath -Force
+        }
         $fullPaths = $includeItems | ForEach-Object { Join-Path $SourceDir $_ }
         Compress-Archive -Path $fullPaths -DestinationPath $ZipPath -Force
     }
@@ -66,7 +102,7 @@ function New-PackageZip {
 
 if ($Target -eq "chrome" -or $Target -eq "all") {
     Write-Host "Packaging $slug v$version for Chrome..."
-    New-PackageZip -SourceDir $rootDir -ZipPath (Join-Path $releaseDir "$slug-v$version.zip")
+    New-PackageZip -SourceDir $rootDir -ZipPath (Join-Path $releaseDir "$slug-chrome-v$version.zip")
 }
 
 if ($Target -eq "firefox" -or $Target -eq "all") {
