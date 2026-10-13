@@ -125,21 +125,45 @@ html.fb-layout-tweaks-hover-expand-right-rail:not(.fb-layout-tweaks-right-rail-e
   transition: var(--fb-lt-text-fade-out) !important;
 }
 
+/* Collapsed: Collapse nested item text container blocks adjacent to icons (e.g. Feeds sub-nav) */
+html.fb-layout-tweaks-hover-expand-left-rail:not(.fb-layout-tweaks-rail-expanded) :is(.fb-layout-tweaks-left-rail, [data-pagelet="LeftRail"]) :is(a, [role="button"]) div:not(:has(svg, img, i, [role="img"])):has(span),
+html.fb-layout-tweaks-hover-expand-right-rail:not(.fb-layout-tweaks-right-rail-expanded) :is(.fb-layout-tweaks-right-rail, [data-pagelet="RightRail"], #right_rail_container):not([role="dialog"] *) :is(a, [role="button"]) div:not(:has(svg, img, i, [role="img"])):has(span) {
+  opacity: 0 !important;
+  max-width: 0 !important;
+  width: 0 !important;
+  flex: 0 0 0px !important;
+  overflow: hidden !important;
+  white-space: nowrap !important;
+  transition: var(--fb-lt-text-fade-out) !important;
+}
+
+/* Collapsed: Prevent item rows from overflowing horizontally */
+html.fb-layout-tweaks-hover-expand-left-rail:not(.fb-layout-tweaks-rail-expanded) :is(.fb-layout-tweaks-left-rail, [data-pagelet="LeftRail"]) :is(a, [role="button"]),
+html.fb-layout-tweaks-hover-expand-right-rail:not(.fb-layout-tweaks-right-rail-expanded) :is(.fb-layout-tweaks-right-rail, [data-pagelet="RightRail"], #right_rail_container):not([role="dialog"] *) :is(a, [role="button"]) {
+  overflow: hidden !important;
+}
+
 /* Collapsed: Keep section headings on a natural single line (no hardcoded pixels) */
-html.fb-layout-tweaks-hover-expand-left-rail:not(.fb-layout-tweaks-rail-expanded) :is(.fb-layout-tweaks-left-rail, [data-pagelet="LeftRail"]) :is(h2, h3, [role="heading"],
-  div:has(> :is(h2, h3, [role="heading"]))):not(:has(svg, img, [role="img"], i)),
-html.fb-layout-tweaks-hover-expand-right-rail:not(.fb-layout-tweaks-right-rail-expanded) :is(.fb-layout-tweaks-right-rail, [data-pagelet="RightRail"], #right_rail_container):not([role="dialog"] *) :is(h2, h3, [role="heading"],
-  div:has(> :is(h2, h3, [role="heading"]))):not(:has(svg, img, [role="img"], i)) {
+html.fb-layout-tweaks-hover-expand-left-rail:not(.fb-layout-tweaks-rail-expanded) :is(.fb-layout-tweaks-left-rail, [data-pagelet="LeftRail"]) :is(h1, h2, h3, [role="heading"],
+  div:has(> :is(h1, h2, h3, [role="heading"])),
+  span:has(> :is(h1, h2, h3, [role="heading"]))):not(:has(svg, img, [role="img"], i)),
+html.fb-layout-tweaks-hover-expand-right-rail:not(.fb-layout-tweaks-right-rail-expanded) :is(.fb-layout-tweaks-right-rail, [data-pagelet="RightRail"], #right_rail_container):not([role="dialog"] *) :is(h1, h2, h3, [role="heading"],
+  div:has(> :is(h1, h2, h3, [role="heading"])),
+  span:has(> :is(h1, h2, h3, [role="heading"]))):not(:has(svg, img, [role="img"], i)) {
   white-space: nowrap !important;
   overflow: hidden !important;
   box-sizing: border-box !important;
 }
 
 /* Collapsed: Make heading text & buttons transparent while preserving natural 1-line height */
-html.fb-layout-tweaks-hover-expand-left-rail:not(.fb-layout-tweaks-rail-expanded) :is(.fb-layout-tweaks-left-rail, [data-pagelet="LeftRail"]) :is(h2, h3, [role="heading"],
-  div:has(> :is(h2, h3, [role="heading"]))):not(:has(svg, img, [role="img"], i)) :is(span, a, [role="button"]),
-html.fb-layout-tweaks-hover-expand-right-rail:not(.fb-layout-tweaks-right-rail-expanded) :is(.fb-layout-tweaks-right-rail, [data-pagelet="RightRail"], #right_rail_container):not([role="dialog"] *) :is(h2, h3, [role="heading"],
-  div:has(> :is(h2, h3, [role="heading"]))):not(:has(svg, img, [role="img"], i)) :is(span, a, [role="button"]) {
+html.fb-layout-tweaks-hover-expand-left-rail:not(.fb-layout-tweaks-rail-expanded) :is(.fb-layout-tweaks-left-rail, [data-pagelet="LeftRail"]) :is(h1, h2, h3, [role="heading"]):not(:has(svg, img, [role="img"], i)),
+html.fb-layout-tweaks-hover-expand-left-rail:not(.fb-layout-tweaks-rail-expanded) :is(.fb-layout-tweaks-left-rail, [data-pagelet="LeftRail"]) :is(h1, h2, h3, [role="heading"],
+  div:has(> :is(h1, h2, h3, [role="heading"])),
+  span:has(> :is(h1, h2, h3, [role="heading"]))):not(:has(svg, img, [role="img"], i)) :is(span, a, [role="button"]),
+html.fb-layout-tweaks-hover-expand-right-rail:not(.fb-layout-tweaks-right-rail-expanded) :is(.fb-layout-tweaks-right-rail, [data-pagelet="RightRail"], #right_rail_container):not([role="dialog"] *) :is(h1, h2, h3, [role="heading"]):not(:has(svg, img, [role="img"], i)),
+html.fb-layout-tweaks-hover-expand-right-rail:not(.fb-layout-tweaks-right-rail-expanded) :is(.fb-layout-tweaks-right-rail, [data-pagelet="RightRail"], #right_rail_container):not([role="dialog"] *) :is(h1, h2, h3, [role="heading"],
+  div:has(> :is(h1, h2, h3, [role="heading"])),
+  span:has(> :is(h1, h2, h3, [role="heading"]))):not(:has(svg, img, [role="img"], i)) :is(span, a, [role="button"]) {
   opacity: 0 !important;
   color: transparent !important;
   display: block !important;
@@ -202,22 +226,40 @@ html.fb-layout-tweaks-hover-expand-right-rail.fb-layout-tweaks-right-rail-expand
   transition: var(--fb-lt-text-fade-in) !important;
 }
 
+/* Expanded: Restore text container blocks smoothly */
+html.fb-layout-tweaks-hover-expand-left-rail.fb-layout-tweaks-rail-expanded :is(.fb-layout-tweaks-left-rail, [data-pagelet="LeftRail"]) :is(a, [role="button"]) div:not(:has(svg, img, i, [role="img"])):has(span),
+html.fb-layout-tweaks-hover-expand-right-rail.fb-layout-tweaks-rail-expanded :is(.fb-layout-tweaks-right-rail, [data-pagelet="RightRail"], #right_rail_container):not([role="dialog"] *) :is(a, [role="button"]) div:not(:has(svg, img, i, [role="img"])):has(span) {
+  opacity: 1 !important;
+  max-width: none !important;
+  width: auto !important;
+  flex: 1 1 auto !important;
+  overflow: visible !important;
+  transition: var(--fb-lt-text-fade-in) !important;
+}
+
 /* Expanded: Maintain natural section heading height */
-html.fb-layout-tweaks-hover-expand-left-rail.fb-layout-tweaks-rail-expanded :is(.fb-layout-tweaks-left-rail, [data-pagelet="LeftRail"]) :is(h2, h3, [role="heading"],
-  div:has(> :is(h2, h3, [role="heading"]))):not(:has(svg, img, [role="img"], i)),
-html.fb-layout-tweaks-hover-expand-right-rail.fb-layout-tweaks-right-rail-expanded :is(.fb-layout-tweaks-right-rail, [data-pagelet="RightRail"], #right_rail_container):not([role="dialog"] *) :is(h2, h3, [role="heading"],
-  div:has(> :is(h2, h3, [role="heading"]))):not(:has(svg, img, [role="img"], i)) {
+html.fb-layout-tweaks-hover-expand-left-rail.fb-layout-tweaks-rail-expanded :is(.fb-layout-tweaks-left-rail, [data-pagelet="LeftRail"]) :is(h1, h2, h3, [role="heading"],
+  div:has(> :is(h1, h2, h3, [role="heading"])),
+  span:has(> :is(h1, h2, h3, [role="heading"]))):not(:has(svg, img, [role="img"], i)),
+html.fb-layout-tweaks-hover-expand-right-rail.fb-layout-tweaks-rail-expanded :is(.fb-layout-tweaks-right-rail, [data-pagelet="RightRail"], #right_rail_container):not([role="dialog"] *) :is(h1, h2, h3, [role="heading"],
+  div:has(> :is(h1, h2, h3, [role="heading"])),
+  span:has(> :is(h1, h2, h3, [role="heading"]))):not(:has(svg, img, [role="img"], i)) {
   white-space: nowrap !important;
   overflow: visible !important;
   box-sizing: border-box !important;
 }
 
 /* Expanded: Fade in section heading text and action buttons smoothly */
-html.fb-layout-tweaks-hover-expand-left-rail.fb-layout-tweaks-rail-expanded :is(.fb-layout-tweaks-left-rail, [data-pagelet="LeftRail"]) :is(h2, h3, [role="heading"],
-  div:has(> :is(h2, h3, [role="heading"]))):not(:has(svg, img, [role="img"], i)) :is(span, a, [role="button"]),
-html.fb-layout-tweaks-hover-expand-right-rail.fb-layout-tweaks-right-rail-expanded :is(.fb-layout-tweaks-right-rail, [data-pagelet="RightRail"], #right_rail_container):not([role="dialog"] *) :is(h2, h3, [role="heading"],
-  div:has(> :is(h2, h3, [role="heading"]))):not(:has(svg, img, [role="img"], i)) :is(span, a, [role="button"]) {
+html.fb-layout-tweaks-hover-expand-left-rail.fb-layout-tweaks-rail-expanded :is(.fb-layout-tweaks-left-rail, [data-pagelet="LeftRail"]) :is(h1, h2, h3, [role="heading"]):not(:has(svg, img, [role="img"], i)),
+html.fb-layout-tweaks-hover-expand-left-rail.fb-layout-tweaks-rail-expanded :is(.fb-layout-tweaks-left-rail, [data-pagelet="LeftRail"]) :is(h1, h2, h3, [role="heading"],
+  div:has(> :is(h1, h2, h3, [role="heading"])),
+  span:has(> :is(h1, h2, h3, [role="heading"]))):not(:has(svg, img, [role="img"], i)) :is(span, a, [role="button"]),
+html.fb-layout-tweaks-hover-expand-right-rail.fb-layout-tweaks-rail-expanded :is(.fb-layout-tweaks-right-rail, [data-pagelet="RightRail"], #right_rail_container):not([role="dialog"] *) :is(h1, h2, h3, [role="heading"]):not(:has(svg, img, [role="img"], i)),
+html.fb-layout-tweaks-hover-expand-right-rail.fb-layout-tweaks-rail-expanded :is(.fb-layout-tweaks-right-rail, [data-pagelet="RightRail"], #right_rail_container):not([role="dialog"] *) :is(h1, h2, h3, [role="heading"],
+  div:has(> :is(h1, h2, h3, [role="heading"])),
+  span:has(> :is(h1, h2, h3, [role="heading"]))):not(:has(svg, img, [role="img"], i)) :is(span, a, [role="button"]) {
   opacity: 1 !important;
+  color: inherit !important;
   overflow: visible !important;
   pointer-events: auto !important;
   transition: var(--fb-lt-text-fade-in) !important;
