@@ -489,3 +489,38 @@ html.fb-layout-tweaks-hide-right-metaai :is(.fb-layout-tweaks-right-rail, [data-
 html.fb-layout-tweaks-hide-right-metaai .fb-layout-tweaks-hide-right-metaai-node {
   display: none !important;
 }
+
+/* ==========================================================================
+   Main Feed Centering (gated by centerMainFeed setting)
+   Compensates asymmetric in-flow rail spacers so the feed stays on the
+   viewport horizontal center. Expanded drawers are fixed overlays (flow
+   spacer stays 72px), so compensation keys only on the collapsed-spacer
+   classes, never on the expanded overlay state. Translate is scoped to
+   wide screens where both rails are visible.
+   ========================================================================== */
+html.fb-layout-tweaks-center-main-feed :is([role="main"], [data-pagelet="Feed"]) {
+  margin-inline: auto !important;
+  justify-self: center !important;
+}
+
+@media (min-width: 1260px) {
+  /* Both rails collapsed (72 / 72): symmetric, no compensation */
+  html.fb-layout-tweaks-center-main-feed.fb-layout-tweaks-hover-expand-left-rail.fb-layout-tweaks-hover-expand-right-rail :is([role="main"], [data-pagelet="Feed"]) {
+    transform: none !important;
+  }
+
+  /* Left native + right collapsed: shift left by half the width difference */
+  html.fb-layout-tweaks-center-main-feed:not(.fb-layout-tweaks-hover-expand-left-rail).fb-layout-tweaks-hover-expand-right-rail :is([role="main"], [data-pagelet="Feed"]) {
+    transform: translateX(calc((var(--fb-lt-rail-collapsed-width) - var(--fb-lt-left-rail-expanded-width)) / 2)) !important;
+  }
+
+  /* Left collapsed + right native: shift right by half the width difference */
+  html.fb-layout-tweaks-center-main-feed.fb-layout-tweaks-hover-expand-left-rail:not(.fb-layout-tweaks-hover-expand-right-rail) :is([role="main"], [data-pagelet="Feed"]) {
+    transform: translateX(calc((var(--fb-lt-right-rail-expanded-width) - var(--fb-lt-rail-collapsed-width)) / 2)) !important;
+  }
+
+  /* Both rails native: shift by half the native width difference */
+  html.fb-layout-tweaks-center-main-feed:not(.fb-layout-tweaks-hover-expand-left-rail):not(.fb-layout-tweaks-hover-expand-right-rail) :is([role="main"], [data-pagelet="Feed"]) {
+    transform: translateX(calc((var(--fb-lt-right-rail-expanded-width) - var(--fb-lt-left-rail-expanded-width)) / 2)) !important;
+  }
+}

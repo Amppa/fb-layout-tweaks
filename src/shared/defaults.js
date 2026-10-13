@@ -3,7 +3,7 @@
  * Single source of truth shared by the service worker (via importScripts)
  * and extension pages (via <script> tag).
  *
- * Settings are authored in three section groups (TOP / LEFT / RIGHT) and
+ * Settings are authored in four section groups (TOP / LEFT / RIGHT / MAIN) and
  * flattened into DEFAULT_SETTINGS. Storage and all consumers use the flat
  * shape, so grouping is organizational only (no migration needed).
  */
@@ -56,12 +56,18 @@ self.RIGHT_SETTINGS = {
   showRightMetaAI: false
 };
 
+self.MAIN_SETTINGS = {
+  // Section: Main Feed (true = keep feed centered when sidebars are asymmetric)
+  centerMainFeed: true
+};
+
 self.DEFAULT_SETTINGS = {
   enabled: true,
   sidebarScope: 'homeOnly',
   ...self.TOP_SETTINGS,
   ...self.LEFT_SETTINGS,
-  ...self.RIGHT_SETTINGS
+  ...self.RIGHT_SETTINGS,
+  ...self.MAIN_SETTINGS
 };
 
 self.INVERTED_KEYS = new Set(['showRightSponsored', 'showRightBirthdays', 'showRightMetaAI']);

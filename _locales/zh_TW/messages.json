@@ -49,6 +49,9 @@
   "cardRightSidebar": {
     "message": "右側欄"
   },
+  "cardMainFeed": {
+    "message": "中間區塊"
+  },
   "cardGlobalSettings": {
     "message": "全域設定"
   },
@@ -188,7 +191,13 @@
     "message": "隱藏右側欄的生日區塊"
   },
   "descHideRightMetaAI": {
-    "message": "隱藏右側欄的 Meta AI 聊天"
+    "message": "隱藏右側欄聊天室中的 Meta AI 按鈕"
+  },
+  "itemCenterMainFeed": {
+    "message": "置中"
+  },
+  "descCenterMainFeed": {
+    "message": "當兩側欄寬度不對稱時，保持中間區塊（動態時報）置中"
   },
   "itemLanguage": {
     "message": "語言"

@@ -49,6 +49,9 @@
   "cardRightSidebar": {
     "message": "Right Sidebar"
   },
+  "cardMainFeed": {
+    "message": "Main Feed"
+  },
   "cardGlobalSettings": {
     "message": "Global Settings"
   },
@@ -189,6 +192,12 @@
   },
   "descHideRightMetaAI": {
     "message": "Hide the Meta AI chat in the right sidebar"
+  },
+  "itemCenterMainFeed": {
+    "message": "Keep Feed Centered"
+  },
+  "descCenterMainFeed": {
+    "message": "Keep the feed horizontally centered when sidebars are asymmetric"
   },
   "itemLanguage": {
     "message": "Language"

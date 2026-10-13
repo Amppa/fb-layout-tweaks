@@ -47,6 +47,9 @@
     root.classList.toggle('fb-layout-tweaks-hover-expand-left-rail', isHoverExpand);
     root.classList.toggle('fb-layout-tweaks-hover-expand-right-rail', trimRightRail);
 
+    const isCenterMainFeed = isSidebarActive && Boolean(settings.centerMainFeed);
+    root.classList.toggle('fb-layout-tweaks-center-main-feed', isCenterMainFeed);
+
     if (!isHoverExpand && isRailExpanded) {
       setRailExpanded(false);
     }
