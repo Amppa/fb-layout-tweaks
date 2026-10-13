@@ -139,12 +139,12 @@ test('isFeedPage correctly identifies feeds and home URLs vs non-feed pages', ()
   assert.strictEqual(isFeedPage('/home.php'), true);
   assert.strictEqual(isFeedPage('/feed'), true);
   assert.strictEqual(isFeedPage('/feed/'), true);
-  assert.strictEqual(isFeedPage('/groups/feed'), true);
-  assert.strictEqual(isFeedPage('/groups/feed/'), true);
-  assert.strictEqual(isFeedPage('/friends/feed'), true);
-  assert.strictEqual(isFeedPage('/friends/feed/'), true);
 
   // Non-feed pages (Groups, Pages, Marketplace, Watch, Profile - Should return false)
+  assert.strictEqual(isFeedPage('/groups/feed'), false);
+  assert.strictEqual(isFeedPage('/groups/feed/'), false);
+  assert.strictEqual(isFeedPage('/friends/feed'), false);
+  assert.strictEqual(isFeedPage('/friends/feed/'), false);
   assert.strictEqual(isFeedPage('/groups/12345678/'), false);
   assert.strictEqual(isFeedPage('/groups/react_developers/'), false);
   assert.strictEqual(isFeedPage('/groups/mygroup/permalink/999/'), false);

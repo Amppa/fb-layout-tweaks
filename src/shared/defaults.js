@@ -82,8 +82,6 @@ self.isFeedPage = function(pathname) {
 
   if (normalized === '/' || normalized === '/index.php' || normalized === '/home.php') return true;
   if (normalized === '/feed' || normalized.startsWith('/feed/')) return true;
-  if (normalized === '/groups/feed' || normalized.startsWith('/groups/feed/')) return true;
-  if (normalized === '/friends/feed' || normalized.startsWith('/friends/feed/')) return true;
 
   return false;
 };
