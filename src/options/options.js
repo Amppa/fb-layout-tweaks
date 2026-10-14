@@ -15,11 +15,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   const versionEl = document.getElementById('optionsVersion');
   if (versionEl) versionEl.textContent = chrome.runtime.getManifest().version;
 
-  const btnTopReset = document.getElementById('btnTopReset');
-  const btnTopHideAll = document.getElementById('btnTopHideAll');
-  const btnTopShowAll = document.getElementById('btnTopShowAll');
-
-  const btnLeftReset = document.getElementById('btnLeftReset');
+  const btnGlobalReset = document.getElementById('btnGlobalReset');
   const btnLeftHideAll = document.getElementById('btnLeftHideAll');
   const btnLeftShowAll = document.getElementById('btnLeftShowAll');
 
@@ -140,10 +136,10 @@ document.addEventListener('DOMContentLoaded', async () => {
   const VALID_FEED_WIDTHS = new Set(['default', 'w1000', 'w1600', 'w50', 'w75', 'w100']);
   const feedWidthSelect = document.getElementById('feedWidth');
   if (feedWidthSelect) {
-    const initWidth = settings.feedWidth;
-    feedWidthSelect.value = VALID_FEED_WIDTHS.has(initWidth) ? initWidth : 'default';
+    const initWidth = settings.feedWidth !== undefined ? settings.feedWidth : DEFAULTS.feedWidth;
+    feedWidthSelect.value = VALID_FEED_WIDTHS.has(initWidth) ? initWidth : (DEFAULTS.feedWidth || 'default');
     feedWidthSelect.addEventListener('change', async () => {
-      const val = VALID_FEED_WIDTHS.has(feedWidthSelect.value) ? feedWidthSelect.value : 'default';
+      const val = VALID_FEED_WIDTHS.has(feedWidthSelect.value) ? feedWidthSelect.value : (DEFAULTS.feedWidth || 'default');
       const { settings: current } = await chrome.storage.local.get('settings');
       await chrome.storage.local.set({ settings: { ...current, feedWidth: val } });
     });
@@ -153,10 +149,10 @@ document.addEventListener('DOMContentLoaded', async () => {
   const VALID_FEED_FONT_SIZES = new Set(['default', 'f150', 'f200', 'f300']);
   const feedFontSizeSelect = document.getElementById('feedFontSize');
   if (feedFontSizeSelect) {
-    const initFontSize = settings.feedFontSize;
-    feedFontSizeSelect.value = VALID_FEED_FONT_SIZES.has(initFontSize) ? initFontSize : 'default';
+    const initFontSize = settings.feedFontSize !== undefined ? settings.feedFontSize : DEFAULTS.feedFontSize;
+    feedFontSizeSelect.value = VALID_FEED_FONT_SIZES.has(initFontSize) ? initFontSize : (DEFAULTS.feedFontSize || 'default');
     feedFontSizeSelect.addEventListener('change', async () => {
-      const val = VALID_FEED_FONT_SIZES.has(feedFontSizeSelect.value) ? feedFontSizeSelect.value : 'default';
+      const val = VALID_FEED_FONT_SIZES.has(feedFontSizeSelect.value) ? feedFontSizeSelect.value : (DEFAULTS.feedFontSize || 'default');
       const { settings: current } = await chrome.storage.local.get('settings');
       await chrome.storage.local.set({ settings: { ...current, feedFontSize: val } });
     });
@@ -185,10 +181,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   }
 
-  const topKeys = ['showTopReels', 'showTopMarketplace', 'showTopGroups', 'showTopGaming'];
   const leftKeys = Object.keys(switches).filter(k => k.startsWith('showLeft'));
 
-  // Section-Level Quick Actions (Top Navigation & Left Sidebar)
+  // Section-Level Quick Actions (Left Sidebar)
   async function applySectionValues(keys, value) {
     const { settings: current } = await chrome.storage.local.get('settings');
     const updated = { ...current };
@@ -200,43 +195,59 @@ document.addEventListener('DOMContentLoaded', async () => {
     sortAllPillGrids();
   }
 
-  async function resetSection(keys, extraPatch = {}) {
-    const { settings: current } = await chrome.storage.local.get('settings');
-    const updated = { ...(current || {}), ...extraPatch };
-    keys.forEach(key => {
-      const defVal = DEFAULTS[key] !== undefined ? Boolean(DEFAULTS[key]) : true;
-      if (switches[key]) switches[key].checked = defVal;
-      updated[key] = defVal;
-    });
-    await chrome.storage.local.set({ settings: updated });
-    sortAllPillGrids();
-  }
-
-  // Top Navigation Actions (Hide All = unchecked, Show All = checked)
-  if (btnTopReset) {
-    btnTopReset.addEventListener('click', () => resetSection(topKeys));
-  }
-
-  if (btnTopHideAll) {
-    btnTopHideAll.addEventListener('click', () => applySectionValues(topKeys, false));
-  }
-
-  if (btnTopShowAll) {
-    btnTopShowAll.addEventListener('click', () => applySectionValues(topKeys, true));
-  }
-
   // Left Sidebar Actions
-
-  if (btnLeftReset) {
-    btnLeftReset.addEventListener('click', () => resetSection(leftKeys));
-  }
-
   if (btnLeftHideAll) {
     btnLeftHideAll.addEventListener('click', () => applySectionValues(leftKeys, false));
   }
 
   if (btnLeftShowAll) {
     btnLeftShowAll.addEventListener('click', () => applySectionValues(leftKeys, true));
+  }
+
+  // Global Settings: Restore Recommended Defaults
+  if (btnGlobalReset) {
+    btnGlobalReset.addEventListener('click', async () => {
+      const confirmMsg = getMsg('confirmResetAll') || 'Are you sure you want to restore all settings to recommended defaults?';
+      if (!confirm(confirmMsg)) return;
+
+      const { settings: cur } = await chrome.storage.local.get('settings');
+      const preservedLocale = cur?.locale || 'en';
+
+      const updated = {
+        ...DEFAULTS,
+        locale: preservedLocale
+      };
+
+      for (const [key, checkbox] of Object.entries(switches)) {
+        if (checkbox) {
+          const defVal = DEFAULTS[key] !== undefined ? DEFAULTS[key] : true;
+          checkbox.checked = toUIChecked(key, defVal);
+        }
+      }
+
+      if (sidebarScopeSelect) {
+        sidebarScopeSelect.value = DEFAULTS.sidebarScope || 'homeOnly';
+      }
+      if (typeof feedWidthSelect !== 'undefined' && feedWidthSelect) {
+        feedWidthSelect.value = DEFAULTS.feedWidth || 'default';
+      }
+      if (typeof feedFontSizeSelect !== 'undefined' && feedFontSizeSelect) {
+        feedFontSizeSelect.value = DEFAULTS.feedFontSize || 'default';
+      }
+      updateMasterUI(DEFAULTS.enabled !== false);
+
+      await chrome.storage.local.set({ settings: updated });
+      sortAllPillGrids();
+
+      const originalText = getMsg('btnRecommended') || 'Recommended';
+      const restoredText = getMsg('feedbackRestored') || 'Restored ✓';
+      btnGlobalReset.textContent = restoredText;
+      btnGlobalReset.disabled = true;
+      setTimeout(() => {
+        btnGlobalReset.textContent = originalText;
+        btnGlobalReset.disabled = false;
+      }, 1500);
+    });
   }
 
   // Live sync states when popup (or another context) changes settings.
@@ -251,10 +262,10 @@ document.addEventListener('DOMContentLoaded', async () => {
       sidebarScopeSelect.value = next.sidebarScope;
     }
     if (typeof feedWidthSelect !== 'undefined' && feedWidthSelect && next.feedWidth !== undefined) {
-      feedWidthSelect.value = VALID_FEED_WIDTHS.has(next.feedWidth) ? next.feedWidth : 'default';
+      feedWidthSelect.value = VALID_FEED_WIDTHS.has(next.feedWidth) ? next.feedWidth : (DEFAULTS.feedWidth || 'default');
     }
     if (typeof feedFontSizeSelect !== 'undefined' && feedFontSizeSelect && next.feedFontSize !== undefined) {
-      feedFontSizeSelect.value = VALID_FEED_FONT_SIZES.has(next.feedFontSize) ? next.feedFontSize : 'default';
+      feedFontSizeSelect.value = VALID_FEED_FONT_SIZES.has(next.feedFontSize) ? next.feedFontSize : (DEFAULTS.feedFontSize || 'default');
     }
     sortAllPillGrids();
   });

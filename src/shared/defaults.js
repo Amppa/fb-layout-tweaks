@@ -44,7 +44,7 @@ self.LEFT_SETTINGS = {
   showLeftMetaQuest: false,
   showLeftFundraisers: false,
   showLeftOrdersPayments: false,
-  hoverExpandLeftRail: false
+  hoverExpandLeftRail: true
 };
 
 self.RIGHT_SETTINGS = {
@@ -62,9 +62,9 @@ self.MAIN_SETTINGS = {
   // Section: Main Feed (true = keep feed centered when sidebars are asymmetric)
   centerMainFeed: true,
   // Feed width: 'default' (680px) | 'w1000' | 'w1600' | 'w50' | 'w75' | 'w100'
-  feedWidth: 'default',
+  feedWidth: 'w75',
   // Feed font size: 'default' (100%) | 'f150' | 'f200' | 'f300'
-  feedFontSize: 'default'
+  feedFontSize: 'f150'
 };
 
 self.DEFAULT_SETTINGS = {

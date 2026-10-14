@@ -32,6 +32,61 @@
     <!-- UI Hide List -->
     <div class="features-list" id="uiCleanList">
 
+      <!-- Card: Global Settings -->
+      <section class="section-card">
+        <div class="card-header">
+          <div class="card-title" data-i18n="cardGlobalSettings">Global Settings</div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-meta">
+            <span class="feature-icon">🌐</span>
+            <div>
+              <div class="feature-title" data-i18n="itemLanguage">Language</div>
+              <div class="feature-desc" data-i18n="descLanguage">Choose display language</div>
+            </div>
+          </div>
+          <div class="feature-action">
+            <div class="lang-switch" id="langSwitch" title="Switch language" data-i18n-title="langToggleTitle">
+              <button type="button" class="lang-segment" data-lang="en">EN</button>
+              <button type="button" class="lang-segment" data-lang="zh_TW">繁中</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Feature Item: Sidebar Scope Dropdown -->
+        <div class="feature-item">
+          <div class="feature-meta">
+            <span class="feature-icon">🎯</span>
+            <div>
+              <div class="feature-title" data-i18n="itemSidebarScope">Sidebar Scope</div>
+              <div class="feature-desc" data-i18n="descSidebarScope">Choose which pages apply sidebar minimization and
+                hiding</div>
+            </div>
+          </div>
+          <div class="feature-action">
+            <select id="sidebarScope" class="select-dropdown" aria-label="Select sidebar scope">
+              <option value="homeOnly" data-i18n="scopeHomeOnly">Feeds & Home Only</option>
+              <option value="global" data-i18n="scopeGlobal">All Facebook Pages</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Feature Item: Recommended Defaults Button -->
+        <div class="feature-item">
+          <div class="feature-meta">
+            <span class="feature-icon">✨</span>
+            <div>
+              <div class="feature-title" data-i18n="itemRecommendedDefaults">Recommended Defaults</div>
+              <div class="feature-desc" data-i18n="descRecommendedDefaults">Restore all settings to recommended defaults</div>
+            </div>
+          </div>
+          <div class="feature-action">
+            <button type="button" class="btn-action" id="btnGlobalReset" data-i18n="btnRecommended" data-i18n-title="btnGlobalResetTitle"
+              title="Restore all settings to recommended defaults">Recommended</button>
+          </div>
+        </div>
+      </section>
+
       <!-- Card: Top Navigation Items -->
       <section class="section-card">
 
@@ -44,12 +99,6 @@
         <div class="group-header">
           <div class="group-title" data-i18n="groupTopNav">Top Bar Item Settings</div>
           <div class="group-actions">
-            <button class="btn-action" id="btnTopReset" data-i18n="btnRecommended" data-i18n-title="btnTopResetTitle"
-              title="Restore recommended top navigation defaults">Recommended</button>
-            <button class="btn-action" id="btnTopHideAll" data-i18n="btnHideAll" data-i18n-title="btnTopHideAllTitle"
-              title="Hide all top navigation items">Hide All</button>
-            <button class="btn-action" id="btnTopShowAll" data-i18n="btnShowAll" data-i18n-title="btnTopShowAllTitle"
-              title="Show all top navigation items">Show All</button>
             <label class="switch">
               <input type="checkbox" id="trimTopNav" aria-label="Toggle Top Navigation section">
               <span class="slider round"></span>
@@ -100,8 +149,6 @@
         <div class="group-header">
           <div class="group-title" data-i18n="groupLeftSidebar">Left Sidebar Item Settings</div>
           <div class="group-actions">
-            <button class="btn-action" id="btnLeftReset" data-i18n="btnRecommended" data-i18n-title="btnLeftResetTitle"
-              title="Restore recommended left sidebar defaults">Recommended</button>
             <button class="btn-action" id="btnLeftHideAll" data-i18n="btnHideAll" data-i18n-title="btnLeftHideAllTitle"
               title="Hide all left sidebar items">Hide All</button>
             <button class="btn-action" id="btnLeftShowAll" data-i18n="btnShowAll" data-i18n-title="btnLeftShowAllTitle"
@@ -395,45 +442,6 @@
         </div>
       </section>
 
-      <!-- Card: Global Settings -->
-      <section class="section-card">
-        <div class="card-header">
-          <div class="card-title" data-i18n="cardGlobalSettings">Global Settings</div>
-        </div>
-        <div class="feature-item">
-          <div class="feature-meta">
-            <span class="feature-icon">🌐</span>
-            <div>
-              <div class="feature-title" data-i18n="itemLanguage">Language</div>
-              <div class="feature-desc" data-i18n="descLanguage">Choose display language</div>
-            </div>
-          </div>
-          <div class="feature-action">
-            <div class="lang-switch" id="langSwitch" title="Switch language" data-i18n-title="langToggleTitle">
-              <button type="button" class="lang-segment" data-lang="en">EN</button>
-              <button type="button" class="lang-segment" data-lang="zh_TW">繁中</button>
-            </div>
-          </div>
-        </div>
-
-        <!-- Feature Item: Sidebar Scope Dropdown -->
-        <div class="feature-item">
-          <div class="feature-meta">
-            <span class="feature-icon">🎯</span>
-            <div>
-              <div class="feature-title" data-i18n="itemSidebarScope">Sidebar Scope</div>
-              <div class="feature-desc" data-i18n="descSidebarScope">Choose which pages apply sidebar minimization and
-                hiding</div>
-            </div>
-          </div>
-          <div class="feature-action">
-            <select id="sidebarScope" class="select-dropdown" aria-label="Select sidebar scope">
-              <option value="homeOnly" data-i18n="scopeHomeOnly">Feeds & Home Only</option>
-              <option value="global" data-i18n="scopeGlobal">All Facebook Pages</option>
-            </select>
-          </div>
-        </div>
-      </section>
 
     </div>
 

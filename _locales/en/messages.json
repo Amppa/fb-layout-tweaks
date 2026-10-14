@@ -79,17 +79,8 @@
   "btnShowAll": {
     "message": "Show All"
   },
-  "btnTopResetTitle": {
-    "message": "Restore recommended top navigation defaults"
-  },
-  "btnTopHideAllTitle": {
-    "message": "Hide all top navigation items"
-  },
-  "btnTopShowAllTitle": {
-    "message": "Show all top navigation items"
-  },
-  "btnLeftResetTitle": {
-    "message": "Restore recommended left sidebar defaults"
+  "btnGlobalResetTitle": {
+    "message": "Restore all settings to recommended defaults"
   },
   "btnLeftHideAllTitle": {
     "message": "Hide all left sidebar items"
@@ -261,5 +252,17 @@
   },
   "scopeGlobal": {
     "message": "All Facebook Pages"
+  },
+  "itemRecommendedDefaults": {
+    "message": "Recommended Defaults"
+  },
+  "descRecommendedDefaults": {
+    "message": "Restore all settings to recommended defaults"
+  },
+  "confirmResetAll": {
+    "message": "Are you sure you want to restore all settings to recommended defaults?"
+  },
+  "feedbackRestored": {
+    "message": "Restored ✓"
   }
 }

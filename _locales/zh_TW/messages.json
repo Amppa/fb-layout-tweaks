@@ -79,17 +79,8 @@
   "btnShowAll": {
     "message": "全部顯示"
   },
-  "btnTopResetTitle": {
-    "message": "還原頂部導覽推薦預設值"
-  },
-  "btnTopHideAllTitle": {
-    "message": "隱藏所有頂部導覽項目"
-  },
-  "btnTopShowAllTitle": {
-    "message": "顯示所有頂部導覽項目"
-  },
-  "btnLeftResetTitle": {
-    "message": "還原左側邊欄推薦預設值"
+  "btnGlobalResetTitle": {
+    "message": "把所有參數還原成預設推薦狀態"
   },
   "btnLeftHideAllTitle": {
     "message": "隱藏所有左側邊欄項目"
@@ -261,5 +252,17 @@
   },
   "scopeGlobal": {
     "message": "Facebook 全域"
+  },
+  "itemRecommendedDefaults": {
+    "message": "推薦預設設定"
+  },
+  "descRecommendedDefaults": {
+    "message": "把所有參數還原成預設推薦狀態"
+  },
+  "confirmResetAll": {
+    "message": "確定要將所有參數還原成預設推薦狀態嗎？"
+  },
+  "feedbackRestored": {
+    "message": "已還原 ✓"
   }
 }
