@@ -51,7 +51,7 @@ git push origin v1.2.1
 - **Safe Read**: Always provide fallbacks: `chrome.storage.local.get({ settings: DEFAULT_SETTINGS }, callback)`.
 - **Granular Write**: Write merged updates directly to the `settings` object in `chrome.storage.local`.
 - **Live Sync**: Rely on `chrome.storage.onChanged` across options, popup, and content scripts instead of point-to-point runtime messaging.
-- **Key-to-Class Mapping**: Per-item settings keys use `show*` convention (e.g. `showLeftGaming`, `showTopReels`). Section masters use `trim*` convention (`trimTopNav`, `trimLeftItems`); a trimmed-off section restores native items regardless of pills. Content script maps `false` values to `fb-layout-tweaks-hide-*` root classes via `getUiCleanClassName(key)`:
+- **Key-to-Class Mapping**: Per-item settings keys use `show*` convention (e.g. `showLeftGaming`, `showTopReels`). Section masters use `trim*` convention (`trimTopNav`, `trimLeftItems`, `trimRightRail`, `trimMainFeed`); a trimmed-off section restores native items regardless of granular settings. Content script maps `false` values to `fb-layout-tweaks-hide-*` root classes via `getUiCleanClassName(key)`:
   - `showLeftMetaAI` -> `fb-layout-tweaks-hide-left-metaai`
   - General pattern: `show*` -> `hide*` -> kebab-case (`showLeftGaming` -> `fb-layout-tweaks-hide-left-gaming`).
 
@@ -96,8 +96,9 @@ When introducing a new setting or navigation item to hide, update in this order:
 3. [ ] **Options UI** (`src/options/options.html` + `src/options/options.js`):
    - Add pill `<label class="pill">` with `<input type="checkbox" id="show..." aria-label="...">` and `data-i18n`.
    - *Top Nav boundary*: If adding a **Top Navigation** item, also register the key in the `topKeys` array in `src/options/options.js` so section quick actions (`Recommended`, `Hide All`, `Show All`) include it.
+   - *Dropdown/Enum boundary*: If adding a `<select>` enum (e.g. `sidebarScope`, `feedWidth`, `feedFontSize`), bind init + `change` persistence like `sidebarScope`, whitelist stored values with fallback to the default, and mirror the value in the `chrome.storage.onChanged` live-sync handler.
 4. [ ] **Localization** (`_locales/en/messages.json` & `_locales/zh_TW/messages.json`): Add bilingual translations for the item label.
-5. [ ] **Class Mapping** (`src/content/content.js`): If the key name requires special hyphenation, verify `getUiCleanClassName(key)` resolves to the expected CSS class.
+5. [ ] **Class Mapping** (`src/content/content.js`): If the key name requires special hyphenation, verify `getUiCleanClassName(key)` resolves to the expected CSS class. Non-`show*` keys (booleans like `centerMainFeed`, enums like `feedWidth`/`feedFontSize`) toggle explicit `fb-layout-tweaks-*` tokens gated by `isSidebarActive`.
 6. [ ] **Tests** (`tests/defaults.test.js` / `tests/test.ps1`): Run unit tests to confirm defaults, options HTML IDs, aria-labels, and i18n keys are 100% synchronized.
 
 ---

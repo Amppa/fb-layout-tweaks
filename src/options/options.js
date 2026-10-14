@@ -136,6 +136,32 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   }
 
+  // Handle Feed Width select (enum with whitelist fallback)
+  const VALID_FEED_WIDTHS = new Set(['default', 'w1000', 'w1600', 'w50', 'w75', 'w100']);
+  const feedWidthSelect = document.getElementById('feedWidth');
+  if (feedWidthSelect) {
+    const initWidth = settings.feedWidth;
+    feedWidthSelect.value = VALID_FEED_WIDTHS.has(initWidth) ? initWidth : 'default';
+    feedWidthSelect.addEventListener('change', async () => {
+      const val = VALID_FEED_WIDTHS.has(feedWidthSelect.value) ? feedWidthSelect.value : 'default';
+      const { settings: current } = await chrome.storage.local.get('settings');
+      await chrome.storage.local.set({ settings: { ...current, feedWidth: val } });
+    });
+  }
+
+  // Handle Feed Font Size select (enum with whitelist fallback)
+  const VALID_FEED_FONT_SIZES = new Set(['default', 'f150', 'f200', 'f300']);
+  const feedFontSizeSelect = document.getElementById('feedFontSize');
+  if (feedFontSizeSelect) {
+    const initFontSize = settings.feedFontSize;
+    feedFontSizeSelect.value = VALID_FEED_FONT_SIZES.has(initFontSize) ? initFontSize : 'default';
+    feedFontSizeSelect.addEventListener('change', async () => {
+      const val = VALID_FEED_FONT_SIZES.has(feedFontSizeSelect.value) ? feedFontSizeSelect.value : 'default';
+      const { settings: current } = await chrome.storage.local.get('settings');
+      await chrome.storage.local.set({ settings: { ...current, feedFontSize: val } });
+    });
+  }
+
   // Handle Master toggle
   if (masterToggle) {
     masterToggle.addEventListener('change', async () => {
@@ -223,6 +249,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
     if (sidebarScopeSelect && typeof next.sidebarScope === 'string') {
       sidebarScopeSelect.value = next.sidebarScope;
+    }
+    if (typeof feedWidthSelect !== 'undefined' && feedWidthSelect && next.feedWidth !== undefined) {
+      feedWidthSelect.value = VALID_FEED_WIDTHS.has(next.feedWidth) ? next.feedWidth : 'default';
+    }
+    if (typeof feedFontSizeSelect !== 'undefined' && feedFontSizeSelect && next.feedFontSize !== undefined) {
+      feedFontSizeSelect.value = VALID_FEED_FONT_SIZES.has(next.feedFontSize) ? next.feedFontSize : 'default';
     }
     sortAllPillGrids();
   });

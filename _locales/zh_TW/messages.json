@@ -22,6 +22,9 @@
   "popupMinimizeRight": {
     "message": "右側欄最小化"
   },
+  "popupEnlargeFeed": {
+    "message": "中間區塊放大"
+  },
   "popupDetailSettings": {
     "message": "詳細項目設定"
   },
@@ -198,6 +201,48 @@
   },
   "descCenterMainFeed": {
     "message": "當兩側欄寬度不對稱時，保持中間區塊（動態時報）置中"
+  },
+  "itemFeedWidth": {
+    "message": "貼文寬度"
+  },
+  "descFeedWidth": {
+    "message": "調整中間動態消息貼文的顯示寬度"
+  },
+  "optFeedWidthDefault": {
+    "message": "原始 (680px)"
+  },
+  "optFeedWidth1000": {
+    "message": "1000px"
+  },
+  "optFeedWidth1600": {
+    "message": "1600px"
+  },
+  "optFeedWidth50": {
+    "message": "50%"
+  },
+  "optFeedWidth75": {
+    "message": "75%"
+  },
+  "optFeedWidth100": {
+    "message": "100%"
+  },
+  "itemFeedFontSize": {
+    "message": "內文大小"
+  },
+  "descFeedFontSize": {
+    "message": "適度加大貼文與留言的文字，提升閱讀舒適度"
+  },
+  "optFeedFontDefault": {
+    "message": "原始 (100%)"
+  },
+  "optFeedFont150": {
+    "message": "150%"
+  },
+  "optFeedFont200": {
+    "message": "200%"
+  },
+  "optFeedFont300": {
+    "message": "300%"
   },
   "itemLanguage": {
     "message": "語言"

@@ -524,3 +524,82 @@ html.fb-layout-tweaks-center-main-feed :is([role="main"], [data-pagelet="Feed"])
     transform: translateX(calc((var(--fb-lt-right-rail-expanded-width) - var(--fb-lt-left-rail-expanded-width)) / 2)) !important;
   }
 }
+
+/* ==========================================================================
+   Feed Width: fixed px (1000 / 1600) or % (50 / 75 / 100)
+   Per-option cap in --fb-lt-feed-width; percent modes uncap (none). 50% / 75%
+   size only the single column child (depth 1) so % does not compound down
+   the chain; deeper levels stay 100% fill.
+   ========================================================================== */
+html.fb-layout-tweaks-feed-width-1000 { --fb-lt-feed-width: 1000px; }
+html.fb-layout-tweaks-feed-width-1600 { --fb-lt-feed-width: 1600px; }
+html.fb-layout-tweaks-feed-width-50,
+html.fb-layout-tweaks-feed-width-75,
+html.fb-layout-tweaks-feed-width-100 { --fb-lt-feed-width: none; }
+
+html[class*="fb-layout-tweaks-feed-width-"] :has(> :is([role="main"], [data-pagelet="Feed"])),
+html[class*="fb-layout-tweaks-feed-width-"] :is([role="main"], [data-pagelet="Feed"]) {
+  max-width: 100% !important;
+}
+html[class*="fb-layout-tweaks-feed-width-"] :is(div[role="feed"], [data-pagelet="Feed"]) {
+  max-width: var(--fb-lt-feed-width) !important;
+  margin-inline: auto !important;
+}
+html[class*="fb-layout-tweaks-feed-width-"] :is(div[role="feed"], [data-pagelet="Feed"], [role="main"]) > div,
+html[class*="fb-layout-tweaks-feed-width-"] div[data-pagelet^="FeedUnit"],
+html[class*="fb-layout-tweaks-feed-width-"] div[role="article"]:not([role="dialog"] *) {
+  max-width: var(--fb-lt-feed-width) !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+/* Ensure images and media inside widened feed fit container naturally */
+html[class*="fb-layout-tweaks-feed-width-"] :is(div[role="feed"], [data-pagelet="Feed"], [role="main"]) :is(img, video):not([role="dialog"] *) {
+  max-width: 100% !important;
+}
+/* Release the fixed-width lock on the feed column. Live DOM: [role="main"]
+   holds a single column child; the 680px lock sits 5 divs deep with no
+   semantic hook (hashed classes only, never bound). Widths 1-4 are already
+   full-fill sections, so widening depths 1-5 uniformly is a no-op for them
+   and releases only the lock. box-sizing keeps padded wrappers safe. */
+html[class*="fb-layout-tweaks-feed-width-"] [role="main"] > div,
+html[class*="fb-layout-tweaks-feed-width-"] [role="main"] > div > div,
+html[class*="fb-layout-tweaks-feed-width-"] [role="main"] > div > div > div,
+html[class*="fb-layout-tweaks-feed-width-"] [role="main"] > div > div > div > div,
+html[class*="fb-layout-tweaks-feed-width-"] [role="main"] > div > div > div > div > div {
+  width: 100% !important;
+  max-width: var(--fb-lt-feed-width) !important;
+  box-sizing: border-box !important;
+  margin-inline: auto !important;
+}
+/* 50%: size only the column child so % does not compound down the chain. */
+html.fb-layout-tweaks-feed-width-50 :is(div[role="feed"], [data-pagelet="Feed"], [role="main"]) > div,
+html.fb-layout-tweaks-feed-width-50 div[role="main"] > div {
+  width: 50% !important;
+  max-width: 50% !important;
+  margin-inline: auto !important;
+}
+/* 75%: size only the column child so % does not compound down the chain. */
+html.fb-layout-tweaks-feed-width-75 :is(div[role="feed"], [data-pagelet="Feed"], [role="main"]) > div,
+html.fb-layout-tweaks-feed-width-75 div[role="main"] > div {
+  width: 75% !important;
+  max-width: 75% !important;
+  margin-inline: auto !important;
+}
+
+/* ==========================================================================
+   Feed Font Size: Enlarge Body Text Only (div-only avoids nested span compounding)
+   Targets div[dir="auto"] body text; preserves headers, icons, and dialogs.
+   Multi-anchor scope: whichever feed container exists in the live DOM wins.
+   ========================================================================== */
+html.fb-layout-tweaks-feed-font-150 :is(div[role="feed"], [data-pagelet="Feed"], [role="main"]) div[dir="auto"]:not([role="dialog"] *) {
+  font-size: 1.5em !important;
+  line-height: 1.6 !important;
+}
+html.fb-layout-tweaks-feed-font-200 :is(div[role="feed"], [data-pagelet="Feed"], [role="main"]) div[dir="auto"]:not([role="dialog"] *) {
+  font-size: 2em !important;
+  line-height: 1.65 !important;
+}
+html.fb-layout-tweaks-feed-font-300 :is(div[role="feed"], [data-pagelet="Feed"], [role="main"]) div[dir="auto"]:not([role="dialog"] *) {
+  font-size: 3em !important;
+  line-height: 1.7 !important;
+}

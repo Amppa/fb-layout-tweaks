@@ -30,6 +30,7 @@
     const trimTopNav = isMasterEnabled && settings.trimTopNav !== false;
     const trimLeftItems = isSidebarActive && settings.trimLeftItems !== false;
     const trimRightRail = isSidebarActive && settings.trimRightRail !== false;
+    const trimMainFeed = isSidebarActive && settings.trimMainFeed !== false;
 
     for (const [key, value] of Object.entries(settings)) {
       if (!key.startsWith('show')) continue;
@@ -47,8 +48,19 @@
     root.classList.toggle('fb-layout-tweaks-hover-expand-left-rail', isHoverExpand);
     root.classList.toggle('fb-layout-tweaks-hover-expand-right-rail', trimRightRail);
 
-    const isCenterMainFeed = isSidebarActive && Boolean(settings.centerMainFeed);
+    const isCenterMainFeed = trimMainFeed && Boolean(settings.centerMainFeed);
     root.classList.toggle('fb-layout-tweaks-center-main-feed', isCenterMainFeed);
+
+    const feedWidth = trimMainFeed ? settings.feedWidth : 'default';
+    root.classList.toggle('fb-layout-tweaks-feed-width-1000', feedWidth === 'w1000');
+    root.classList.toggle('fb-layout-tweaks-feed-width-1600', feedWidth === 'w1600');
+    root.classList.toggle('fb-layout-tweaks-feed-width-50', feedWidth === 'w50');
+    root.classList.toggle('fb-layout-tweaks-feed-width-75', feedWidth === 'w75');
+    root.classList.toggle('fb-layout-tweaks-feed-width-100', feedWidth === 'w100');
+    const feedFontSize = trimMainFeed ? settings.feedFontSize : 'default';
+    root.classList.toggle('fb-layout-tweaks-feed-font-150', feedFontSize === 'f150');
+    root.classList.toggle('fb-layout-tweaks-feed-font-200', feedFontSize === 'f200');
+    root.classList.toggle('fb-layout-tweaks-feed-font-300', feedFontSize === 'f300');
 
     if (!isHoverExpand && isRailExpanded) {
       setRailExpanded(false);

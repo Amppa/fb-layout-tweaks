@@ -334,6 +334,10 @@
       <section class="section-card">
         <div class="card-header">
           <div class="card-title" data-i18n="cardMainFeed">Main Feed</div>
+          <label class="switch">
+            <input type="checkbox" id="trimMainFeed" aria-label="Toggle Enlarge Main Feed">
+            <span class="slider round"></span>
+          </label>
         </div>
         <div class="feature-item">
           <div class="feature-meta">
@@ -349,6 +353,44 @@
               <input type="checkbox" id="centerMainFeed" aria-label="Toggle Feed Centering">
               <span class="slider round"></span>
             </label>
+          </div>
+        </div>
+        <!-- Feature Item: Feed Width Dropdown -->
+        <div class="feature-item">
+          <div class="feature-meta">
+            <span class="feature-icon">↔️</span>
+            <div>
+              <div class="feature-title" data-i18n="itemFeedWidth">Feed Width</div>
+              <div class="feature-desc" data-i18n="descFeedWidth">Adjust the display width of posts in the main feed</div>
+            </div>
+          </div>
+          <div class="feature-action">
+            <select id="feedWidth" class="select-dropdown" aria-label="Select feed width">
+              <option value="default" data-i18n="optFeedWidthDefault">Original (680px)</option>
+              <option value="w1000" data-i18n="optFeedWidth1000">1000px</option>
+              <option value="w1600" data-i18n="optFeedWidth1600">1600px</option>
+              <option value="w50" data-i18n="optFeedWidth50">50%</option>
+              <option value="w75" data-i18n="optFeedWidth75">75%</option>
+              <option value="w100" data-i18n="optFeedWidth100">100%</option>
+            </select>
+          </div>
+        </div>
+        <!-- Feature Item: Feed Font Size Dropdown -->
+        <div class="feature-item">
+          <div class="feature-meta">
+            <span class="feature-icon">🔍</span>
+            <div>
+              <div class="feature-title" data-i18n="itemFeedFontSize">Post Text Size</div>
+              <div class="feature-desc" data-i18n="descFeedFontSize">Enlarge text in post bodies and comments for comfortable reading</div>
+            </div>
+          </div>
+          <div class="feature-action">
+            <select id="feedFontSize" class="select-dropdown" aria-label="Select post text size">
+              <option value="default" data-i18n="optFeedFontDefault">Original (100%)</option>
+              <option value="f150" data-i18n="optFeedFont150">150%</option>
+              <option value="f200" data-i18n="optFeedFont200">200%</option>
+              <option value="f300" data-i18n="optFeedFont300">300%</option>
+            </select>
           </div>
         </div>
       </section>

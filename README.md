@@ -4,8 +4,9 @@ A lightweight Chrome extension (Manifest V3) that declutters Facebook desktop na
 
 ## Key Features
 
-- **Declutter Navigation**: Hide unwanted items in both Top Navigation and Left Sidebar with instant zero-FOUC hiding.
-- **Icon-Only Sidebar**: Shrink the left sidebar into an icon-only rail (72px) that smoothly expands on hover without shifting the main feed.
+- **Declutter Navigation**: Hide unwanted items in Top Navigation, Left Sidebar, and Right Sidebar with instant zero-FOUC hiding.
+- **Icon-Only Sidebars**: Shrink left and right sidebars into 72px icon rails that expand smoothly on hover as non-pushing overlays.
+- **Customizable Main Feed**: Adjust feed post display width (1000px, 1600px, 50%, 75%, 100%), scale post body text size (150%, 200%, 300%), and maintain centered alignment.
 - **Instant Sync**: All settings update across open Facebook tabs in real time without reloading.
 
 ---
@@ -15,14 +16,17 @@ A lightweight Chrome extension (Manifest V3) that declutters Facebook desktop na
 ### 1. Toolbar Popup (Quick Controls)
 Click the extension icon in your Chrome toolbar to:
 - Turn the extension on or off with the master toggle.
-- Quickly toggle **Top Navigation Items**, **Left Sidebar Items**, or **Left Sidebar Icon-only** mode.
+- Quickly toggle **Minimize Left Sidebar** (icon-only rail).
+- Quickly toggle **Minimize Right Sidebar** (avatar rail).
+- Quickly toggle **Enlarge Main Feed**.
 - Click **Detailed Settings** to open the full options dashboard.
 
 ### 2. Options Page (Granular Settings)
 Right-click the extension icon and select **Options** (or click **Detailed Settings** from the popup):
 - **Top Navigation Items**: Show or hide individual items (Reels, Marketplace, Groups, Gaming).
-- **Left Sidebar Items**: Fine-tune 20+ sidebar shortcuts. Use **Recommended**, **Hide All**, or **Show All** to quickly batch-configure.
-- **Left Sidebar Behavior**: Toggle the icon-only hover expand mode.
+- **Left Sidebar Items & Behavior**: Fine-tune 20+ sidebar shortcuts and toggle icon-only hover expand mode.
+- **Right Sidebar Items & Behavior**: Hide Sponsored, Birthdays, Meta AI, and toggle avatar rail mode.
+- **Main Feed**: Toggle feed enlargement, keep feed centered, choose feed width (Original 680px, 1000px, 1600px, 50%, 75%, 100%), and scale text size (up to 300%).
 - **Language Switch**: Switch between English and Traditional Chinese (繁體中文).
 
 ---

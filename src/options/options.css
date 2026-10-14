@@ -132,6 +132,9 @@ body {
 
 /* Card Header */
 .card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   padding: 2px 4px 10px;
   border-bottom: 1px solid var(--divider);
   margin-bottom: 8px;

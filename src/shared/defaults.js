@@ -57,8 +57,14 @@ self.RIGHT_SETTINGS = {
 };
 
 self.MAIN_SETTINGS = {
+  // Section master (popup quick toggle, true = feed customization active)
+  trimMainFeed: true,
   // Section: Main Feed (true = keep feed centered when sidebars are asymmetric)
-  centerMainFeed: true
+  centerMainFeed: true,
+  // Feed width: 'default' (680px) | 'w1000' | 'w1600' | 'w50' | 'w75' | 'w100'
+  feedWidth: 'default',
+  // Feed font size: 'default' (100%) | 'f150' | 'f200' | 'f300'
+  feedFontSize: 'default'
 };
 
 self.DEFAULT_SETTINGS = {

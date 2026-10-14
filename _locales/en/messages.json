@@ -22,6 +22,9 @@
   "popupMinimizeRight": {
     "message": "Minimize Right Sidebar"
   },
+  "popupEnlargeFeed": {
+    "message": "Enlarge Main Feed"
+  },
   "popupDetailSettings": {
     "message": "Detailed Settings"
   },
@@ -198,6 +201,48 @@
   },
   "descCenterMainFeed": {
     "message": "Keep the feed horizontally centered when sidebars are asymmetric"
+  },
+  "itemFeedWidth": {
+    "message": "Feed Width"
+  },
+  "descFeedWidth": {
+    "message": "Adjust the display width of posts in the main feed"
+  },
+  "optFeedWidthDefault": {
+    "message": "Original (680px)"
+  },
+  "optFeedWidth1000": {
+    "message": "1000px"
+  },
+  "optFeedWidth1600": {
+    "message": "1600px"
+  },
+  "optFeedWidth50": {
+    "message": "50%"
+  },
+  "optFeedWidth75": {
+    "message": "75%"
+  },
+  "optFeedWidth100": {
+    "message": "100%"
+  },
+  "itemFeedFontSize": {
+    "message": "Post Text Size"
+  },
+  "descFeedFontSize": {
+    "message": "Enlarge text in post bodies and comments for comfortable reading"
+  },
+  "optFeedFontDefault": {
+    "message": "Original (100%)"
+  },
+  "optFeedFont150": {
+    "message": "150%"
+  },
+  "optFeedFont200": {
+    "message": "200%"
+  },
+  "optFeedFont300": {
+    "message": "300%"
   },
   "itemLanguage": {
     "message": "Language"

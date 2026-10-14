@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   if (versionEl) versionEl.textContent = chrome.runtime.getManifest().version;
 
   // Section quick toggles (ids match settings keys)
-  const sectionKeys = ['hoverExpandLeftRail', 'trimRightRail'];
+  const sectionKeys = ['hoverExpandLeftRail', 'trimRightRail', 'trimMainFeed'];
   const sectionToggles = {};
   sectionKeys.forEach(key => {
     sectionToggles[key] = document.getElementById(key);
