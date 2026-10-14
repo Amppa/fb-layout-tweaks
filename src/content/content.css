@@ -552,6 +552,17 @@ html[class*="fb-layout-tweaks-feed-width-"] div[role="article"]:not([role="dialo
   width: 100% !important;
   box-sizing: border-box !important;
 }
+/* Stories & Reels tray: uncap fixed 590px wrapper for hscroll carousels */
+html[class*="fb-layout-tweaks-feed-width-"] :is(div[role="feed"], [data-pagelet="Feed"]) div:has([data-type="hscroll-child"]),
+html[class*="fb-layout-tweaks-feed-width-"] :is(div[role="feed"], [data-pagelet="Feed"]) div:has([data-focus-target*="tray"]),
+html[class*="fb-layout-tweaks-feed-width-"] [role="main"] > div div:has([data-type="hscroll-child"]),
+html[class*="fb-layout-tweaks-feed-width-"] [role="main"] > div div:has([data-focus-target*="tray"]),
+html[class*="fb-layout-tweaks-feed-width-"] div[data-pagelet^="Stories"],
+html[class*="fb-layout-tweaks-feed-width-"] [data-focus-target*="tray"] {
+  max-width: 100% !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
 /* Ensure images and media inside widened feed fit container naturally */
 html[class*="fb-layout-tweaks-feed-width-"] :is(div[role="feed"], [data-pagelet="Feed"], [role="main"]) :is(img, video):not([role="dialog"] *) {
   max-width: 100% !important;
