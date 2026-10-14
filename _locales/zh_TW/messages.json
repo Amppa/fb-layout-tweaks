@@ -197,7 +197,7 @@
     "message": "貼文寬度"
   },
   "descFeedWidth": {
-    "message": "調整中間動態消息貼文的顯示寬度"
+    "message": "調整中間動態消息貼文的顯示寬度，百分比以主欄可用寬度為準"
   },
   "optFeedWidthDefault": {
     "message": "原始 (680px)"
@@ -209,13 +209,13 @@
     "message": "1600px"
   },
   "optFeedWidth50": {
-    "message": "50%"
+    "message": "填滿 50%"
   },
   "optFeedWidth75": {
-    "message": "75%"
+    "message": "填滿 75%"
   },
   "optFeedWidth100": {
-    "message": "100%"
+    "message": "填滿 100%"
   },
   "itemFeedFontSize": {
     "message": "內文大小"
