@@ -103,6 +103,45 @@ body {
   line-height: 1.3;
 }
 
+/* Feed sub-options: indented past parent title plus one character, follow trimMainFeed */
+.section-row.sub-row {
+  padding-left: calc(44px + 1ch);
+}
+
+.section-row.sub-row.disabled {
+  opacity: 0.4;
+}
+
+.select-dropdown {
+  background: var(--bg-card);
+  color: var(--text-primary);
+  border: 1px solid var(--border-hover);
+  border-radius: 6px;
+  padding: 5px 8px;
+  font-size: 12px;
+  font-family: inherit;
+  outline: none;
+  cursor: pointer;
+  max-width: 130px;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.select-dropdown:hover {
+  background: var(--bg-card-hover);
+  border-color: var(--accent-color);
+}
+
+.select-dropdown:focus-visible {
+  border-color: var(--accent-color);
+  outline: 2px solid var(--accent-color);
+  outline-offset: 1px;
+}
+
+.select-dropdown:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 /* Switch */
 .switch {
   position: relative;

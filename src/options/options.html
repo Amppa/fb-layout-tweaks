@@ -408,35 +408,15 @@
             <span class="feature-icon">↔️</span>
             <div>
               <div class="feature-title" data-i18n="itemFeedWidth">Feed Width</div>
-              <div class="feature-desc" data-i18n="descFeedWidth">Adjust the display width of posts; percentages fill the available main column</div>
+              <div class="feature-desc" data-i18n="descFeedWidth">Increasing the main column width will also enlarge feed media.</div>
             </div>
           </div>
           <div class="feature-action">
             <select id="feedWidth" class="select-dropdown" aria-label="Select feed width">
-              <option value="default" data-i18n="optFeedWidthDefault">Original (680px)</option>
-              <option value="w1000" data-i18n="optFeedWidth1000">1000px</option>
-              <option value="w1600" data-i18n="optFeedWidth1600">1600px</option>
-              <option value="w50" data-i18n="optFeedWidth50">Fill 50%</option>
-              <option value="w75" data-i18n="optFeedWidth75">Fill 75%</option>
-              <option value="w100" data-i18n="optFeedWidth100">Fill 100%</option>
-            </select>
-          </div>
-        </div>
-        <!-- Feature Item: Feed Font Size Dropdown -->
-        <div class="feature-item">
-          <div class="feature-meta">
-            <span class="feature-icon">🔍</span>
-            <div>
-              <div class="feature-title" data-i18n="itemFeedFontSize">Post Text Size</div>
-              <div class="feature-desc" data-i18n="descFeedFontSize">Enlarge text in post bodies and comments for comfortable reading</div>
-            </div>
-          </div>
-          <div class="feature-action">
-            <select id="feedFontSize" class="select-dropdown" aria-label="Select post text size">
-              <option value="default" data-i18n="optFeedFontDefault">Original (100%)</option>
-              <option value="f150" data-i18n="optFeedFont150">150%</option>
-              <option value="f200" data-i18n="optFeedFont200">200%</option>
-              <option value="f300" data-i18n="optFeedFont300">300%</option>
+              <option value="default" data-i18n="optFeedWidthDefault">680px (Original)</option>
+              <option value="w50" data-i18n="optFeedWidth50">50%</option>
+              <option value="w75" data-i18n="optFeedWidth75">75%</option>
+              <option value="w100" data-i18n="optFeedWidth100">100%</option>
             </select>
           </div>
         </div>
@@ -445,19 +425,34 @@
           <div class="feature-meta">
             <span class="feature-icon">🖼️</span>
             <div>
-              <div class="feature-title" data-i18n="itemFeedMediaHeight">Post Media Height</div>
-              <div class="feature-desc" data-i18n="descFeedMediaHeight">Scale down post photos, albums, background cards, and videos</div>
+              <div class="feature-title" data-i18n="itemFeedMediaHeight">Feed Media Height</div>
+              <div class="feature-desc" data-i18n="descFeedMediaHeight">Scale down feed photos, albums, background cards, and videos</div>
             </div>
           </div>
           <div class="feature-action">
-            <select id="feedMediaHeight" class="select-dropdown" aria-label="Select post media height">
-              <option value="default" data-i18n="optMediaHeightDefault">Original (100%)</option>
-              <option value="h75" data-i18n="optMediaHeight75">75% Height</option>
-              <option value="h50" data-i18n="optMediaHeight50">50% Height</option>
-              <option value="h25" data-i18n="optMediaHeight25">25% Height</option>
-              <option value="px400" data-i18n="optMediaHeightPx400">Fixed 400px</option>
-              <option value="px300" data-i18n="optMediaHeightPx300">Fixed 300px</option>
-              <option value="px200" data-i18n="optMediaHeightPx200">Fixed 200px</option>
+            <select id="feedMediaHeight" class="select-dropdown" aria-label="Select feed media height">
+              <option value="h25" data-i18n="optMediaHeight25">25%</option>
+              <option value="h50" data-i18n="optMediaHeight50">50%</option>
+              <option value="h75" data-i18n="optMediaHeight75">75%</option>
+              <option value="default" data-i18n="optMediaHeightDefault">100% (Original)</option>
+            </select>
+          </div>
+        </div>
+        <!-- Feature Item: Feed Font Size Dropdown -->
+        <div class="feature-item">
+          <div class="feature-meta">
+            <span class="feature-icon">🔍</span>
+            <div>
+              <div class="feature-title" data-i18n="itemFeedFontSize">Feed Text Size</div>
+              <div class="feature-desc" data-i18n="descFeedFontSize">Enlarge text in feed posts and comments for comfortable reading</div>
+            </div>
+          </div>
+          <div class="feature-action">
+            <select id="feedFontSize" class="select-dropdown" aria-label="Select feed text size">
+              <option value="default" data-i18n="optFeedFontDefault">100% (Original)</option>
+              <option value="f150" data-i18n="optFeedFont150">150%</option>
+              <option value="f200" data-i18n="optFeedFont200">200%</option>
+              <option value="f300" data-i18n="optFeedFont300">300%</option>
             </select>
           </div>
         </div>

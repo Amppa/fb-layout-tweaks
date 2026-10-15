@@ -133,7 +133,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   // Handle Feed Width select (enum with whitelist fallback)
-  const VALID_FEED_WIDTHS = new Set(['default', 'w1000', 'w1600', 'w50', 'w75', 'w100']);
+  const VALID_FEED_WIDTHS = new Set(['default', 'w50', 'w75', 'w100']);
   const feedWidthSelect = document.getElementById('feedWidth');
   if (feedWidthSelect) {
     const initWidth = settings.feedWidth !== undefined ? settings.feedWidth : DEFAULTS.feedWidth;
@@ -159,7 +159,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   // Handle Feed Media Height select (enum with whitelist fallback)
-  const VALID_FEED_MEDIA_HEIGHTS = new Set(['default', 'h75', 'h50', 'h25', 'px400', 'px300', 'px200']);
+  const VALID_FEED_MEDIA_HEIGHTS = new Set(['default', 'h75', 'h50', 'h25']);
   const feedMediaHeightSelect = document.getElementById('feedMediaHeight');
   if (feedMediaHeightSelect) {
     const initMediaHeight = settings.feedMediaHeight !== undefined ? settings.feedMediaHeight : DEFAULTS.feedMediaHeight;

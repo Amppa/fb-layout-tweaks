@@ -197,34 +197,28 @@
     "message": "Feed Width"
   },
   "descFeedWidth": {
-    "message": "Adjust the display width of posts; percentages fill the available main column"
+    "message": "Increasing the main column width will also enlarge feed media."
   },
   "optFeedWidthDefault": {
-    "message": "Original (680px)"
-  },
-  "optFeedWidth1000": {
-    "message": "1000px"
-  },
-  "optFeedWidth1600": {
-    "message": "1600px"
+    "message": "680px (Original)"
   },
   "optFeedWidth50": {
-    "message": "Fill 50%"
+    "message": "50%"
   },
   "optFeedWidth75": {
-    "message": "Fill 75%"
+    "message": "75%"
   },
   "optFeedWidth100": {
-    "message": "Fill 100%"
+    "message": "100%"
   },
   "itemFeedFontSize": {
-    "message": "Post Text Size"
+    "message": "Feed Text Size"
   },
   "descFeedFontSize": {
-    "message": "Enlarge text in post bodies and comments for comfortable reading"
+    "message": "Enlarge text in feed posts and comments for comfortable reading"
   },
   "optFeedFontDefault": {
-    "message": "Original (100%)"
+    "message": "100% (Original)"
   },
   "optFeedFont150": {
     "message": "150%"
@@ -236,31 +230,22 @@
     "message": "300%"
   },
   "itemFeedMediaHeight": {
-    "message": "Post Media Height"
+    "message": "Feed Media Height"
   },
   "descFeedMediaHeight": {
-    "message": "Scale down post photos, albums, background cards, and videos"
+    "message": "Scale down feed photos, albums, background cards, and videos"
   },
   "optMediaHeightDefault": {
-    "message": "Original (100%)"
+    "message": "100% (Original)"
   },
   "optMediaHeight75": {
-    "message": "75% Height"
+    "message": "75%"
   },
   "optMediaHeight50": {
-    "message": "50% Height"
+    "message": "50%"
   },
   "optMediaHeight25": {
-    "message": "25% Height"
-  },
-  "optMediaHeightPx400": {
-    "message": "Fixed 400px"
-  },
-  "optMediaHeightPx300": {
-    "message": "Fixed 300px"
-  },
-  "optMediaHeightPx200": {
-    "message": "Fixed 200px"
+    "message": "25%"
   },
   "itemLanguage": {
     "message": "Language"
