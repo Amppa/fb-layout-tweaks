@@ -7,3 +7,5 @@ release/
 *.log
 
 .kilo/
+.perf-profile/
+perf-trace*.json

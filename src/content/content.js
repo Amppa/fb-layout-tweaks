@@ -110,6 +110,7 @@
             }
           }
         }
+        return { spansCount: spans.length, candidateCount: candidates.length };
       }
     } catch (e) {
       // Non-fatal
@@ -196,6 +197,8 @@
   function tagRailContainers() {
     try {
       // Tag genuine Left Rail containers (skip nested descendants)
+      let leftCount = 0;
+      let rightCount = 0;
       const leftCandidates = document.querySelectorAll(
         '[data-pagelet="LeftRail"], div[role="navigation"]:not(header *):not([role="banner"] *):not([data-pagelet="Header"] *)'
       );
@@ -203,6 +206,7 @@
         if (el.parentElement && el.parentElement.closest('[data-pagelet="LeftRail"], .fb-layout-tweaks-left-rail')) {
           continue;
         }
+        leftCount++;
         if (!el.classList.contains('fb-layout-tweaks-left-rail')) {
           el.classList.add('fb-layout-tweaks-left-rail');
         }
@@ -224,6 +228,7 @@
         if (el.parentElement && el.parentElement.closest('#right_rail_container, [data-pagelet="RightRail"], .fb-layout-tweaks-right-rail')) {
           continue;
         }
+        rightCount++;
         if (!el.classList.contains('fb-layout-tweaks-right-rail')) {
           el.classList.add('fb-layout-tweaks-right-rail');
         }
@@ -232,6 +237,7 @@
           parent.classList.add('fb-layout-tweaks-right-rail-parent');
         }
       }
+      return { leftCount, rightCount };
     } catch (e) {
       // Non-fatal
     }
@@ -256,10 +262,45 @@
     scanScheduled = true;
     requestAnimationFrame(() => {
       scanScheduled = false;
+      const isDebug = typeof document !== 'undefined' && Boolean(document.documentElement?.dataset?.fbLtDebug);
+      if (!isDebug) {
+        checkUrlChange();
+        tagRailContainers();
+        scanLeftRailDynamicItems();
+        scanRightRailDynamicItems();
+        return;
+      }
+
+      const t0 = performance.now();
       checkUrlChange();
-      tagRailContainers();
-      scanLeftRailDynamicItems();
+      const t1 = performance.now();
+      const tagStats = tagRailContainers();
+      const t2 = performance.now();
+      const leftStats = scanLeftRailDynamicItems();
+      const t3 = performance.now();
       scanRightRailDynamicItems();
+      const t4 = performance.now();
+
+      try {
+        document.dispatchEvent(new CustomEvent('__fb_lt_perf__', {
+          detail: {
+            type: 'scan',
+            totalMs: t4 - t0,
+            urlCheckMs: t1 - t0,
+            tagRailMs: t2 - t1,
+            tagLeftCount: tagStats?.leftCount || 0,
+            tagRightCount: tagStats?.rightCount || 0,
+            leftRailMs: t3 - t2,
+            leftRailSpans: leftStats?.spansCount || 0,
+            leftRailCandidates: leftStats?.candidateCount || 0,
+            rightRailMs: t4 - t3,
+            dockMs: 0,
+            dockBubbles: 0,
+            dockRectCalls: 0,
+            timestamp: Date.now()
+          }
+        }));
+      } catch (_) {}
     });
   }
 
@@ -330,6 +371,8 @@
   }
 
   function handleButtonHover(e) {
+    const isDebug = typeof document !== 'undefined' && Boolean(document.documentElement?.dataset?.fbLtDebug);
+    const t0 = isDebug ? performance.now() : 0;
     if (!currentSettings || currentSettings.enabled === false || !currentSettings.hoverExpandLeftRail) {
       if (isRailExpanded) setRailExpanded(false);
       return;
@@ -385,6 +428,25 @@
         }, 280);
       }
     }
+
+    if (isDebug) {
+      const dur = performance.now() - t0;
+      if (dur > 0.05) {
+        try {
+          document.dispatchEvent(new CustomEvent('__fb_lt_perf__', {
+            detail: {
+              type: 'hover',
+              target: 'left',
+              durationMs: dur,
+              isHoverActive,
+              isRailExpanded,
+              isInsideDrawerBounds,
+              timestamp: Date.now()
+            }
+          }));
+        } catch (_) {}
+      }
+    }
   }
 
   if (typeof document !== 'undefined') {
@@ -420,6 +482,8 @@
   }
 
   function handleRightRailHover(e) {
+    const isDebug = typeof document !== 'undefined' && Boolean(document.documentElement?.dataset?.fbLtDebug);
+    const t0 = isDebug ? performance.now() : 0;
     if (!currentSettings || currentSettings.enabled === false || currentSettings.trimRightRail === false) {
       if (isRightRailExpanded) setRightRailExpanded(false);
       return;
@@ -470,6 +534,25 @@
           setRightRailExpanded(false);
           rightCollapseTimer = null;
         }, 280);
+      }
+    }
+
+    if (isDebug) {
+      const dur = performance.now() - t0;
+      if (dur > 0.05) {
+        try {
+          document.dispatchEvent(new CustomEvent('__fb_lt_perf__', {
+            detail: {
+              type: 'hover',
+              target: 'right',
+              durationMs: dur,
+              isOverItem,
+              isOverRail,
+              isRightRailExpanded,
+              timestamp: Date.now()
+            }
+          }));
+        } catch (_) {}
       }
     }
   }
