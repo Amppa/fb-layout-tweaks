@@ -62,6 +62,20 @@
     root.classList.toggle('fb-layout-tweaks-feed-font-200', feedFontSize === 'f200');
     root.classList.toggle('fb-layout-tweaks-feed-font-300', feedFontSize === 'f300');
 
+    const feedMediaHeight = (isMasterEnabled && trimMainFeed) ? (settings.feedMediaHeight || 'default') : 'default';
+    root.classList.toggle('fb-layout-tweaks-feed-media-h75', feedMediaHeight === 'h75');
+    root.classList.toggle('fb-layout-tweaks-feed-media-h50', feedMediaHeight === 'h50');
+    root.classList.toggle('fb-layout-tweaks-feed-media-h25', feedMediaHeight === 'h25');
+    root.classList.toggle('fb-layout-tweaks-feed-media-px400', feedMediaHeight === 'px400');
+    root.classList.toggle('fb-layout-tweaks-feed-media-px300', feedMediaHeight === 'px300');
+    root.classList.toggle('fb-layout-tweaks-feed-media-px200', feedMediaHeight === 'px200');
+
+    if (feedMediaHeight !== 'default') {
+      scanAndScaleFeedMedia(feedMediaHeight);
+    } else {
+      restoreFeedMedia();
+    }
+
     if (!isHoverExpand && isRailExpanded) {
       setRailExpanded(false);
     }
@@ -256,6 +270,138 @@
     }
   }
 
+  const FEED_MEDIA_SCALE_FACTORS = {
+    h75: 0.75,
+    h50: 0.5,
+    h25: 0.25
+  };
+  const FEED_MEDIA_PIXEL_LIMITS = {
+    px400: 400,
+    px300: 300,
+    px200: 200
+  };
+
+  function scanAndScaleFeedMedia(mode) {
+    try {
+      if (typeof document === 'undefined') return;
+      if (!mode || mode === 'default') {
+        restoreFeedMedia();
+        return;
+      }
+      const isFactorMode = FEED_MEDIA_SCALE_FACTORS[mode] !== undefined;
+      const isPixelMode = FEED_MEDIA_PIXEL_LIMITS[mode] !== undefined;
+      if (!isFactorMode && !isPixelMode) {
+        restoreFeedMedia();
+        return;
+      }
+
+      // Query media image elements inside main feed column, excluding banner, navigation, and dialogs
+      const mediaElements = document.querySelectorAll(
+        ':is([role="main"], [data-pagelet="Feed"], div[role="feed"]) img:not([role="dialog"] *):not([role="banner"] *):not([role="navigation"] *)'
+      );
+
+      for (const el of mediaElements) {
+        // Skip small icons, badges, avatars (threshold 140px width or height)
+        const w = el.clientWidth || el.naturalWidth || parseFloat(el.getAttribute('width')) || 0;
+        const h = el.clientHeight || el.naturalHeight || parseFloat(el.getAttribute('height')) || 0;
+        if (w < 140 && h < 90) continue;
+
+        // Walk up ancestors to find the padding-top aspect wrapper
+        let curr = el.parentElement;
+        let wrapper = null;
+        let d = 0;
+        while (curr && curr !== document.body && d < 12) {
+          d++;
+          const cs = window.getComputedStyle(curr);
+          const inlineStyle = curr.getAttribute('style') || '';
+          if (inlineStyle.includes('padding-top') || inlineStyle.includes('--x-paddingTop') || parseFloat(cs.paddingTop) > 40) {
+            wrapper = curr;
+            break;
+          }
+          curr = curr.parentElement;
+        }
+
+        if (wrapper) {
+          const wcs = window.getComputedStyle(wrapper);
+          if (!wrapper.dataset.fbLtOrigPadding) {
+            wrapper.dataset.fbLtOrigPadding = String(parseFloat(wcs.paddingTop) || 0);
+            wrapper.dataset.fbLtOrigWidth = String(parseFloat(wcs.width) || wrapper.getBoundingClientRect().width || 0);
+            wrapper.dataset.fbLtOrigStyle = wrapper.getAttribute('style') || '__EMPTY__';
+          }
+          const origPadding = parseFloat(wrapper.dataset.fbLtOrigPadding);
+          const origWidth = parseFloat(wrapper.dataset.fbLtOrigWidth);
+
+          let factor = 1.0;
+          if (isFactorMode) {
+            factor = FEED_MEDIA_SCALE_FACTORS[mode];
+          } else if (isPixelMode && origPadding > 0) {
+            const maxPx = FEED_MEDIA_PIXEL_LIMITS[mode];
+            factor = origPadding > maxPx ? (maxPx / origPadding) : 1.0;
+          }
+
+          if (factor < 1.0 && origPadding > 0) {
+            const targetPadding = Math.round(origPadding * factor);
+            wrapper.style.setProperty('padding-top', `${targetPadding}px`, 'important');
+            if (origWidth > 0) {
+              const targetWidth = Math.round(origWidth * factor);
+              wrapper.style.setProperty('width', `${targetWidth}px`, 'important');
+              wrapper.style.setProperty('max-width', `${targetWidth}px`, 'important');
+              wrapper.style.setProperty('margin-inline', 'auto', 'important');
+            }
+            wrapper.style.setProperty('overflow', 'hidden', 'important');
+
+            if (!el.dataset.fbLtOrigStyle) {
+              el.dataset.fbLtOrigStyle = el.getAttribute('style') || '__EMPTY__';
+            }
+            el.style.setProperty('object-fit', 'contain', 'important');
+            el.style.setProperty('object-position', 'center', 'important');
+
+            // Also clamp immediate parent if it has fixed height
+            let parent = wrapper.parentElement;
+            if (parent && parent !== document.body && !parent.matches('[role="article"], [role="main"], [data-pagelet^="FeedUnit"], .post-card')) {
+              const pcs = window.getComputedStyle(parent);
+              const pInline = parent.getAttribute('style') || '';
+              if (pInline.includes('height:') || parseFloat(pcs.height) > (targetPadding + 40)) {
+                if (!parent.dataset.fbLtOrigStyle) {
+                  parent.dataset.fbLtOrigStyle = pInline || '__EMPTY__';
+                  parent.dataset.fbLtOrigHeight = String(parseFloat(pcs.height) || 0);
+                }
+                const origH = parseFloat(parent.dataset.fbLtOrigHeight);
+                if (origH > 0) {
+                  parent.style.setProperty('max-height', `${Math.round(origH * factor)}px`, 'important');
+                  parent.style.setProperty('overflow', 'hidden', 'important');
+                }
+              }
+            }
+          }
+        }
+      }
+    } catch (_) {
+      // Non-fatal
+    }
+  }
+
+  function restoreFeedMedia() {
+    try {
+      if (typeof document === 'undefined') return;
+      const modified = document.querySelectorAll('[data-fb-lt-orig-style]');
+      for (const el of modified) {
+        const orig = el.dataset.fbLtOrigStyle;
+        if (orig && orig !== '__EMPTY__') {
+          el.setAttribute('style', orig);
+        } else {
+          el.removeAttribute('style');
+        }
+        delete el.dataset.fbLtOrigStyle;
+        delete el.dataset.fbLtOrigPadding;
+        delete el.dataset.fbLtOrigWidth;
+        delete el.dataset.fbLtOrigHeight;
+      }
+    } catch (_) {
+      // Non-fatal
+    }
+  }
+
   let scanScheduled = false;
   function triggerThrottledScan() {
     if (scanScheduled) return;
@@ -268,6 +414,9 @@
         tagRailContainers();
         scanLeftRailDynamicItems();
         scanRightRailDynamicItems();
+        if (currentSettings && currentSettings.enabled !== false && currentSettings.trimMainFeed !== false && currentSettings.feedMediaHeight && currentSettings.feedMediaHeight !== 'default') {
+          scanAndScaleFeedMedia(currentSettings.feedMediaHeight);
+        }
         return;
       }
 
@@ -280,6 +429,9 @@
       const t3 = performance.now();
       scanRightRailDynamicItems();
       const t4 = performance.now();
+      if (currentSettings && currentSettings.enabled !== false && currentSettings.trimMainFeed !== false && currentSettings.feedMediaHeight && currentSettings.feedMediaHeight !== 'default') {
+        scanAndScaleFeedMedia(currentSettings.feedMediaHeight);
+      }
 
       try {
         document.dispatchEvent(new CustomEvent('__fb_lt_perf__', {
@@ -564,7 +716,11 @@
   if (typeof module !== 'undefined' && module.exports) {
     module.exports = {
       getUiCleanClassName,
-      isFeedPage: (typeof self !== 'undefined' && self.isFeedPage) || null
+      isFeedPage: (typeof self !== 'undefined' && self.isFeedPage) || null,
+      scanAndScaleFeedMedia,
+      restoreFeedMedia,
+      FEED_MEDIA_SCALE_FACTORS,
+      FEED_MEDIA_PIXEL_LIMITS
     };
   }
 })();

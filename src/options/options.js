@@ -158,6 +158,19 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   }
 
+  // Handle Feed Media Height select (enum with whitelist fallback)
+  const VALID_FEED_MEDIA_HEIGHTS = new Set(['default', 'h75', 'h50', 'h25', 'px400', 'px300', 'px200']);
+  const feedMediaHeightSelect = document.getElementById('feedMediaHeight');
+  if (feedMediaHeightSelect) {
+    const initMediaHeight = settings.feedMediaHeight !== undefined ? settings.feedMediaHeight : DEFAULTS.feedMediaHeight;
+    feedMediaHeightSelect.value = VALID_FEED_MEDIA_HEIGHTS.has(initMediaHeight) ? initMediaHeight : (DEFAULTS.feedMediaHeight || 'default');
+    feedMediaHeightSelect.addEventListener('change', async () => {
+      const val = VALID_FEED_MEDIA_HEIGHTS.has(feedMediaHeightSelect.value) ? feedMediaHeightSelect.value : (DEFAULTS.feedMediaHeight || 'default');
+      const { settings: current } = await chrome.storage.local.get('settings');
+      await chrome.storage.local.set({ settings: { ...current, feedMediaHeight: val } });
+    });
+  }
+
   // Handle Master toggle
   if (masterToggle) {
     masterToggle.addEventListener('change', async () => {
@@ -234,6 +247,9 @@ document.addEventListener('DOMContentLoaded', async () => {
       if (typeof feedFontSizeSelect !== 'undefined' && feedFontSizeSelect) {
         feedFontSizeSelect.value = DEFAULTS.feedFontSize || 'default';
       }
+      if (typeof feedMediaHeightSelect !== 'undefined' && feedMediaHeightSelect) {
+        feedMediaHeightSelect.value = DEFAULTS.feedMediaHeight || 'default';
+      }
       updateMasterUI(DEFAULTS.enabled !== false);
 
       await chrome.storage.local.set({ settings: updated });
@@ -266,6 +282,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
     if (typeof feedFontSizeSelect !== 'undefined' && feedFontSizeSelect && next.feedFontSize !== undefined) {
       feedFontSizeSelect.value = VALID_FEED_FONT_SIZES.has(next.feedFontSize) ? next.feedFontSize : (DEFAULTS.feedFontSize || 'default');
+    }
+    if (typeof feedMediaHeightSelect !== 'undefined' && feedMediaHeightSelect && next.feedMediaHeight !== undefined) {
+      feedMediaHeightSelect.value = VALID_FEED_MEDIA_HEIGHTS.has(next.feedMediaHeight) ? next.feedMediaHeight : (DEFAULTS.feedMediaHeight || 'default');
     }
     sortAllPillGrids();
   });

@@ -235,6 +235,33 @@
   "optFeedFont300": {
     "message": "300%"
   },
+  "itemFeedMediaHeight": {
+    "message": "Post Media Height"
+  },
+  "descFeedMediaHeight": {
+    "message": "Scale down post photos, albums, background cards, and videos"
+  },
+  "optMediaHeightDefault": {
+    "message": "Original (100%)"
+  },
+  "optMediaHeight75": {
+    "message": "75% Height"
+  },
+  "optMediaHeight50": {
+    "message": "50% Height"
+  },
+  "optMediaHeight25": {
+    "message": "25% Height"
+  },
+  "optMediaHeightPx400": {
+    "message": "Fixed 400px"
+  },
+  "optMediaHeightPx300": {
+    "message": "Fixed 300px"
+  },
+  "optMediaHeightPx200": {
+    "message": "Fixed 200px"
+  },
   "itemLanguage": {
     "message": "Language"
   },

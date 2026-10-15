@@ -235,6 +235,33 @@
   "optFeedFont300": {
     "message": "300%"
   },
+  "itemFeedMediaHeight": {
+    "message": "貼文媒體高度"
+  },
+  "descFeedMediaHeight": {
+    "message": "依比例降低貼文圖片、相簿、字卡與影片的顯示高度"
+  },
+  "optMediaHeightDefault": {
+    "message": "原始高度 (100%)"
+  },
+  "optMediaHeight75": {
+    "message": "75% 高度"
+  },
+  "optMediaHeight50": {
+    "message": "50% 高度"
+  },
+  "optMediaHeight25": {
+    "message": "25% 高度"
+  },
+  "optMediaHeightPx400": {
+    "message": "固定 400px"
+  },
+  "optMediaHeightPx300": {
+    "message": "固定 300px"
+  },
+  "optMediaHeightPx200": {
+    "message": "固定 200px"
+  },
   "itemLanguage": {
     "message": "語言"
   },

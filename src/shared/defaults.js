@@ -64,7 +64,9 @@ self.MAIN_SETTINGS = {
   // Feed width: 'default' (680px) | 'w1000' | 'w1600' | 'w50' | 'w75' | 'w100'
   feedWidth: 'w75',
   // Feed font size: 'default' (100%) | 'f150' | 'f200' | 'f300'
-  feedFontSize: 'f150'
+  feedFontSize: 'f150',
+  // Feed media height scale: 'default' (100%) | 'h75' (75%) | 'h50' (50%)
+  feedMediaHeight: 'default'
 };
 
 self.DEFAULT_SETTINGS = {

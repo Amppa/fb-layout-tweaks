@@ -614,3 +614,60 @@ html.fb-layout-tweaks-feed-font-300 :is(div[role="feed"], [data-pagelet="Feed"],
   font-size: 3em !important;
   line-height: 1.7 !important;
 }
+
+/* ==========================================================================
+   Feed Media Height: Scale down post photos, albums, background cards
+   Targets containers inside feed articles; preserves dialogs/modals.
+   ========================================================================== */
+html.fb-layout-tweaks-feed-media-h75 {
+  --fb-lt-album-max-height: 375px;
+  --fb-lt-card-height: 285px;
+  --fb-lt-album-max-width: 75%;
+  --fb-lt-card-max-width: 75%;
+}
+html.fb-layout-tweaks-feed-media-h50 {
+  --fb-lt-album-max-height: 250px;
+  --fb-lt-card-height: 190px;
+  --fb-lt-album-max-width: 50%;
+  --fb-lt-card-max-width: 50%;
+}
+html.fb-layout-tweaks-feed-media-h25 {
+  --fb-lt-album-max-height: 125px;
+  --fb-lt-card-height: 95px;
+  --fb-lt-album-max-width: 25%;
+  --fb-lt-card-max-width: 25%;
+}
+html.fb-layout-tweaks-feed-media-px400 {
+  --fb-lt-album-max-height: 400px;
+  --fb-lt-card-height: 400px;
+  --fb-lt-album-max-width: 400px;
+  --fb-lt-card-max-width: 400px;
+}
+html.fb-layout-tweaks-feed-media-px300 {
+  --fb-lt-album-max-height: 300px;
+  --fb-lt-card-height: 300px;
+  --fb-lt-album-max-width: 300px;
+  --fb-lt-card-max-width: 300px;
+}
+html.fb-layout-tweaks-feed-media-px200 {
+  --fb-lt-album-max-height: 200px;
+  --fb-lt-card-height: 200px;
+  --fb-lt-album-max-width: 200px;
+  --fb-lt-card-max-width: 200px;
+}
+
+/* Multi-photo collage albums (.x1s85apg has inline height: 500px) */
+html[class*="fb-layout-tweaks-feed-media-"] :is(div[role="feed"], [data-pagelet="Feed"], [role="main"]) div.x1s85apg {
+  max-width: var(--fb-lt-album-max-width) !important;
+  max-height: var(--fb-lt-album-max-height) !important;
+  margin-inline: auto !important;
+  overflow: hidden !important;
+}
+
+/* Background gradient text cards */
+html[class*="fb-layout-tweaks-feed-media-"] :is(div[role="feed"], [data-pagelet="Feed"], [role="main"]) div[style*="background-image"] {
+  max-width: var(--fb-lt-card-max-width) !important;
+  max-height: var(--fb-lt-card-height) !important;
+  margin-inline: auto !important;
+  overflow: hidden !important;
+}
