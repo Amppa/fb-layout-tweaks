@@ -6,6 +6,24 @@
 
 (() => {
   let currentSettings = null;
+  let expandTimer = null;
+  let collapseTimer = null;
+  let isRailExpanded = false;
+  let rightExpandTimer = null;
+  let rightCollapseTimer = null;
+  let isRightRailExpanded = false;
+
+  function setRailExpanded(expanded) {
+    if (isRailExpanded === expanded) return;
+    isRailExpanded = expanded;
+    document.documentElement.classList.toggle('fb-layout-tweaks-rail-expanded', expanded);
+  }
+
+  function setRightRailExpanded(expanded) {
+    if (isRightRailExpanded === expanded) return;
+    isRightRailExpanded = expanded;
+    document.documentElement.classList.toggle('fb-layout-tweaks-right-rail-expanded', expanded);
+  }
 
   function getUiCleanClassName(key) {
     // Maps show* settings keys to hide-based fb-layout-tweaks-* CSS tokens
@@ -486,7 +504,8 @@
     }
 
     // Listen for realtime settings changes from Options page
-    chrome.storage.onChanged.addListener((changes, area) => {
+    if (chrome.storage.onChanged && chrome.storage.onChanged.addListener) {
+      chrome.storage.onChanged.addListener((changes, area) => {
       if (area === 'local' && changes.settings) {
         const baseDefaults = (typeof DEFAULT_SETTINGS !== 'undefined' ? DEFAULT_SETTINGS : {});
         currentSettings = { ...baseDefaults, ...(changes.settings.newValue || {}) };
@@ -500,17 +519,9 @@
       }
     });
   }
+}
 
   // Button-Targeted Hover Expand Manager (Zero-Pixel Guessing, Clean Flyout)
-  let expandTimer = null;
-  let collapseTimer = null;
-  let isRailExpanded = false;
-
-  function setRailExpanded(expanded) {
-    if (isRailExpanded === expanded) return;
-    isRailExpanded = expanded;
-    document.documentElement.classList.toggle('fb-layout-tweaks-rail-expanded', expanded);
-  }
 
   const LEFT_RAIL_EXCLUDE_ANCESTORS = 'header *, [role="banner"] *, [data-pagelet="Header"] *';
 
@@ -583,7 +594,7 @@
 
     if (isDebug) {
       const dur = performance.now() - t0;
-      if (dur > 0.05) {
+      if (dur >= 0) {
         try {
           document.dispatchEvent(new CustomEvent('__fb_lt_perf__', {
             detail: {
@@ -615,15 +626,6 @@
   }
 
   // Right Rail Hover Expand Manager (mirrors left rail, anchored on complementary rail)
-  let rightExpandTimer = null;
-  let rightCollapseTimer = null;
-  let isRightRailExpanded = false;
-
-  function setRightRailExpanded(expanded) {
-    if (isRightRailExpanded === expanded) return;
-    isRightRailExpanded = expanded;
-    document.documentElement.classList.toggle('fb-layout-tweaks-right-rail-expanded', expanded);
-  }
 
   function getRightRailContainer(node) {
     if (!node || !node.closest) return null;
@@ -659,9 +661,9 @@
       return;
     }
 
-    // Check if mouse is directly over any right rail contact row / button / link
+    // Check if mouse is directly over any right rail contact row / button / link or rail container
     const isOverItem = Boolean(target.closest(':is(a, [role="button"], [role="listitem"], li)'));
-    const isOverRail = isRightRailExpanded;
+    const isOverRail = Boolean(rail || isRightRailExpanded);
 
     if (isOverItem || isOverRail) {
       if (rightCollapseTimer) {
@@ -691,7 +693,7 @@
 
     if (isDebug) {
       const dur = performance.now() - t0;
-      if (dur > 0.05) {
+      if (dur >= 0) {
         try {
           document.dispatchEvent(new CustomEvent('__fb_lt_perf__', {
             detail: {
