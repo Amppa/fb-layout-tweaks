@@ -275,6 +275,90 @@
     }
   }
 
+  // Layout anchors the extension expects on an applicable Facebook page.
+  // Zero matches after page settle suggests a Facebook redesign broke targeting.
+  const LAYOUT_ANCHOR_SELECTORS = [
+    '[data-pagelet="LeftRail"]',
+    '[data-pagelet="RightRail"]',
+    '[data-pagelet="Feed"]',
+    'div[role="feed"]',
+    'div[role="navigation"]',
+    'div[role="complementary"]',
+    '#right_rail_container'
+  ];
+
+  function countLayoutAnchors(root) {
+    const scope = root || (typeof document !== 'undefined' ? document : null);
+    if (!scope || typeof scope.querySelectorAll !== 'function') return 0;
+    let count = 0;
+    for (const sel of LAYOUT_ANCHOR_SELECTORS) {
+      try {
+        count += scope.querySelectorAll(sel).length;
+      } catch (_) {
+        // Skip invalid selectors in this environment.
+      }
+    }
+    return count;
+  }
+
+  // Content health check: reports {ok, ts} under the "health" storage key for
+  // the background badge. Only runs where tweaks are expected to be active,
+  // only writes on state change, and uses delayed checks so async Facebook
+  // rendering is not mistaken for breakage.
+  let lastReportedHealthOk = null;
+  let healthCheckTimers = [];
+
+  function clearHealthCheckTimers() {
+    for (const t of healthCheckTimers) {
+      try { clearTimeout(t); } catch (_) {}
+    }
+    healthCheckTimers = [];
+  }
+
+  function isHealthCheckApplicable() {
+    if (!currentSettings || currentSettings.enabled === false) return false;
+    if (currentSettings.sidebarScope === 'global') return true;
+    const pathname = (typeof window !== 'undefined' && window.location) ? window.location.pathname : '';
+    const isFeed = (typeof self !== 'undefined' && self.isFeedPage) ? self.isFeedPage(pathname) : true;
+    return isFeed;
+  }
+
+  function reportHealth(ok) {
+    if (lastReportedHealthOk === ok) return;
+    lastReportedHealthOk = ok;
+    try {
+      const store = (typeof chrome !== 'undefined' && chrome.storage) ? chrome.storage.local : null;
+      if (store) {
+        const done = store.set({ health: { ok, ts: Date.now() } });
+        if (done && typeof done.catch === 'function') done.catch(() => {});
+      }
+    } catch (_) {
+      // Non-fatal
+    }
+  }
+
+  function evaluateHealth() {
+    if (!isHealthCheckApplicable()) return;
+    reportHealth(countLayoutAnchors() > 0);
+  }
+
+  function scheduleHealthChecks() {
+    clearHealthCheckTimers();
+    if (!isHealthCheckApplicable()) return;
+    // Delayed only: document_start DOM is legitimately empty.
+    for (const delayMs of [4000, 10000]) {
+      try {
+        healthCheckTimers.push(setTimeout(evaluateHealth, delayMs));
+      } catch (_) {}
+    }
+  }
+
+  function recoverHealthIfFound() {
+    if (lastReportedHealthOk !== false) return;
+    if (!isHealthCheckApplicable()) return;
+    if (countLayoutAnchors() > 0) reportHealth(true);
+  }
+
   let lastPathname = typeof window !== 'undefined' ? window.location.pathname : '';
 
   function checkUrlChange() {
@@ -284,6 +368,7 @@
       lastPathname = currentPath;
       if (currentSettings) {
         applyUiCleanClasses(currentSettings);
+        scheduleHealthChecks();
       }
     }
   }
@@ -435,6 +520,7 @@
         if (currentSettings && currentSettings.enabled !== false && currentSettings.trimMainFeed !== false && currentSettings.feedMediaHeight && currentSettings.feedMediaHeight !== 'default') {
           scanAndScaleFeedMedia(currentSettings.feedMediaHeight);
         }
+        recoverHealthIfFound();
         return;
       }
 
@@ -489,6 +575,7 @@
       const baseDefaults = (typeof DEFAULT_SETTINGS !== 'undefined' ? DEFAULT_SETTINGS : {});
       currentSettings = { ...baseDefaults, ...(data?.settings || {}) };
       applyUiCleanClasses(currentSettings);
+      scheduleHealthChecks();
     });
 
     // Observe for dynamic content loads (e.g. "See More" bookmark expansion)
@@ -510,6 +597,11 @@
         const baseDefaults = (typeof DEFAULT_SETTINGS !== 'undefined' ? DEFAULT_SETTINGS : {});
         currentSettings = { ...baseDefaults, ...(changes.settings.newValue || {}) };
         applyUiCleanClasses(currentSettings);
+        if (currentSettings.enabled !== false) {
+          scheduleHealthChecks();
+        } else {
+          clearHealthCheckTimers();
+        }
         if (!currentSettings.hoverExpandLeftRail) {
           setRailExpanded(false);
         }
@@ -722,7 +814,9 @@
       scanAndScaleFeedMedia,
       restoreFeedMedia,
       FEED_MEDIA_SCALE_FACTORS,
-      FEED_MEDIA_PIXEL_LIMITS
+      FEED_MEDIA_PIXEL_LIMITS,
+      LAYOUT_ANCHOR_SELECTORS,
+      countLayoutAnchors
     };
   }
 })();
