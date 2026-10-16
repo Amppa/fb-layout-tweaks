@@ -4,42 +4,128 @@ This document defines core engineering logics, workflows, command runbooks, and 
 
 ---
 
-## 1. Quick Runbook (Commands)
+## 1. Quick Runbook (Commands & Effects)
+
+### 1.1 Performance Debugging & Benchmarking (`scripts/perf-debug.js`)
+
+High-fidelity performance measurement suite using Puppeteer. Launches Chrome with unpacked extension loaded and tracks CDP trace, FPS, long tasks, throttled scanner overhead, and layout shifts.
 
 ```bash
-# Run unit tests (Node.js 18+ built-in test runner)
-node tests/defaults.test.js
-# Or: node --test tests/defaults.test.js
+# 1. Automated Sidebar Benchmark (Mock Facebook, repeatable & offline)
+# Opens visible Chrome, tests left & right sidebars expand/collapse for N cycles, outputs metrics:
+node scripts/perf-debug.js --mock --sidebars 5
 
-# Run the full suite (defaults, tokens, i18n usage)
-node --test tests/*.test.js
+# 2. Automated Sidebar Benchmark (Live Facebook, preserves login state in ~/.fb-layout-tweaks-profile)
+node scripts/perf-debug.js --sidebars 5
 
-# Or pure Windows PowerShell unit tests (Zero dependencies):
+# 3. Dynamic Feed Mutation & Scanner Stress Test
+# Simulates auto-scrolling on feed for 10 seconds, collects scanner latencies, then exits:
+node scripts/perf-debug.js --mock --scroll --duration 10
+
+# 4. In-Page Live Performance HUD
+# Injects floating diagnostic HUD at bottom-left corner showing real-time FPS, mutations/s, scan ms:
+node scripts/perf-debug.js --mock --hud
+
+# 5. Chrome CDP Trace Recording
+# Captures full DevTools timeline trace and exports to release/perf-trace.json:
+node scripts/perf-debug.js --mock --trace --duration 5
+
+# 6. Headless Execution (CI / headless environment)
+node scripts/perf-debug.js --mock --sidebars 3 --headless
+```
+
+#### CLI Options & Effects
+| Option | Argument | Description & Effect |
+| :--- | :--- | :--- |
+| `--mock` | None | Boots built-in offline mock Facebook server (`127.0.0.1:<port>`) for repeatable benchmarks. |
+| `--sidebars` | `[cycles]` | Runs automated sidebar benchmark (default: 5 cycles). Measures expand/collapse latency, hover handler execution, feed layout shift, and FPS. |
+| `--scroll` | None | Enables automatic smooth feed scrolling loop (600px every 1.2s) to stress mutation scanner. |
+| `--duration` | `<seconds>` | Automatically finalizes session after N seconds, writes reports, and exits. |
+| `--hud` | None | Injects a floating in-page HUD displaying real-time FPS, Long Tasks, and scan timing. |
+| `--trace` | None | Records Chrome Performance CDP Trace and saves to `release/perf-trace.json`. |
+| `--headless` | None | Runs in headless mode (default: `false`, opens visible window for visual inspection). |
+| `--url` | `<url>` | Custom target URL (default: `https://www.facebook.com/`). |
+| `--user-data-dir` | `<dir>` | Dedicated Chrome user profile directory (default: `~/.fb-layout-tweaks-profile`). |
+
+All benchmark runs export results to:
+- `release/perf-summary.md` (Human-readable Markdown executive report)
+- `release/perf-summary.json` (Structured JSON telemetry)
+
+---
+
+### 1.2 Media Height Inspection (`scripts/inspect-media.js`)
+
+Inspects real Facebook DOM structures for feed photos, video reels, multi-image collages, and aspect-ratio wrappers.
+
+```bash
+# Launch interactive browser session with media inspector loaded:
+node scripts/inspect-media.js
+
+# Target specific profile or custom test URL:
+node scripts/inspect-media.js --user-data-dir ~/.fb-layout-tweaks-profile
+```
+
+---
+
+### 1.3 Unit Testing (`tests/`)
+
+```bash
+# 1. Zero-dependency Windows PowerShell Suite (Recommended for quick checks)
+# Runs all 7 structural, i18n symmetry, ARIA, and pure function tests:
 powershell -ExecutionPolicy Bypass -File tests/test.ps1
 
-# Package clean release zips (outputs to release/)
-node scripts/package.js --target all
-# Or Windows PowerShell:
-powershell -ExecutionPolicy Bypass -File scripts/package.ps1 -Target all
-# Targets: chrome (default, legacy name), firefox (gecko manifest patch), all
+# 2. Node.js Built-in Test Runner (Node 18+)
+# Runs full test suite:
+node --test tests/*.test.js
 
-### Release Flow (GitHub Release)
-```bash
-# Cut a release (version must match manifest.json)
-git tag -a v1.2.1 -m v1.2.1
-git push origin v1.2.1
-# → .github/workflows/release.yml tests, builds both zips,
-#   and creates the GitHub Release with zips attached.
+# 3. Individual Test Suites
+node tests/pure-functions.test.js      # Key-to-class mapping, inverted logic, isFeedPage
+node tests/feed-media-height.test.js   # Feed media scaling ratios & limits
+node tests/defaults.test.js            # Default settings integrity & schema
+node tests/tokens.test.js              # Design tokens CSS consistency
+node tests/i18n-usage.test.js          # Symmetrical i18n keys between en and zh_TW
 ```
-- `release/` is git-ignored: never commit zips; CI rebuilds them automatically from the tag.
 
-### Local Extension Loading
-1. In Chrome, open `chrome://extensions/` and enable **Developer mode**.
+---
+
+### 1.4 Extension Packaging & Distribution (`scripts/package.js` / `scripts/package.ps1`)
+
+Generates clean production `.zip` bundles with exclusion of tests, scripts, `.git`, and release artifacts.
+
+```bash
+# Node.js packager:
+node scripts/package.js --target all       # Builds both Chrome and Firefox zips
+node scripts/package.js --target chrome    # Builds release/fb-layout-tweaks-v<version>.zip
+node scripts/package.js --target firefox   # Builds release/fb-layout-tweaks-firefox-v<version>.zip
+
+# Or PowerShell packager:
+powershell -ExecutionPolicy Bypass -File scripts/package.ps1 -Target all
+```
+
+---
+
+### 1.5 Release Flow (GitHub Release)
+
+```bash
+# Cut a release (version tag must match manifest.json)
+git tag -a v1.4.2 -m "Release v1.4.2"
+git push origin v1.4.2
+# → .github/workflows/release.yml triggers tests, generates zip archives,
+#   and publishes GitHub Release with attached assets.
+```
+> [!NOTE]
+> `release/` is git-ignored: never commit production zips directly to git. CI builds them automatically from tag commits.
+
+---
+
+### 1.6 Local Unpacked Extension Loading
+
+1. In Chrome, navigate to `chrome://extensions/` and enable **Developer mode**.
 2. Click **Load unpacked** and select the repository root directory (`fb-layout-tweaks`).
-3. Reload extension card after code changes:
-   - **Popup / Options**: Reopen the popup or reload the options tab.
-   - **Background Service Worker**: Click the reload icon on the extension card in `chrome://extensions/`.
-   - **Content Scripts & CSS**: Reload extension card, then refresh the Facebook tab (`https://www.facebook.com/*`).
+3. Reload extension after code changes:
+   - **Popup / Options**: Reopen popup or refresh options tab.
+   - **Background Service Worker**: Click the reload icon on extension card.
+   - **Content Scripts & CSS**: Click reload icon on extension card, then refresh Facebook tab (`F5`).
 
 ---
 
