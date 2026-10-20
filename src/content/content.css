@@ -430,6 +430,12 @@ html.fb-layout-tweaks-hide-top-reels :is(header, [role="banner"], [data-pagelet=
   display: none !important;
 }
 
+/* Friends */
+html.fb-layout-tweaks-hide-top-friends :is(header, [role="banner"], [data-pagelet="Header"]) :is(li, div[role="tab"]):has(a[href*="/friends"]),
+html.fb-layout-tweaks-hide-top-friends :is(header, [role="banner"], [data-pagelet="Header"]) a[href*="/friends"] {
+  display: none !important;
+}
+
 /* Marketplace */
 html.fb-layout-tweaks-hide-top-marketplace :is(header, [role="banner"], [data-pagelet="Header"]) :is(li, div[role="tab"]):has(a[href*="/marketplace"]),
 html.fb-layout-tweaks-hide-top-marketplace :is(header, [role="banner"], [data-pagelet="Header"]) a[href*="/marketplace"] {

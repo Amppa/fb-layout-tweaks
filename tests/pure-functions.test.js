@@ -27,6 +27,7 @@ test('getUiCleanClassName correctly transforms settings keys to CSS hide tokens'
 
   // Standard kebab-cased keys across sections
   assert.strictEqual(getUiCleanClassName('showTopReels'), 'fb-layout-tweaks-hide-top-reels');
+  assert.strictEqual(getUiCleanClassName('showTopFriends'), 'fb-layout-tweaks-hide-top-friends');
   assert.strictEqual(getUiCleanClassName('showTopMarketplace'), 'fb-layout-tweaks-hide-top-marketplace');
   assert.strictEqual(getUiCleanClassName('showTopGroups'), 'fb-layout-tweaks-hide-top-groups');
   assert.strictEqual(getUiCleanClassName('showTopGaming'), 'fb-layout-tweaks-hide-top-gaming');

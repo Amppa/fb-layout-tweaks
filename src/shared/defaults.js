@@ -13,6 +13,7 @@ self.TOP_SETTINGS = {
   trimTopNav: true,
   // Section: Top Navigation (true = visible)
   showTopReels: true,
+  showTopFriends: true,
   showTopMarketplace: false,
   showTopGroups: true,
   showTopGaming: false
