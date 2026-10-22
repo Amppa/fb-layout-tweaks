@@ -652,6 +652,17 @@
     });
   }
 
+  function hasRelevantMutations(mutations) {
+    if (!mutations || !mutations.length) return false;
+    for (let i = 0; i < mutations.length; i++) {
+      const m = mutations[i];
+      if (m && m.addedNodes && m.addedNodes.length > 0) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   // Load initial settings and set up observers when running in extension environment
   if (typeof chrome !== 'undefined' && chrome.storage && typeof document !== 'undefined') {
     if (typeof window !== 'undefined') {
@@ -690,8 +701,8 @@
 
     // Observe for dynamic content loads (e.g. "See More" bookmark expansion)
     try {
-      const observer = new MutationObserver(() => {
-        if (currentSettings?.enabled !== false && needsDynamicScan(currentSettings)) {
+      const observer = new MutationObserver((mutations) => {
+        if (currentSettings?.enabled !== false && needsDynamicScan(currentSettings) && hasRelevantMutations(mutations)) {
           triggerThrottledScan();
         }
       });
@@ -950,7 +961,8 @@
       FEED_MEDIA_SCALE_FACTORS,
       FEED_MEDIA_PIXEL_LIMITS,
       LAYOUT_ANCHOR_SELECTORS,
-      countLayoutAnchors
+      countLayoutAnchors,
+      hasRelevantMutations
     };
   }
 })();

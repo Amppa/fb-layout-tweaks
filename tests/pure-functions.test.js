@@ -392,3 +392,29 @@ test('scanLeftRailDynamicItems short-circuits when ads manager is already tagged
 
   delete globalThis.document;
 });
+
+test('hasRelevantMutations filters mutation records and only triggers when nodes are added', () => {
+  const { hasRelevantMutations } = require('../src/content/content.js');
+  assert.strictEqual(typeof hasRelevantMutations, 'function');
+
+  // Empty or invalid input
+  assert.strictEqual(hasRelevantMutations(null), false);
+  assert.strictEqual(hasRelevantMutations([]), false);
+
+  // Pure node removal (e.g. tooltip closed, popup unmounted)
+  assert.strictEqual(hasRelevantMutations([
+    { addedNodes: [], removedNodes: [{ tagName: 'DIV' }] }
+  ]), false);
+
+  // Node additions present
+  assert.strictEqual(hasRelevantMutations([
+    { addedNodes: [{ tagName: 'IMG' }], removedNodes: [] }
+  ]), true);
+
+  // Mixed mutations
+  assert.strictEqual(hasRelevantMutations([
+    { addedNodes: [], removedNodes: [{ tagName: 'DIV' }] },
+    { addedNodes: [{ tagName: 'SPAN' }], removedNodes: [] }
+  ]), true);
+});
+
