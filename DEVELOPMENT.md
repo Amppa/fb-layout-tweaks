@@ -108,8 +108,8 @@ powershell -ExecutionPolicy Bypass -File scripts/package.ps1 -Target all
 
 ```bash
 # Cut a release (version tag must match manifest.json)
-git tag -a v1.4.2 -m "Release v1.4.2"
-git push origin v1.4.2
+git tag -a v1.5.0 -m "Release v1.5.0"
+git push origin v1.5.0
 # → .github/workflows/release.yml triggers tests, generates zip archives,
 #   and publishes GitHub Release with attached assets.
 ```
