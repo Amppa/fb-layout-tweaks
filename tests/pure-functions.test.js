@@ -15,7 +15,7 @@ const path = require('node:path');
 globalThis.self ??= globalThis;
 require('../src/shared/defaults.js');
 
-const { getUiCleanClassName, normalizeRightRailMode } = require('../src/content/content.js');
+const { getUiCleanClassName, normalizeRightRailMode, deriveLayoutClasses } = require('../src/content/content.js');
 const { getMsg, setLocaleMessages, resolveEffectiveLocale } = require('../src/shared/i18n.js');
 
 const ROOT_DIR = path.resolve(__dirname, '..');
@@ -198,4 +198,169 @@ test('resolveEffectiveLocale correctly resolves explicit and auto locales', () =
   assert.strictEqual(resolveEffectiveLocale(undefined), 'en');
   delete globalThis.chrome;
 });
+
+test('SETTINGS_ENUMS contains valid sets and matches default settings', () => {
+  const { SETTINGS_ENUMS, DEFAULT_SETTINGS } = self;
+  assert.ok(SETTINGS_ENUMS, 'SETTINGS_ENUMS must be defined on self');
+
+  const expectedEnums = ['locale', 'sidebarScope', 'trimRightRail', 'feedWidth', 'feedFontSize', 'feedMediaHeight'];
+  for (const key of expectedEnums) {
+    assert.ok(SETTINGS_ENUMS[key] instanceof Set, `${key} should have a Set of valid values`);
+    assert.ok(SETTINGS_ENUMS[key].has(DEFAULT_SETTINGS[key]), `Default value for ${key} (${DEFAULT_SETTINGS[key]}) must be in SETTINGS_ENUMS`);
+  }
+});
+
+test('sanitizeSettingValue validates enum values, normalizes legacy booleans, and falls back to defaults', () => {
+  const { sanitizeSettingValue, DEFAULT_SETTINGS } = self;
+  assert.strictEqual(typeof sanitizeSettingValue, 'function');
+
+  // Valid values
+  assert.strictEqual(sanitizeSettingValue('trimRightRail', 'hidden'), 'hidden');
+  assert.strictEqual(sanitizeSettingValue('trimRightRail', 'hover'), 'hover');
+  assert.strictEqual(sanitizeSettingValue('trimRightRail', 'visible'), 'visible');
+  assert.strictEqual(sanitizeSettingValue('feedWidth', 'w100'), 'w100');
+  assert.strictEqual(sanitizeSettingValue('sidebarScope', 'global'), 'global');
+
+  // Legacy boolean mapping for trimRightRail
+  assert.strictEqual(sanitizeSettingValue('trimRightRail', true), 'hover');
+  assert.strictEqual(sanitizeSettingValue('trimRightRail', false), 'visible');
+
+  // Invalid values fallback to DEFAULT_SETTINGS
+  assert.strictEqual(sanitizeSettingValue('trimRightRail', 'invalid-mode'), DEFAULT_SETTINGS.trimRightRail);
+  assert.strictEqual(sanitizeSettingValue('trimRightRail', undefined), DEFAULT_SETTINGS.trimRightRail);
+  assert.strictEqual(sanitizeSettingValue('trimRightRail', null), DEFAULT_SETTINGS.trimRightRail);
+  assert.strictEqual(sanitizeSettingValue('feedWidth', 'w999'), DEFAULT_SETTINGS.feedWidth);
+  assert.strictEqual(sanitizeSettingValue('locale', 'invalid-lang'), DEFAULT_SETTINGS.locale);
+
+  // Non-enum keys pass through if defined
+  assert.strictEqual(sanitizeSettingValue('enabled', false), false);
+  assert.strictEqual(sanitizeSettingValue('enabled', undefined), DEFAULT_SETTINGS.enabled);
+});
+
+test('bindSelectDropdown initializes element value and handles changes and updates', async () => {
+  const { bindSelectDropdown, DEFAULT_SETTINGS } = self;
+  assert.strictEqual(typeof bindSelectDropdown, 'function');
+
+  // Null element guard
+  assert.strictEqual(bindSelectDropdown(null, 'feedWidth'), null);
+
+  // Mock DOM Select Element
+  const listeners = [];
+  const mockSelect = {
+    value: '',
+    disabled: false,
+    addEventListener: (type, handler) => {
+      listeners.push({ type, handler });
+    }
+  };
+
+  let savedVal = null;
+  const binding = bindSelectDropdown(mockSelect, 'feedWidth', {
+    initialValue: 'w50',
+    onChange: async (val) => {
+      savedVal = val;
+    }
+  });
+
+  assert.strictEqual(mockSelect.value, 'w50');
+  assert.strictEqual(binding.element, mockSelect);
+  assert.strictEqual(binding.key, 'feedWidth');
+
+  // Simulate user selection change
+  mockSelect.value = 'w100';
+  const changeListener = listeners.find(l => l.type === 'change');
+  assert.ok(changeListener, 'Should register a change listener');
+  await changeListener.handler();
+  assert.strictEqual(savedVal, 'w100');
+
+  // Simulate update() from storage
+  binding.update('w75');
+  assert.strictEqual(mockSelect.value, 'w75');
+
+  // Invalid update value falls back to default
+  binding.update('invalid-choice');
+  assert.strictEqual(mockSelect.value, DEFAULT_SETTINGS.feedWidth);
+});
+
+test('deriveLayoutClasses returns complete set of active layout tokens based on settings and scope', () => {
+  const { DEFAULT_SETTINGS } = self;
+
+  // Disabled master switch produces zero classes
+  const disabledClasses = deriveLayoutClasses({ ...DEFAULT_SETTINGS, enabled: false }, true);
+  assert.strictEqual(disabledClasses.size, 0);
+
+  // Default settings on active feed
+  const defaultClasses = deriveLayoutClasses(DEFAULT_SETTINGS, true);
+  assert.ok(defaultClasses.has('fb-layout-tweaks-hover-expand-left-rail'));
+  assert.ok(defaultClasses.has('fb-layout-tweaks-hide-right-rail'));
+  assert.ok(defaultClasses.has('fb-layout-tweaks-center-main-feed'));
+  assert.ok(defaultClasses.has('fb-layout-tweaks-feed-width-75'));
+  assert.ok(defaultClasses.has('fb-layout-tweaks-feed-font-150'));
+
+  // Feed/Sidebar inactive (non-feed page with homeOnly scope)
+  const nonFeedClasses = deriveLayoutClasses(DEFAULT_SETTINGS, false);
+  // Sidebar expand & right rail hide should not be present
+  assert.strictEqual(nonFeedClasses.has('fb-layout-tweaks-hover-expand-left-rail'), false);
+  assert.strictEqual(nonFeedClasses.has('fb-layout-tweaks-hide-right-rail'), false);
+  // Top nav trimming is still active even outside feed
+  assert.strictEqual(nonFeedClasses.has('fb-layout-tweaks-hide-top-marketplace'), true);
+
+  // Custom configuration test
+  const customSettings = {
+    ...DEFAULT_SETTINGS,
+    trimRightRail: 'hover',
+    feedWidth: 'w100',
+    feedFontSize: 'f200',
+    feedMediaHeight: 'h50',
+    showTopReels: false,
+    showLeftFriends: false
+  };
+  const customClasses = deriveLayoutClasses(customSettings, true);
+  assert.ok(customClasses.has('fb-layout-tweaks-hover-expand-right-rail'));
+  assert.strictEqual(customClasses.has('fb-layout-tweaks-hide-right-rail'), false);
+  assert.ok(customClasses.has('fb-layout-tweaks-feed-width-100'));
+  assert.ok(customClasses.has('fb-layout-tweaks-feed-font-200'));
+  assert.ok(customClasses.has('fb-layout-tweaks-feed-media-h50'));
+  assert.ok(customClasses.has('fb-layout-tweaks-hide-top-reels'));
+  assert.ok(customClasses.has('fb-layout-tweaks-hide-left-friends'));
+});
+
+test('updateSettings executes sequential updates without race condition data loss', async () => {
+  const { updateSettings } = self;
+  assert.strictEqual(typeof updateSettings, 'function');
+
+  // Mock chrome.storage.local with asynchronous delay
+  let mockStore = { settings: { initialKey: true } };
+  globalThis.chrome = {
+    storage: {
+      local: {
+        get: async (key) => {
+          await new Promise(r => setTimeout(r, 5));
+          return { settings: { ...mockStore.settings } };
+        },
+        set: async (obj) => {
+          await new Promise(r => setTimeout(r, 5));
+          mockStore.settings = { ...obj.settings };
+        }
+      }
+    }
+  };
+
+  // Launch multiple rapid concurrent updates without awaiting between them
+  const p1 = updateSettings({ key1: 'value1' });
+  const p2 = updateSettings({ key2: 'value2' });
+  const p3 = updateSettings((current) => ({ key3: (current.key1 ? 'has-key1' : 'missing') }));
+
+  const [res1, res2, res3] = await Promise.all([p1, p2, p3]);
+
+  assert.strictEqual(mockStore.settings.initialKey, true);
+  assert.strictEqual(mockStore.settings.key1, 'value1');
+  assert.strictEqual(mockStore.settings.key2, 'value2');
+  assert.strictEqual(mockStore.settings.key3, 'has-key1');
+  assert.strictEqual(res3.key3, 'has-key1');
+
+  delete globalThis.chrome;
+});
+
+
 

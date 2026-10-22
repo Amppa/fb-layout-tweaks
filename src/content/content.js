@@ -33,6 +33,67 @@
     return 'fb-layout-tweaks-' + key.replace(/^show/, 'hide').replace(/([A-Z])/g, '-$1').toLowerCase();
   }
 
+  function deriveLayoutClasses(settings, isSidebarActive) {
+    const classes = new Set();
+    if (!settings || settings.enabled === false) return classes;
+
+    const trimTopNav = settings.trimTopNav !== false;
+    const trimLeftItems = isSidebarActive && settings.trimLeftItems !== false;
+    const rightRailMode = normalizeRightRailMode(settings.trimRightRail, isSidebarActive);
+    const isHoverRightRail = rightRailMode === 'hover';
+    const isHideRightRail = rightRailMode === 'hidden';
+    const trimMainFeed = isSidebarActive && settings.trimMainFeed !== false;
+
+    for (const [key, value] of Object.entries(settings)) {
+      if (!key.startsWith('show')) continue;
+      if (key === 'showLeftProfile') continue; // Fixed anchor (Profile) has no hide rule
+      const sectionActive = key.startsWith('showTop') ? trimTopNav
+        : key.startsWith('showRight') ? (rightRailMode !== 'visible')
+        : trimLeftItems;
+      if (sectionActive && value === false) {
+        classes.add(getUiCleanClassName(key));
+      }
+    }
+
+    if (isSidebarActive && Boolean(settings.hoverExpandLeftRail)) {
+      classes.add('fb-layout-tweaks-hover-expand-left-rail');
+    }
+    if (isHoverRightRail) {
+      classes.add('fb-layout-tweaks-hover-expand-right-rail');
+    }
+    if (isHideRightRail) {
+      classes.add('fb-layout-tweaks-hide-right-rail');
+    }
+
+    if (trimMainFeed && Boolean(settings.centerMainFeed)) {
+      classes.add('fb-layout-tweaks-center-main-feed');
+    }
+
+    if (trimMainFeed) {
+      const feedWidth = settings.feedWidth;
+      if (feedWidth === 'w50') classes.add('fb-layout-tweaks-feed-width-50');
+      else if (feedWidth === 'w75') classes.add('fb-layout-tweaks-feed-width-75');
+      else if (feedWidth === 'w100') classes.add('fb-layout-tweaks-feed-width-100');
+      else if (feedWidth === 'w1000') classes.add('fb-layout-tweaks-feed-width-1000');
+      else if (feedWidth === 'w1600') classes.add('fb-layout-tweaks-feed-width-1600');
+
+      const feedFontSize = settings.feedFontSize;
+      if (feedFontSize === 'f150') classes.add('fb-layout-tweaks-feed-font-150');
+      else if (feedFontSize === 'f200') classes.add('fb-layout-tweaks-feed-font-200');
+      else if (feedFontSize === 'f300') classes.add('fb-layout-tweaks-feed-font-300');
+
+      const feedMediaHeight = settings.feedMediaHeight;
+      if (feedMediaHeight === 'h75') classes.add('fb-layout-tweaks-feed-media-h75');
+      else if (feedMediaHeight === 'h50') classes.add('fb-layout-tweaks-feed-media-h50');
+      else if (feedMediaHeight === 'h25') classes.add('fb-layout-tweaks-feed-media-h25');
+      else if (feedMediaHeight === 'px400') classes.add('fb-layout-tweaks-feed-media-px400');
+      else if (feedMediaHeight === 'px300') classes.add('fb-layout-tweaks-feed-media-px300');
+      else if (feedMediaHeight === 'px200') classes.add('fb-layout-tweaks-feed-media-px200');
+    }
+
+    return classes;
+  }
+
   function applyUiCleanClasses(settings) {
     if (!settings) return;
     const root = document.documentElement;
@@ -44,52 +105,29 @@
       (typeof self !== 'undefined' && self.isFeedPage ? self.isFeedPage(typeof window !== 'undefined' ? window.location.pathname : '') : true)
     );
 
-    // Section masters from popup: a trimmed-off section restores native items.
-    const trimTopNav = isMasterEnabled && settings.trimTopNav !== false;
-    const trimLeftItems = isSidebarActive && settings.trimLeftItems !== false;
-    const rightRailMode = normalizeRightRailMode(settings.trimRightRail, isSidebarActive);
-    const isHoverRightRail = rightRailMode === 'hover';
-    const isHideRightRail = rightRailMode === 'hidden';
-    const trimMainFeed = isSidebarActive && settings.trimMainFeed !== false;
+    const targetClasses = deriveLayoutClasses(settings, isSidebarActive);
 
-    for (const [key, value] of Object.entries(settings)) {
-      if (!key.startsWith('show')) continue;
-      // Fixed anchor (Profile) has no hide rule.
-      if (key === 'showLeftProfile') continue;
-      const sectionActive = key.startsWith('showTop') ? trimTopNav
-        : key.startsWith('showRight') ? (rightRailMode !== 'visible')
-        : trimLeftItems;
-      const className = getUiCleanClassName(key);
-      const isHidden = sectionActive && value === false;
-      root.classList.toggle(className, isHidden);
+    // Synchronize root layout classes efficiently
+    const currentClasses = Array.from(root.classList);
+    for (const cls of currentClasses) {
+      if (cls.startsWith('fb-layout-tweaks-') &&
+          cls !== 'fb-layout-tweaks-rail-expanded' &&
+          cls !== 'fb-layout-tweaks-right-rail-expanded' &&
+          !targetClasses.has(cls)) {
+        root.classList.remove(cls);
+      }
+    }
+    for (const cls of targetClasses) {
+      if (!root.classList.contains(cls)) {
+        root.classList.add(cls);
+      }
     }
 
-    const isHoverExpand = isSidebarActive && Boolean(settings.hoverExpandLeftRail);
-    root.classList.toggle('fb-layout-tweaks-hover-expand-left-rail', isHoverExpand);
-    root.classList.toggle('fb-layout-tweaks-hover-expand-right-rail', isHoverRightRail);
-    root.classList.toggle('fb-layout-tweaks-hide-right-rail', isHideRightRail);
-
-    const isCenterMainFeed = trimMainFeed && Boolean(settings.centerMainFeed);
-    root.classList.toggle('fb-layout-tweaks-center-main-feed', isCenterMainFeed);
-
-    const feedWidth = trimMainFeed ? settings.feedWidth : 'default';
-    root.classList.toggle('fb-layout-tweaks-feed-width-1000', feedWidth === 'w1000');
-    root.classList.toggle('fb-layout-tweaks-feed-width-1600', feedWidth === 'w1600');
-    root.classList.toggle('fb-layout-tweaks-feed-width-50', feedWidth === 'w50');
-    root.classList.toggle('fb-layout-tweaks-feed-width-75', feedWidth === 'w75');
-    root.classList.toggle('fb-layout-tweaks-feed-width-100', feedWidth === 'w100');
-    const feedFontSize = trimMainFeed ? settings.feedFontSize : 'default';
-    root.classList.toggle('fb-layout-tweaks-feed-font-150', feedFontSize === 'f150');
-    root.classList.toggle('fb-layout-tweaks-feed-font-200', feedFontSize === 'f200');
-    root.classList.toggle('fb-layout-tweaks-feed-font-300', feedFontSize === 'f300');
-
-    const feedMediaHeight = (isMasterEnabled && trimMainFeed) ? (settings.feedMediaHeight || 'default') : 'default';
-    root.classList.toggle('fb-layout-tweaks-feed-media-h75', feedMediaHeight === 'h75');
-    root.classList.toggle('fb-layout-tweaks-feed-media-h50', feedMediaHeight === 'h50');
-    root.classList.toggle('fb-layout-tweaks-feed-media-h25', feedMediaHeight === 'h25');
-    root.classList.toggle('fb-layout-tweaks-feed-media-px400', feedMediaHeight === 'px400');
-    root.classList.toggle('fb-layout-tweaks-feed-media-px300', feedMediaHeight === 'px300');
-    root.classList.toggle('fb-layout-tweaks-feed-media-px200', feedMediaHeight === 'px200');
+    const isHoverExpand = targetClasses.has('fb-layout-tweaks-hover-expand-left-rail');
+    const isHoverRightRail = targetClasses.has('fb-layout-tweaks-hover-expand-right-rail');
+    const feedMediaHeight = (isMasterEnabled && isSidebarActive && settings.trimMainFeed !== false)
+      ? (settings.feedMediaHeight || 'default')
+      : 'default';
 
     if (feedMediaHeight !== 'default') {
       scanAndScaleFeedMedia(feedMediaHeight);
@@ -822,6 +860,7 @@
     module.exports = {
       getUiCleanClassName,
       normalizeRightRailMode,
+      deriveLayoutClasses,
       isFeedPage: (typeof self !== 'undefined' && self.isFeedPage) || null,
       scanAndScaleFeedMedia,
       restoreFeedMedia,
