@@ -465,29 +465,39 @@
         return;
       }
 
-      // Query media image elements inside main feed column, excluding banner, navigation, and dialogs
-      const mediaElements = document.querySelectorAll(
-        ':is([role="main"], [data-pagelet="Feed"], div[role="feed"]) img:not([role="dialog"] *):not([role="banner"] *):not([role="navigation"] *)'
+      // Query media image elements inside main feed column with incremental mode stamp exclusion
+      const feed = (typeof document.querySelector === 'function' && document.querySelector('[role="main"], [data-pagelet="Feed"], div[role="feed"]')) || document;
+      const mediaElements = feed.querySelectorAll(
+        `img:not([data-fb-lt-scaled-mode="${mode}"])`
       );
 
       for (const el of mediaElements) {
         // Incremental stamp cache: if already scaled to current mode, skip to avoid forced reflow
         if (el.dataset.fbLtScaledMode === mode) continue;
 
+        // Skip dialogs, banners, and navigations
+        if (el.closest && el.closest('[role="dialog"], [role="banner"], [role="navigation"]')) continue;
+
         // Skip small icons, badges, avatars (threshold 140px width or height)
-        const w = el.clientWidth || el.naturalWidth || parseFloat(el.getAttribute('width')) || 0;
-        const h = el.clientHeight || el.naturalHeight || parseFloat(el.getAttribute('height')) || 0;
+        // Prefer natural metadata first to avoid triggering layout reflow
+        const w = el.naturalWidth || parseFloat(el.getAttribute('width')) || el.clientWidth || 0;
+        const h = el.naturalHeight || parseFloat(el.getAttribute('height')) || el.clientHeight || 0;
         if (w < 140 && h < 90) continue;
 
         // Walk up ancestors to find the padding-top aspect wrapper
+        // Prioritize inline styles first to avoid triggering getComputedStyle reflows on intermediate nodes
         let curr = el.parentElement;
         let wrapper = null;
         let d = 0;
         while (curr && curr !== document.body && d < 12) {
           d++;
-          const cs = window.getComputedStyle(curr);
           const inlineStyle = curr.getAttribute('style') || '';
-          if (inlineStyle.includes('padding-top') || inlineStyle.includes('--x-paddingTop') || parseFloat(cs.paddingTop) > 40) {
+          if (inlineStyle.includes('padding-top') || inlineStyle.includes('--x-paddingTop')) {
+            wrapper = curr;
+            break;
+          }
+          const cs = window.getComputedStyle(curr);
+          if (parseFloat(cs.paddingTop) > 40) {
             wrapper = curr;
             break;
           }
