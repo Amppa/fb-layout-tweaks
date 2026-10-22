@@ -99,6 +99,8 @@ function createMockDom() {
             results.push(child);
           } else if (selector.includes('[data-fb-lt-orig-style]') && child.dataset.fbLtOrigStyle) {
             results.push(child);
+          } else if (selector.includes('[data-fb-lt-scaled-mode]') && child.dataset.fbLtScaledMode) {
+            results.push(child);
           }
           traverse(child);
         }
@@ -210,3 +212,49 @@ test('scanAndScaleFeedMedia correctly scales images for 75%, 50%, 25%, px400, px
   assert.strictEqual(img._styles['object-fit'], 'cover', 'Restoring must restore original object-fit');
   assert.strictEqual(video._styles['height'], '500px', 'Video still untouched');
 });
+
+test('scanAndScaleFeedMedia uses incremental data-fb-lt-scaled-mode stamp to skip already-scaled images', () => {
+  const { document, window, MockElement } = createMockDom();
+  globalThis.document = document;
+  globalThis.window = window;
+
+  const { scanAndScaleFeedMedia } = require('../src/content/content.js');
+
+  const feed = new MockElement('DIV', 'feed-2');
+  feed.setAttribute('role', 'feed');
+  document.body.appendChild(feed);
+
+  const post = new MockElement('DIV', 'post-2');
+  post.setAttribute('role', 'article');
+  post.classList.add('post-card');
+  feed.appendChild(post);
+
+  const wrapper = new MockElement('DIV', 'wrapper-2');
+  wrapper.setAttribute('style', 'padding-top: 600px; width: 600px; position: relative;');
+  post.appendChild(wrapper);
+
+  const img = new MockElement('IMG', 'photo-2');
+  img.setAttribute('style', 'object-fit: cover; width: 100%; height: 100%;');
+  img.clientWidth = 600;
+  img.clientHeight = 600;
+  wrapper.appendChild(img);
+
+  scanAndScaleFeedMedia('h50');
+  assert.strictEqual(img.dataset.fbLtScaledMode, 'h50');
+  assert.strictEqual(wrapper._styles['padding-top'], '300px');
+
+  // Modify wrapper style artificially to verify a second call to scanAndScaleFeedMedia('h50') does not re-process
+  wrapper._styles['padding-top'] = 'custom-untouched';
+  scanAndScaleFeedMedia('h50');
+  assert.strictEqual(wrapper._styles['padding-top'], 'custom-untouched', 'Should skip already stamped image');
+
+  // When mode changes to 'h25', it should re-process
+  scanAndScaleFeedMedia('h25');
+  assert.strictEqual(img.dataset.fbLtScaledMode, 'h25');
+  assert.strictEqual(wrapper._styles['padding-top'], '150px', 'Should re-process when mode changes');
+
+  // Restoring should clean up stamp
+  scanAndScaleFeedMedia('default');
+  assert.strictEqual(img.dataset.fbLtScaledMode, undefined);
+});
+

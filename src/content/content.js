@@ -227,6 +227,7 @@
       if (currentSettings.showRightSponsored === false) {
         const headings = rail.querySelectorAll('h3');
         for (const h of headings) {
+          if (h.closest('.fb-layout-tweaks-hide-right-sponsored-node')) continue;
           const title = h.textContent.replace(/[\u200b-\u200f\ufeff]/g, '').trim().toLowerCase();
           if (title !== 'sponsored' && !title.startsWith('贊助')) continue;
           let node = h.parentElement;
@@ -247,6 +248,7 @@
       if (currentSettings.showRightBirthdays === false) {
         const links = rail.querySelectorAll('a[href*="/events/birthdays/"]');
         for (const el of links) {
+          if (el.closest('.fb-layout-tweaks-hide-right-birthdays-node')) continue;
           let node = el.parentElement;
           while (node && node !== rail) {
             const heading = node.querySelector(':scope h3');
@@ -266,6 +268,7 @@
       if (currentSettings.showRightMetaAI === false) {
         const spans = rail.querySelectorAll('span');
         for (const span of spans) {
+          if (span.closest('.fb-layout-tweaks-hide-right-metaai-node')) continue;
           const hasName = Array.from(span.childNodes).some(
             n => n.nodeType === Node.TEXT_NODE && n.textContent.trim() === 'Meta AI'
           );
@@ -468,6 +471,9 @@
       );
 
       for (const el of mediaElements) {
+        // Incremental stamp cache: if already scaled to current mode, skip to avoid forced reflow
+        if (el.dataset.fbLtScaledMode === mode) continue;
+
         // Skip small icons, badges, avatars (threshold 140px width or height)
         const w = el.clientWidth || el.naturalWidth || parseFloat(el.getAttribute('width')) || 0;
         const h = el.clientHeight || el.naturalHeight || parseFloat(el.getAttribute('height')) || 0;
@@ -522,6 +528,7 @@
             }
             el.style.setProperty('object-fit', 'contain', 'important');
             el.style.setProperty('object-position', 'center', 'important');
+            el.dataset.fbLtScaledMode = mode;
 
             // Also clamp immediate parent if it has fixed height
             let parent = wrapper.parentElement;
@@ -563,6 +570,11 @@
         delete el.dataset.fbLtOrigPadding;
         delete el.dataset.fbLtOrigWidth;
         delete el.dataset.fbLtOrigHeight;
+        delete el.dataset.fbLtScaledMode;
+      }
+      const scaledImages = document.querySelectorAll('[data-fb-lt-scaled-mode]');
+      for (const el of scaledImages) {
+        delete el.dataset.fbLtScaledMode;
       }
     } catch (_) {
       // Non-fatal
