@@ -727,6 +727,15 @@
       return;
     }
 
+    // Boundary fast-exit: when rail is collapsed and mouse is in feed (clientX > 72px)
+    if (!isRailExpanded && typeof e.clientX === 'number' && e.clientX > 72) {
+      if (expandTimer) {
+        clearTimeout(expandTimer);
+        expandTimer = null;
+      }
+      return;
+    }
+
     const target = e.target;
     if (!target) return;
 
@@ -826,6 +835,16 @@
     const t0 = isDebug ? performance.now() : 0;
     if (!isRightRailActive()) {
       if (isRightRailExpanded) setRightRailExpanded(false);
+      return;
+    }
+
+    // Boundary fast-exit: when right rail is collapsed and mouse is well outside right edge
+    const screenWidth = typeof window !== 'undefined' ? window.innerWidth : 0;
+    if (!isRightRailExpanded && typeof e.clientX === 'number' && screenWidth > 0 && e.clientX < (screenWidth - 72)) {
+      if (rightExpandTimer) {
+        clearTimeout(rightExpandTimer);
+        rightExpandTimer = null;
+      }
       return;
     }
 
