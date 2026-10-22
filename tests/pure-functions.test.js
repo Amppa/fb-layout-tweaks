@@ -325,4 +325,42 @@ test('deriveLayoutClasses returns complete set of active layout tokens based on 
   assert.ok(customClasses.has('fb-layout-tweaks-hide-left-friends'));
 });
 
+test('updateSettings executes sequential updates without race condition data loss', async () => {
+  const { updateSettings } = self;
+  assert.strictEqual(typeof updateSettings, 'function');
+
+  // Mock chrome.storage.local with asynchronous delay
+  let mockStore = { settings: { initialKey: true } };
+  globalThis.chrome = {
+    storage: {
+      local: {
+        get: async (key) => {
+          await new Promise(r => setTimeout(r, 5));
+          return { settings: { ...mockStore.settings } };
+        },
+        set: async (obj) => {
+          await new Promise(r => setTimeout(r, 5));
+          mockStore.settings = { ...obj.settings };
+        }
+      }
+    }
+  };
+
+  // Launch multiple rapid concurrent updates without awaiting between them
+  const p1 = updateSettings({ key1: 'value1' });
+  const p2 = updateSettings({ key2: 'value2' });
+  const p3 = updateSettings((current) => ({ key3: (current.key1 ? 'has-key1' : 'missing') }));
+
+  const [res1, res2, res3] = await Promise.all([p1, p2, p3]);
+
+  assert.strictEqual(mockStore.settings.initialKey, true);
+  assert.strictEqual(mockStore.settings.key1, 'value1');
+  assert.strictEqual(mockStore.settings.key2, 'value2');
+  assert.strictEqual(mockStore.settings.key3, 'has-key1');
+  assert.strictEqual(res3.key3, 'has-key1');
+
+  delete globalThis.chrome;
+});
+
+
 

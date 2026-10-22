@@ -89,8 +89,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       updateMasterUI(masterToggle.checked);
     }
     if (persist) {
-      const { settings: cur } = await chrome.storage.local.get('settings');
-      await chrome.storage.local.set({ settings: { ...(cur || {}), locale: validLocale } });
+      await updateSettings({ locale: validLocale });
     }
   }
 
@@ -132,9 +131,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     masterToggle.addEventListener('change', async () => {
       const active = masterToggle.checked;
       updateMasterUI(active);
-      const { settings: current } = await chrome.storage.local.get('settings');
-      const updated = { ...current, enabled: active };
-      await chrome.storage.local.set({ settings: updated });
+      await updateSettings({ enabled: active });
     });
   }
 
@@ -142,9 +139,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   for (const [key, checkbox] of Object.entries(switches)) {
     if (checkbox) {
       checkbox.addEventListener('change', async () => {
-        const { settings: current } = await chrome.storage.local.get('settings');
-        const updated = { ...current, [key]: toStoredValue(key, checkbox.checked) };
-        await chrome.storage.local.set({ settings: updated });
+        await updateSettings({ [key]: toStoredValue(key, checkbox.checked) });
         sortAllPillGrids();
       });
     }
@@ -154,13 +149,12 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // Section-Level Quick Actions (Left Sidebar)
   async function applySectionValues(keys, value) {
-    const { settings: current } = await chrome.storage.local.get('settings');
-    const updated = { ...current };
+    const patch = {};
     keys.forEach(key => {
       if (switches[key]) switches[key].checked = value;
-      updated[key] = value;
+      patch[key] = value;
     });
-    await chrome.storage.local.set({ settings: updated });
+    await updateSettings(patch);
     sortAllPillGrids();
   }
 

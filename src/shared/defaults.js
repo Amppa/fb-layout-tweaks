@@ -126,6 +126,8 @@ self.bindSelectDropdown = function(selectEl, key, options = {}) {
     selectEl.value = val;
     if (typeof options.onChange === 'function') {
       await options.onChange(val);
+    } else if (typeof self.updateSettings === 'function') {
+      await self.updateSettings({ [key]: val });
     } else if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.local) {
       const { settings: current } = await chrome.storage.local.get('settings');
       await chrome.storage.local.set({ settings: { ...(current || {}), [key]: val } });
@@ -141,6 +143,25 @@ self.bindSelectDropdown = function(selectEl, key, options = {}) {
       }
     }
   };
+};
+
+let updateQueue = Promise.resolve();
+
+self.updateSettings = function(patchOrUpdater) {
+  updateQueue = updateQueue.catch(() => {}).then(async () => {
+    if (typeof chrome === 'undefined' || !chrome.storage || !chrome.storage.local) {
+      return {};
+    }
+    const data = await chrome.storage.local.get('settings');
+    const current = (data && data.settings) || {};
+    const updates = typeof patchOrUpdater === 'function' ? patchOrUpdater(current) : patchOrUpdater;
+    if (!updates || Object.keys(updates).length === 0) return current;
+
+    const nextSettings = { ...current, ...updates };
+    await chrome.storage.local.set({ settings: nextSettings });
+    return nextSettings;
+  });
+  return updateQueue;
 };
 
 self.INVERTED_KEYS = new Set(['showRightSponsored', 'showRightBirthdays', 'showRightMetaAI']);
@@ -175,6 +196,7 @@ if (typeof module !== 'undefined' && module.exports) {
     SETTINGS_ENUMS: self.SETTINGS_ENUMS,
     sanitizeSettingValue: self.sanitizeSettingValue,
     bindSelectDropdown: self.bindSelectDropdown,
+    updateSettings: self.updateSettings,
     INVERTED_KEYS: self.INVERTED_KEYS,
     toUIChecked: self.toUIChecked,
     toStoredValue: self.toStoredValue,

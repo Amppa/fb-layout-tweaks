@@ -33,11 +33,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     enableToggle.checked = mergedSettings.enabled !== false;
 
     enableToggle.addEventListener('change', async () => {
-      const data = await chrome.storage.local.get('settings');
-      const current = data.settings || {};
-      const updated = { ...current, enabled: enableToggle.checked };
       updateMasterUI(enableToggle.checked);
-      await chrome.storage.local.set({ settings: updated });
+      await updateSettings({ enabled: enableToggle.checked });
     });
   }
 
@@ -47,10 +44,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (toggle) {
       toggle.checked = Boolean(mergedSettings[key]);
       toggle.addEventListener('change', async () => {
-        const data = await chrome.storage.local.get('settings');
-        const current = data.settings || {};
-        const updated = { ...current, [key]: toggle.checked };
-        await chrome.storage.local.set({ settings: updated });
+        await updateSettings({ [key]: toggle.checked });
         if (key === 'trimMainFeed') updateFeedSubUI(toggle.checked);
       });
     }
