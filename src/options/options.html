@@ -46,10 +46,11 @@
             </div>
           </div>
           <div class="feature-action">
-            <div class="lang-switch" id="langSwitch" title="Switch language" data-i18n-title="langToggleTitle">
-              <button type="button" class="lang-segment" data-lang="en">EN</button>
-              <button type="button" class="lang-segment" data-lang="zh_TW">繁中</button>
-            </div>
+            <select id="locale" class="select-dropdown" aria-label="Select display language">
+              <option value="auto" data-i18n="optLangAuto">Auto</option>
+              <option value="en" data-i18n="optLangEn">English</option>
+              <option value="zh_TW" data-i18n="optLangZh">Chinese</option>
+            </select>
           </div>
         </div>
 

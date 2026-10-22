@@ -21,10 +21,10 @@ document.addEventListener('DOMContentLoaded', async () => {
   const VALID_RIGHT_RAIL_MODES = new Set(['hidden', 'hover', 'visible']);
   const trimRightRailSelect = document.getElementById('trimRightRail');
 
-  // Load settings & locale: do not auto-detect system language, default to 'en'
+  // Load settings & locale
   const { settings } = await chrome.storage.local.get('settings');
   const mergedSettings = { ...DEFAULT_SETTINGS, ...(settings || {}) };
-  const prefLocale = mergedSettings.locale || 'en';
+  const prefLocale = mergedSettings.locale || DEFAULT_SETTINGS.locale || 'auto';
   await loadLocaleMessages(prefLocale);
   applyI18n();
 

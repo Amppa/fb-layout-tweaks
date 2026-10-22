@@ -16,7 +16,7 @@ globalThis.self ??= globalThis;
 require('../src/shared/defaults.js');
 
 const { getUiCleanClassName, normalizeRightRailMode } = require('../src/content/content.js');
-const { getMsg, setLocaleMessages } = require('../src/shared/i18n.js');
+const { getMsg, setLocaleMessages, resolveEffectiveLocale } = require('../src/shared/i18n.js');
 
 const ROOT_DIR = path.resolve(__dirname, '..');
 
@@ -175,5 +175,27 @@ test('normalizeRightRailMode correctly resolves modes and falls back to hidden',
   // Inactive sidebar scope forces visible
   assert.strictEqual(normalizeRightRailMode('hidden', false), 'visible');
   assert.strictEqual(normalizeRightRailMode('hover', false), 'visible');
+});
+
+test('resolveEffectiveLocale correctly resolves explicit and auto locales', () => {
+  assert.strictEqual(resolveEffectiveLocale('en'), 'en');
+  assert.strictEqual(resolveEffectiveLocale('zh_TW'), 'zh_TW');
+
+  // Auto with Chinese UI
+  globalThis.chrome = { i18n: { getUILanguage: () => 'zh-TW' } };
+  assert.strictEqual(resolveEffectiveLocale('auto'), 'zh_TW');
+
+  // Auto with English UI
+  globalThis.chrome = { i18n: { getUILanguage: () => 'en-US' } };
+  assert.strictEqual(resolveEffectiveLocale('auto'), 'en');
+
+  // Auto with Japanese UI
+  globalThis.chrome = { i18n: { getUILanguage: () => 'ja' } };
+  assert.strictEqual(resolveEffectiveLocale('auto'), 'en');
+
+  // Fallback for undefined with non-Chinese UI
+  globalThis.chrome = { i18n: { getUILanguage: () => 'fr' } };
+  assert.strictEqual(resolveEffectiveLocale(undefined), 'en');
+  delete globalThis.chrome;
 });
 

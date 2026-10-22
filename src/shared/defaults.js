@@ -72,6 +72,7 @@ self.MAIN_SETTINGS = {
 
 self.DEFAULT_SETTINGS = {
   enabled: true,
+  locale: 'auto',
   sidebarScope: 'homeOnly',
   ...self.TOP_SETTINGS,
   ...self.LEFT_SETTINGS,

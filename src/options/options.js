@@ -7,8 +7,6 @@
  */
 
 document.addEventListener('DOMContentLoaded', async () => {
-  const langSegments = document.querySelectorAll('.lang-segment');
-
   const masterToggle = document.getElementById('enabled');
   const masterStatus = document.getElementById('masterStatus');
   const uiCleanList = document.getElementById('uiCleanList');
@@ -74,20 +72,19 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   }
 
-  // Load language preference: do not auto-detect system language, default to 'en'
+  // Load language preference (auto, en, zh_TW)
   const { settings: initialSettings } = await chrome.storage.local.get('settings');
-  const prefLocale = initialSettings?.locale || 'en';
+  const prefLocale = initialSettings?.locale || DEFAULTS.locale || 'auto';
+  const VALID_LOCALES = new Set(['auto', 'en', 'zh_TW']);
+  const localeSelect = document.getElementById('locale');
 
   async function updateLocale(locale, persist = false) {
     await loadLocaleMessages(locale);
-    document.documentElement.lang = locale === 'zh_TW' ? 'zh-TW' : 'en';
+    document.documentElement.lang = currentLocale === 'zh_TW' ? 'zh-TW' : 'en';
     applyI18n();
-    langSegments.forEach(btn => {
-      const active = btn.dataset.lang === locale;
-      btn.classList.toggle('is-active', active);
-      if (active) btn.setAttribute('aria-pressed', 'true');
-      else btn.removeAttribute('aria-pressed');
-    });
+    if (localeSelect) {
+      localeSelect.value = VALID_LOCALES.has(locale) ? locale : 'auto';
+    }
     if (masterToggle) {
       updateMasterUI(masterToggle.checked);
     }
@@ -99,13 +96,12 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   await updateLocale(prefLocale, false);
 
-  langSegments.forEach(btn => {
-    btn.addEventListener('click', async () => {
-      const next = btn.dataset.lang;
-      if (!next || next === currentLocale) return;
+  if (localeSelect) {
+    localeSelect.addEventListener('change', async () => {
+      const next = VALID_LOCALES.has(localeSelect.value) ? localeSelect.value : 'auto';
       await updateLocale(next, true);
     });
-  });
+  }
 
   // Load initial settings (single-user: legacy hide* keys are ignored)
   const data = await chrome.storage.local.get('settings');
@@ -284,7 +280,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   // Live sync states when popup (or another context) changes settings.
-  chrome.storage.onChanged.addListener((changes, area) => {
+  chrome.storage.onChanged.addListener(async (changes, area) => {
     if (area !== 'local' || !changes.settings?.newValue) return;
     const next = changes.settings.newValue;
     if (typeof next.enabled === 'boolean') updateMasterUI(next.enabled);
@@ -307,6 +303,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
     if (typeof feedMediaHeightSelect !== 'undefined' && feedMediaHeightSelect && next.feedMediaHeight !== undefined) {
       feedMediaHeightSelect.value = VALID_FEED_MEDIA_HEIGHTS.has(next.feedMediaHeight) ? next.feedMediaHeight : (DEFAULTS.feedMediaHeight || 'default');
+    }
+    if (next.locale && localeSelect && next.locale !== localeSelect.value) {
+      await updateLocale(next.locale, false);
     }
     sortAllPillGrids();
   });

@@ -262,6 +262,15 @@
   "descLanguage": {
     "message": "Choose display language"
   },
+  "optLangAuto": {
+    "message": "Auto"
+  },
+  "optLangEn": {
+    "message": "English"
+  },
+  "optLangZh": {
+    "message": "Chinese"
+  },
   "itemSidebarScope": {
     "message": "Sidebar Scope"
   },

@@ -262,6 +262,15 @@
   "descLanguage": {
     "message": "選擇顯示語言"
   },
+  "optLangAuto": {
+    "message": "自動"
+  },
+  "optLangEn": {
+    "message": "英文"
+  },
+  "optLangZh": {
+    "message": "中文"
+  },
   "itemSidebarScope": {
     "message": "側邊欄生效範圍"
   },
