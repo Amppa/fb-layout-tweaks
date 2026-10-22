@@ -74,23 +74,23 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // Load language preference (auto, en, zh_TW)
   const { settings: initialSettings } = await chrome.storage.local.get('settings');
-  const prefLocale = initialSettings?.locale || DEFAULTS.locale || 'auto';
-  const VALID_LOCALES = new Set(['auto', 'en', 'zh_TW']);
+  const prefLocale = sanitizeSettingValue('locale', initialSettings?.locale);
   const localeSelect = document.getElementById('locale');
 
   async function updateLocale(locale, persist = false) {
-    await loadLocaleMessages(locale);
+    const validLocale = sanitizeSettingValue('locale', locale);
+    await loadLocaleMessages(validLocale);
     document.documentElement.lang = currentLocale === 'zh_TW' ? 'zh-TW' : 'en';
     applyI18n();
     if (localeSelect) {
-      localeSelect.value = VALID_LOCALES.has(locale) ? locale : 'auto';
+      localeSelect.value = validLocale;
     }
     if (masterToggle) {
       updateMasterUI(masterToggle.checked);
     }
     if (persist) {
       const { settings: cur } = await chrome.storage.local.get('settings');
-      await chrome.storage.local.set({ settings: { ...(cur || {}), locale } });
+      await chrome.storage.local.set({ settings: { ...(cur || {}), locale: validLocale } });
     }
   }
 
@@ -98,8 +98,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   if (localeSelect) {
     localeSelect.addEventListener('change', async () => {
-      const next = VALID_LOCALES.has(localeSelect.value) ? localeSelect.value : 'auto';
-      await updateLocale(next, true);
+      await updateLocale(localeSelect.value, true);
     });
   }
 
@@ -118,68 +117,15 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
   sortAllPillGrids();
 
-  const sidebarScopeSelect = document.getElementById('sidebarScope');
-  if (sidebarScopeSelect) {
-    sidebarScopeSelect.value = settings.sidebarScope || DEFAULTS.sidebarScope || 'homeOnly';
-    sidebarScopeSelect.addEventListener('change', async () => {
-      const { settings: current } = await chrome.storage.local.get('settings');
-      const updated = { ...current, sidebarScope: sidebarScopeSelect.value };
-      await chrome.storage.local.set({ settings: updated });
-    });
-  }
-
-  // Handle Right Sidebar mode select (enum with whitelist fallback)
-  const VALID_RIGHT_RAIL_MODES = new Set(['hidden', 'hover', 'visible']);
-  const trimRightRailSelect = document.getElementById('trimRightRail');
-  if (trimRightRailSelect) {
-    const rawVal = settings.trimRightRail;
-    const initMode = rawVal === true ? 'hover' : (rawVal === false ? 'visible' : rawVal);
-    trimRightRailSelect.value = VALID_RIGHT_RAIL_MODES.has(initMode) ? initMode : (DEFAULTS.trimRightRail || 'hidden');
-    trimRightRailSelect.addEventListener('change', async () => {
-      const val = VALID_RIGHT_RAIL_MODES.has(trimRightRailSelect.value) ? trimRightRailSelect.value : (DEFAULTS.trimRightRail || 'hidden');
-      const { settings: current } = await chrome.storage.local.get('settings');
-      await chrome.storage.local.set({ settings: { ...current, trimRightRail: val } });
-    });
-  }
-
-  // Handle Feed Width select (enum with whitelist fallback)
-  const VALID_FEED_WIDTHS = new Set(['default', 'w50', 'w75', 'w100']);
-  const feedWidthSelect = document.getElementById('feedWidth');
-  if (feedWidthSelect) {
-    const initWidth = settings.feedWidth !== undefined ? settings.feedWidth : DEFAULTS.feedWidth;
-    feedWidthSelect.value = VALID_FEED_WIDTHS.has(initWidth) ? initWidth : (DEFAULTS.feedWidth || 'default');
-    feedWidthSelect.addEventListener('change', async () => {
-      const val = VALID_FEED_WIDTHS.has(feedWidthSelect.value) ? feedWidthSelect.value : (DEFAULTS.feedWidth || 'default');
-      const { settings: current } = await chrome.storage.local.get('settings');
-      await chrome.storage.local.set({ settings: { ...current, feedWidth: val } });
-    });
-  }
-
-  // Handle Feed Font Size select (enum with whitelist fallback)
-  const VALID_FEED_FONT_SIZES = new Set(['default', 'f150', 'f200', 'f300']);
-  const feedFontSizeSelect = document.getElementById('feedFontSize');
-  if (feedFontSizeSelect) {
-    const initFontSize = settings.feedFontSize !== undefined ? settings.feedFontSize : DEFAULTS.feedFontSize;
-    feedFontSizeSelect.value = VALID_FEED_FONT_SIZES.has(initFontSize) ? initFontSize : (DEFAULTS.feedFontSize || 'default');
-    feedFontSizeSelect.addEventListener('change', async () => {
-      const val = VALID_FEED_FONT_SIZES.has(feedFontSizeSelect.value) ? feedFontSizeSelect.value : (DEFAULTS.feedFontSize || 'default');
-      const { settings: current } = await chrome.storage.local.get('settings');
-      await chrome.storage.local.set({ settings: { ...current, feedFontSize: val } });
-    });
-  }
-
-  // Handle Feed Media Height select (enum with whitelist fallback)
-  const VALID_FEED_MEDIA_HEIGHTS = new Set(['default', 'h75', 'h50', 'h25']);
-  const feedMediaHeightSelect = document.getElementById('feedMediaHeight');
-  if (feedMediaHeightSelect) {
-    const initMediaHeight = settings.feedMediaHeight !== undefined ? settings.feedMediaHeight : DEFAULTS.feedMediaHeight;
-    feedMediaHeightSelect.value = VALID_FEED_MEDIA_HEIGHTS.has(initMediaHeight) ? initMediaHeight : (DEFAULTS.feedMediaHeight || 'default');
-    feedMediaHeightSelect.addEventListener('change', async () => {
-      const val = VALID_FEED_MEDIA_HEIGHTS.has(feedMediaHeightSelect.value) ? feedMediaHeightSelect.value : (DEFAULTS.feedMediaHeight || 'default');
-      const { settings: current } = await chrome.storage.local.get('settings');
-      await chrome.storage.local.set({ settings: { ...current, feedMediaHeight: val } });
-    });
-  }
+  // Handle select dropdowns with unified binding and validation
+  const dropdownKeys = ['sidebarScope', 'trimRightRail', 'feedWidth', 'feedFontSize', 'feedMediaHeight'];
+  const dropdowns = {};
+  dropdownKeys.forEach(key => {
+    const el = document.getElementById(key);
+    if (el) {
+      dropdowns[key] = bindSelectDropdown(el, key, { initialValue: settings[key] });
+    }
+  });
 
   // Handle Master toggle
   if (masterToggle) {
@@ -248,21 +194,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
       }
 
-      if (sidebarScopeSelect) {
-        sidebarScopeSelect.value = DEFAULTS.sidebarScope || 'homeOnly';
-      }
-      if (trimRightRailSelect) {
-        trimRightRailSelect.value = DEFAULTS.trimRightRail || 'hidden';
-      }
-      if (typeof feedWidthSelect !== 'undefined' && feedWidthSelect) {
-        feedWidthSelect.value = DEFAULTS.feedWidth || 'default';
-      }
-      if (typeof feedFontSizeSelect !== 'undefined' && feedFontSizeSelect) {
-        feedFontSizeSelect.value = DEFAULTS.feedFontSize || 'default';
-      }
-      if (typeof feedMediaHeightSelect !== 'undefined' && feedMediaHeightSelect) {
-        feedMediaHeightSelect.value = DEFAULTS.feedMediaHeight || 'default';
-      }
+      dropdownKeys.forEach(key => {
+        dropdowns[key]?.update(DEFAULTS[key]);
+      });
       updateMasterUI(DEFAULTS.enabled !== false);
 
       await chrome.storage.local.set({ settings: updated });
@@ -287,23 +221,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     for (const [key, checkbox] of Object.entries(switches)) {
       if (checkbox && typeof next[key] === 'boolean') checkbox.checked = toUIChecked(key, next[key]);
     }
-    if (sidebarScopeSelect && typeof next.sidebarScope === 'string') {
-      sidebarScopeSelect.value = next.sidebarScope;
-    }
-    if (trimRightRailSelect && next.trimRightRail !== undefined) {
-      const raw = next.trimRightRail;
-      const norm = raw === true ? 'hover' : (raw === false ? 'visible' : raw);
-      trimRightRailSelect.value = VALID_RIGHT_RAIL_MODES.has(norm) ? norm : (DEFAULTS.trimRightRail || 'hidden');
-    }
-    if (typeof feedWidthSelect !== 'undefined' && feedWidthSelect && next.feedWidth !== undefined) {
-      feedWidthSelect.value = VALID_FEED_WIDTHS.has(next.feedWidth) ? next.feedWidth : (DEFAULTS.feedWidth || 'default');
-    }
-    if (typeof feedFontSizeSelect !== 'undefined' && feedFontSizeSelect && next.feedFontSize !== undefined) {
-      feedFontSizeSelect.value = VALID_FEED_FONT_SIZES.has(next.feedFontSize) ? next.feedFontSize : (DEFAULTS.feedFontSize || 'default');
-    }
-    if (typeof feedMediaHeightSelect !== 'undefined' && feedMediaHeightSelect && next.feedMediaHeight !== undefined) {
-      feedMediaHeightSelect.value = VALID_FEED_MEDIA_HEIGHTS.has(next.feedMediaHeight) ? next.feedMediaHeight : (DEFAULTS.feedMediaHeight || 'default');
-    }
+    dropdownKeys.forEach(key => {
+      if (next[key] !== undefined) {
+        dropdowns[key]?.update(next[key]);
+      }
+    });
     if (next.locale && localeSelect && next.locale !== localeSelect.value) {
       await updateLocale(next.locale, false);
     }

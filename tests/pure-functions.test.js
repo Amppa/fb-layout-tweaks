@@ -199,3 +199,87 @@ test('resolveEffectiveLocale correctly resolves explicit and auto locales', () =
   delete globalThis.chrome;
 });
 
+test('SETTINGS_ENUMS contains valid sets and matches default settings', () => {
+  const { SETTINGS_ENUMS, DEFAULT_SETTINGS } = self;
+  assert.ok(SETTINGS_ENUMS, 'SETTINGS_ENUMS must be defined on self');
+
+  const expectedEnums = ['locale', 'sidebarScope', 'trimRightRail', 'feedWidth', 'feedFontSize', 'feedMediaHeight'];
+  for (const key of expectedEnums) {
+    assert.ok(SETTINGS_ENUMS[key] instanceof Set, `${key} should have a Set of valid values`);
+    assert.ok(SETTINGS_ENUMS[key].has(DEFAULT_SETTINGS[key]), `Default value for ${key} (${DEFAULT_SETTINGS[key]}) must be in SETTINGS_ENUMS`);
+  }
+});
+
+test('sanitizeSettingValue validates enum values, normalizes legacy booleans, and falls back to defaults', () => {
+  const { sanitizeSettingValue, DEFAULT_SETTINGS } = self;
+  assert.strictEqual(typeof sanitizeSettingValue, 'function');
+
+  // Valid values
+  assert.strictEqual(sanitizeSettingValue('trimRightRail', 'hidden'), 'hidden');
+  assert.strictEqual(sanitizeSettingValue('trimRightRail', 'hover'), 'hover');
+  assert.strictEqual(sanitizeSettingValue('trimRightRail', 'visible'), 'visible');
+  assert.strictEqual(sanitizeSettingValue('feedWidth', 'w100'), 'w100');
+  assert.strictEqual(sanitizeSettingValue('sidebarScope', 'global'), 'global');
+
+  // Legacy boolean mapping for trimRightRail
+  assert.strictEqual(sanitizeSettingValue('trimRightRail', true), 'hover');
+  assert.strictEqual(sanitizeSettingValue('trimRightRail', false), 'visible');
+
+  // Invalid values fallback to DEFAULT_SETTINGS
+  assert.strictEqual(sanitizeSettingValue('trimRightRail', 'invalid-mode'), DEFAULT_SETTINGS.trimRightRail);
+  assert.strictEqual(sanitizeSettingValue('trimRightRail', undefined), DEFAULT_SETTINGS.trimRightRail);
+  assert.strictEqual(sanitizeSettingValue('trimRightRail', null), DEFAULT_SETTINGS.trimRightRail);
+  assert.strictEqual(sanitizeSettingValue('feedWidth', 'w999'), DEFAULT_SETTINGS.feedWidth);
+  assert.strictEqual(sanitizeSettingValue('locale', 'invalid-lang'), DEFAULT_SETTINGS.locale);
+
+  // Non-enum keys pass through if defined
+  assert.strictEqual(sanitizeSettingValue('enabled', false), false);
+  assert.strictEqual(sanitizeSettingValue('enabled', undefined), DEFAULT_SETTINGS.enabled);
+});
+
+test('bindSelectDropdown initializes element value and handles changes and updates', async () => {
+  const { bindSelectDropdown, DEFAULT_SETTINGS } = self;
+  assert.strictEqual(typeof bindSelectDropdown, 'function');
+
+  // Null element guard
+  assert.strictEqual(bindSelectDropdown(null, 'feedWidth'), null);
+
+  // Mock DOM Select Element
+  const listeners = [];
+  const mockSelect = {
+    value: '',
+    disabled: false,
+    addEventListener: (type, handler) => {
+      listeners.push({ type, handler });
+    }
+  };
+
+  let savedVal = null;
+  const binding = bindSelectDropdown(mockSelect, 'feedWidth', {
+    initialValue: 'w50',
+    onChange: async (val) => {
+      savedVal = val;
+    }
+  });
+
+  assert.strictEqual(mockSelect.value, 'w50');
+  assert.strictEqual(binding.element, mockSelect);
+  assert.strictEqual(binding.key, 'feedWidth');
+
+  // Simulate user selection change
+  mockSelect.value = 'w100';
+  const changeListener = listeners.find(l => l.type === 'change');
+  assert.ok(changeListener, 'Should register a change listener');
+  await changeListener.handler();
+  assert.strictEqual(savedVal, 'w100');
+
+  // Simulate update() from storage
+  binding.update('w75');
+  assert.strictEqual(mockSelect.value, 'w75');
+
+  // Invalid update value falls back to default
+  binding.update('invalid-choice');
+  assert.strictEqual(mockSelect.value, DEFAULT_SETTINGS.feedWidth);
+});
+
+

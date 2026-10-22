@@ -80,6 +80,69 @@ self.DEFAULT_SETTINGS = {
   ...self.MAIN_SETTINGS
 };
 
+self.SETTINGS_ENUMS = {
+  locale: new Set(['auto', 'en', 'zh_TW']),
+  sidebarScope: new Set(['homeOnly', 'global']),
+  trimRightRail: new Set(['hidden', 'hover', 'visible']),
+  feedWidth: new Set(['default', 'w50', 'w75', 'w100']),
+  feedFontSize: new Set(['default', 'f150', 'f200', 'f300']),
+  feedMediaHeight: new Set(['default', 'h75', 'h50', 'h25'])
+};
+
+self.sanitizeSettingValue = function(key, rawValue) {
+  const fallback = self.DEFAULT_SETTINGS[key];
+  if (rawValue === undefined || rawValue === null) return fallback;
+
+  // Handle trimRightRail legacy booleans (true -> 'hover', false -> 'visible')
+  if (key === 'trimRightRail') {
+    if (rawValue === true) rawValue = 'hover';
+    else if (rawValue === false) rawValue = 'visible';
+  }
+
+  const validSet = self.SETTINGS_ENUMS ? self.SETTINGS_ENUMS[key] : null;
+  if (validSet) {
+    return validSet.has(rawValue) ? rawValue : fallback;
+  }
+  return rawValue;
+};
+
+self.bindSelectDropdown = function(selectEl, key, options = {}) {
+  if (!selectEl) return null;
+  const fallback = options.fallback !== undefined ? options.fallback : self.DEFAULT_SETTINGS[key];
+
+  function getSanitized(val) {
+    if (typeof self.sanitizeSettingValue === 'function') {
+      return self.sanitizeSettingValue(key, val);
+    }
+    const validSet = self.SETTINGS_ENUMS ? self.SETTINGS_ENUMS[key] : null;
+    return (validSet && validSet.has(val)) ? val : fallback;
+  }
+
+  const initial = options.initialValue !== undefined ? options.initialValue : fallback;
+  selectEl.value = getSanitized(initial);
+
+  selectEl.addEventListener('change', async () => {
+    const val = getSanitized(selectEl.value);
+    selectEl.value = val;
+    if (typeof options.onChange === 'function') {
+      await options.onChange(val);
+    } else if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.local) {
+      const { settings: current } = await chrome.storage.local.get('settings');
+      await chrome.storage.local.set({ settings: { ...(current || {}), [key]: val } });
+    }
+  });
+
+  return {
+    key,
+    element: selectEl,
+    update(nextVal) {
+      if (nextVal !== undefined) {
+        selectEl.value = getSanitized(nextVal);
+      }
+    }
+  };
+};
+
 self.INVERTED_KEYS = new Set(['showRightSponsored', 'showRightBirthdays', 'showRightMetaAI']);
 
 self.toUIChecked = function(key, storedValue) {
@@ -101,4 +164,21 @@ self.isFeedPage = function(pathname) {
 
   return false;
 };
+
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = {
+    DEFAULT_SETTINGS: self.DEFAULT_SETTINGS,
+    TOP_SETTINGS: self.TOP_SETTINGS,
+    LEFT_SETTINGS: self.LEFT_SETTINGS,
+    RIGHT_SETTINGS: self.RIGHT_SETTINGS,
+    MAIN_SETTINGS: self.MAIN_SETTINGS,
+    SETTINGS_ENUMS: self.SETTINGS_ENUMS,
+    sanitizeSettingValue: self.sanitizeSettingValue,
+    bindSelectDropdown: self.bindSelectDropdown,
+    INVERTED_KEYS: self.INVERTED_KEYS,
+    toUIChecked: self.toUIChecked,
+    toStoredValue: self.toStoredValue,
+    isFeedPage: self.isFeedPage
+  };
+}
 
