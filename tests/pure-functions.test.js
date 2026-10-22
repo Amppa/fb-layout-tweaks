@@ -15,7 +15,7 @@ const path = require('node:path');
 globalThis.self ??= globalThis;
 require('../src/shared/defaults.js');
 
-const { getUiCleanClassName, normalizeRightRailMode } = require('../src/content/content.js');
+const { getUiCleanClassName, normalizeRightRailMode, deriveLayoutClasses } = require('../src/content/content.js');
 const { getMsg, setLocaleMessages, resolveEffectiveLocale } = require('../src/shared/i18n.js');
 
 const ROOT_DIR = path.resolve(__dirname, '..');
@@ -280,6 +280,49 @@ test('bindSelectDropdown initializes element value and handles changes and updat
   // Invalid update value falls back to default
   binding.update('invalid-choice');
   assert.strictEqual(mockSelect.value, DEFAULT_SETTINGS.feedWidth);
+});
+
+test('deriveLayoutClasses returns complete set of active layout tokens based on settings and scope', () => {
+  const { DEFAULT_SETTINGS } = self;
+
+  // Disabled master switch produces zero classes
+  const disabledClasses = deriveLayoutClasses({ ...DEFAULT_SETTINGS, enabled: false }, true);
+  assert.strictEqual(disabledClasses.size, 0);
+
+  // Default settings on active feed
+  const defaultClasses = deriveLayoutClasses(DEFAULT_SETTINGS, true);
+  assert.ok(defaultClasses.has('fb-layout-tweaks-hover-expand-left-rail'));
+  assert.ok(defaultClasses.has('fb-layout-tweaks-hide-right-rail'));
+  assert.ok(defaultClasses.has('fb-layout-tweaks-center-main-feed'));
+  assert.ok(defaultClasses.has('fb-layout-tweaks-feed-width-75'));
+  assert.ok(defaultClasses.has('fb-layout-tweaks-feed-font-150'));
+
+  // Feed/Sidebar inactive (non-feed page with homeOnly scope)
+  const nonFeedClasses = deriveLayoutClasses(DEFAULT_SETTINGS, false);
+  // Sidebar expand & right rail hide should not be present
+  assert.strictEqual(nonFeedClasses.has('fb-layout-tweaks-hover-expand-left-rail'), false);
+  assert.strictEqual(nonFeedClasses.has('fb-layout-tweaks-hide-right-rail'), false);
+  // Top nav trimming is still active even outside feed
+  assert.strictEqual(nonFeedClasses.has('fb-layout-tweaks-hide-top-marketplace'), true);
+
+  // Custom configuration test
+  const customSettings = {
+    ...DEFAULT_SETTINGS,
+    trimRightRail: 'hover',
+    feedWidth: 'w100',
+    feedFontSize: 'f200',
+    feedMediaHeight: 'h50',
+    showTopReels: false,
+    showLeftFriends: false
+  };
+  const customClasses = deriveLayoutClasses(customSettings, true);
+  assert.ok(customClasses.has('fb-layout-tweaks-hover-expand-right-rail'));
+  assert.strictEqual(customClasses.has('fb-layout-tweaks-hide-right-rail'), false);
+  assert.ok(customClasses.has('fb-layout-tweaks-feed-width-100'));
+  assert.ok(customClasses.has('fb-layout-tweaks-feed-font-200'));
+  assert.ok(customClasses.has('fb-layout-tweaks-feed-media-h50'));
+  assert.ok(customClasses.has('fb-layout-tweaks-hide-top-reels'));
+  assert.ok(customClasses.has('fb-layout-tweaks-hide-left-friends'));
 });
 
 
