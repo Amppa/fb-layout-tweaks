@@ -362,5 +362,33 @@ test('updateSettings executes sequential updates without race condition data los
   delete globalThis.chrome;
 });
 
+test('scanLeftRailDynamicItems short-circuits when ads manager is already tagged and connected', () => {
+  const { scanLeftRailDynamicItems } = require('../src/content/content.js');
+  assert.strictEqual(typeof scanLeftRailDynamicItems, 'function');
 
+  const mockRail = {
+    isConnected: true,
+    querySelector: (sel) => {
+      if (sel.includes('.fb-layout-tweaks-hide-left-ads-manager-node')) {
+        return { isConnected: true };
+      }
+      return null;
+    },
+    querySelectorAll: () => {
+      throw new Error('querySelectorAll should not be called when already tagged!');
+    }
+  };
 
+  globalThis.document = {
+    querySelector: (sel) => {
+      if (sel.includes('fb-layout-tweaks-left-rail') || sel.includes('LeftRail')) return mockRail;
+      return null;
+    }
+  };
+
+  const result = scanLeftRailDynamicItems({ enabled: true, showLeftAdsManager: false });
+  assert.strictEqual(result.cached, true);
+  assert.strictEqual(result.spansCount, 0);
+
+  delete globalThis.document;
+});

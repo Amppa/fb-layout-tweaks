@@ -160,16 +160,22 @@
     return currentSettings.showLeftAdsManager === false;
   }
 
-  function scanLeftRailDynamicItems() {
+  function scanLeftRailDynamicItems(settings = currentSettings) {
     try {
-      if (!currentSettings || currentSettings.enabled === false) return;
+      if (!settings || settings.enabled === false) return;
 
-      if (isAdsManagerHidden()) {
+      if (settings.showLeftAdsManager === false) {
         const leftRail = document.querySelector(
           '.fb-layout-tweaks-left-rail, [data-pagelet="LeftRail"], div[role="navigation"]:not(header *):not([role="banner"] *)'
         );
         const root = leftRail || (typeof document !== 'undefined' ? document.body : null);
         if (!root) return;
+
+        // O(1) Fast-path: if Ads Manager is already tagged and connected in the DOM, skip querying spans
+        const alreadyTagged = root.querySelector('.fb-layout-tweaks-hide-left-ads-manager-node');
+        if (alreadyTagged && (alreadyTagged.isConnected !== false)) {
+          return { spansCount: 0, candidateCount: 0, cached: true };
+        }
 
         const candidates = root.querySelectorAll(
           'a[href*="adsmanager"], a[href*="ads/manager"], a[href*="ad_center"], a[aria-label*="廣告管理員"], a[aria-label*="Ads Manager" i]'
@@ -936,6 +942,7 @@
       normalizeRightRailMode,
       deriveLayoutClasses,
       isAdsManagerHidden,
+      scanLeftRailDynamicItems,
       isRightRailActive,
       isFeedPage: (typeof self !== 'undefined' && self.isFeedPage) || null,
       scanAndScaleFeedMedia,
