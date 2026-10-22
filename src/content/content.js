@@ -165,7 +165,13 @@
       if (!currentSettings || currentSettings.enabled === false) return;
 
       if (isAdsManagerHidden()) {
-        const candidates = document.querySelectorAll(
+        const leftRail = document.querySelector(
+          '.fb-layout-tweaks-left-rail, [data-pagelet="LeftRail"], div[role="navigation"]:not(header *):not([role="banner"] *)'
+        );
+        const root = leftRail || (typeof document !== 'undefined' ? document.body : null);
+        if (!root) return;
+
+        const candidates = root.querySelectorAll(
           'a[href*="adsmanager"], a[href*="ads/manager"], a[href*="ad_center"], a[aria-label*="廣告管理員"], a[aria-label*="Ads Manager" i]'
         );
         for (const el of candidates) {
@@ -173,7 +179,7 @@
           row.classList.add('fb-layout-tweaks-hide-left-ads-manager-node');
         }
 
-        const spans = document.querySelectorAll('span');
+        const spans = root.querySelectorAll('span');
         for (const span of spans) {
           if (span.children.length === 0) {
             const text = span.textContent.trim();
@@ -275,8 +281,17 @@
 
   const RIGHT_RAIL_EXCLUDE_ANCESTORS = '[role="dialog"], [aria-modal="true"], [role="main"], [data-pagelet*="Photo"], [data-pagelet*="Media"], [data-pagelet*="Tahoe"]';
 
-  function tagRailContainers() {
+  function tagRailContainers(force = false) {
     try {
+      if (!force && typeof document !== 'undefined') {
+        const leftTagged = document.querySelector('.fb-layout-tweaks-left-rail');
+        const rightNeeded = isRightRailActive();
+        const rightTagged = rightNeeded ? document.querySelector('.fb-layout-tweaks-right-rail') : true;
+        if (leftTagged && leftTagged.isConnected && rightTagged && (rightTagged === true || rightTagged.isConnected)) {
+          return { leftCount: 1, rightCount: rightNeeded ? 1 : 0 };
+        }
+      }
+
       // Tag genuine Left Rail containers (skip nested descendants)
       let leftCount = 0;
       let rightCount = 0;
@@ -627,10 +642,28 @@
       scheduleHealthChecks();
     });
 
+    // Check if current settings require dynamic DOM subtree scanning
+    function needsDynamicScan(settings) {
+      if (!settings || settings.enabled === false) return false;
+      const isAdsManagerActive = settings.showLeftAdsManager === false;
+      const isFeedMediaActive = settings.trimMainFeed !== false &&
+        Boolean(settings.feedMediaHeight) && settings.feedMediaHeight !== 'default';
+      const isRightRailDynamicActive = (settings.trimRightRail === 'hover' || settings.trimRightRail === true) && (
+        settings.showRightSponsored === false ||
+        settings.showRightBirthdays === false ||
+        settings.showRightMetaAI === false
+      );
+      const railsNeedTagging = typeof document !== 'undefined' && (
+        !document.querySelector('.fb-layout-tweaks-left-rail') ||
+        (isRightRailActive() && !document.querySelector('.fb-layout-tweaks-right-rail'))
+      );
+      return isAdsManagerActive || isFeedMediaActive || isRightRailDynamicActive || railsNeedTagging;
+    }
+
     // Observe for dynamic content loads (e.g. "See More" bookmark expansion)
     try {
       const observer = new MutationObserver(() => {
-        if (currentSettings?.enabled !== false) {
+        if (currentSettings?.enabled !== false && needsDynamicScan(currentSettings)) {
           triggerThrottledScan();
         }
       });
@@ -861,6 +894,8 @@
       getUiCleanClassName,
       normalizeRightRailMode,
       deriveLayoutClasses,
+      isAdsManagerHidden,
+      isRightRailActive,
       isFeedPage: (typeof self !== 'undefined' && self.isFeedPage) || null,
       scanAndScaleFeedMedia,
       restoreFeedMedia,
