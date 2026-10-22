@@ -165,7 +165,13 @@
       if (!currentSettings || currentSettings.enabled === false) return;
 
       if (isAdsManagerHidden()) {
-        const candidates = document.querySelectorAll(
+        const leftRail = document.querySelector(
+          '.fb-layout-tweaks-left-rail, [data-pagelet="LeftRail"], div[role="navigation"]:not(header *):not([role="banner"] *)'
+        );
+        const root = leftRail || (typeof document !== 'undefined' ? document.body : null);
+        if (!root) return;
+
+        const candidates = root.querySelectorAll(
           'a[href*="adsmanager"], a[href*="ads/manager"], a[href*="ad_center"], a[aria-label*="廣告管理員"], a[aria-label*="Ads Manager" i]'
         );
         for (const el of candidates) {
@@ -173,7 +179,7 @@
           row.classList.add('fb-layout-tweaks-hide-left-ads-manager-node');
         }
 
-        const spans = document.querySelectorAll('span');
+        const spans = root.querySelectorAll('span');
         for (const span of spans) {
           if (span.children.length === 0) {
             const text = span.textContent.trim();
@@ -221,6 +227,7 @@
       if (currentSettings.showRightSponsored === false) {
         const headings = rail.querySelectorAll('h3');
         for (const h of headings) {
+          if (h.closest('.fb-layout-tweaks-hide-right-sponsored-node')) continue;
           const title = h.textContent.replace(/[\u200b-\u200f\ufeff]/g, '').trim().toLowerCase();
           if (title !== 'sponsored' && !title.startsWith('贊助')) continue;
           let node = h.parentElement;
@@ -241,6 +248,7 @@
       if (currentSettings.showRightBirthdays === false) {
         const links = rail.querySelectorAll('a[href*="/events/birthdays/"]');
         for (const el of links) {
+          if (el.closest('.fb-layout-tweaks-hide-right-birthdays-node')) continue;
           let node = el.parentElement;
           while (node && node !== rail) {
             const heading = node.querySelector(':scope h3');
@@ -260,6 +268,7 @@
       if (currentSettings.showRightMetaAI === false) {
         const spans = rail.querySelectorAll('span');
         for (const span of spans) {
+          if (span.closest('.fb-layout-tweaks-hide-right-metaai-node')) continue;
           const hasName = Array.from(span.childNodes).some(
             n => n.nodeType === Node.TEXT_NODE && n.textContent.trim() === 'Meta AI'
           );
@@ -275,8 +284,17 @@
 
   const RIGHT_RAIL_EXCLUDE_ANCESTORS = '[role="dialog"], [aria-modal="true"], [role="main"], [data-pagelet*="Photo"], [data-pagelet*="Media"], [data-pagelet*="Tahoe"]';
 
-  function tagRailContainers() {
+  function tagRailContainers(force = false) {
     try {
+      if (!force && typeof document !== 'undefined') {
+        const leftTagged = document.querySelector('.fb-layout-tweaks-left-rail');
+        const rightNeeded = isRightRailActive();
+        const rightTagged = rightNeeded ? document.querySelector('.fb-layout-tweaks-right-rail') : true;
+        if (leftTagged && leftTagged.isConnected && rightTagged && (rightTagged === true || rightTagged.isConnected)) {
+          return { leftCount: 1, rightCount: rightNeeded ? 1 : 0 };
+        }
+      }
+
       // Tag genuine Left Rail containers (skip nested descendants)
       let leftCount = 0;
       let rightCount = 0;
@@ -453,6 +471,9 @@
       );
 
       for (const el of mediaElements) {
+        // Incremental stamp cache: if already scaled to current mode, skip to avoid forced reflow
+        if (el.dataset.fbLtScaledMode === mode) continue;
+
         // Skip small icons, badges, avatars (threshold 140px width or height)
         const w = el.clientWidth || el.naturalWidth || parseFloat(el.getAttribute('width')) || 0;
         const h = el.clientHeight || el.naturalHeight || parseFloat(el.getAttribute('height')) || 0;
@@ -507,6 +528,7 @@
             }
             el.style.setProperty('object-fit', 'contain', 'important');
             el.style.setProperty('object-position', 'center', 'important');
+            el.dataset.fbLtScaledMode = mode;
 
             // Also clamp immediate parent if it has fixed height
             let parent = wrapper.parentElement;
@@ -548,6 +570,11 @@
         delete el.dataset.fbLtOrigPadding;
         delete el.dataset.fbLtOrigWidth;
         delete el.dataset.fbLtOrigHeight;
+        delete el.dataset.fbLtScaledMode;
+      }
+      const scaledImages = document.querySelectorAll('[data-fb-lt-scaled-mode]');
+      for (const el of scaledImages) {
+        delete el.dataset.fbLtScaledMode;
       }
     } catch (_) {
       // Non-fatal
@@ -627,10 +654,28 @@
       scheduleHealthChecks();
     });
 
+    // Check if current settings require dynamic DOM subtree scanning
+    function needsDynamicScan(settings) {
+      if (!settings || settings.enabled === false) return false;
+      const isAdsManagerActive = settings.showLeftAdsManager === false;
+      const isFeedMediaActive = settings.trimMainFeed !== false &&
+        Boolean(settings.feedMediaHeight) && settings.feedMediaHeight !== 'default';
+      const isRightRailDynamicActive = (settings.trimRightRail === 'hover' || settings.trimRightRail === true) && (
+        settings.showRightSponsored === false ||
+        settings.showRightBirthdays === false ||
+        settings.showRightMetaAI === false
+      );
+      const railsNeedTagging = typeof document !== 'undefined' && (
+        !document.querySelector('.fb-layout-tweaks-left-rail') ||
+        (isRightRailActive() && !document.querySelector('.fb-layout-tweaks-right-rail'))
+      );
+      return isAdsManagerActive || isFeedMediaActive || isRightRailDynamicActive || railsNeedTagging;
+    }
+
     // Observe for dynamic content loads (e.g. "See More" bookmark expansion)
     try {
       const observer = new MutationObserver(() => {
-        if (currentSettings?.enabled !== false) {
+        if (currentSettings?.enabled !== false && needsDynamicScan(currentSettings)) {
           triggerThrottledScan();
         }
       });
@@ -679,6 +724,15 @@
     const t0 = isDebug ? performance.now() : 0;
     if (!currentSettings || currentSettings.enabled === false || !currentSettings.hoverExpandLeftRail) {
       if (isRailExpanded) setRailExpanded(false);
+      return;
+    }
+
+    // Boundary fast-exit: when rail is collapsed and mouse is in feed (clientX > 72px)
+    if (!isRailExpanded && typeof e.clientX === 'number' && e.clientX > 72) {
+      if (expandTimer) {
+        clearTimeout(expandTimer);
+        expandTimer = null;
+      }
       return;
     }
 
@@ -784,6 +838,16 @@
       return;
     }
 
+    // Boundary fast-exit: when right rail is collapsed and mouse is well outside right edge
+    const screenWidth = typeof window !== 'undefined' ? window.innerWidth : 0;
+    if (!isRightRailExpanded && typeof e.clientX === 'number' && screenWidth > 0 && e.clientX < (screenWidth - 72)) {
+      if (rightExpandTimer) {
+        clearTimeout(rightExpandTimer);
+        rightExpandTimer = null;
+      }
+      return;
+    }
+
     const target = e.target;
     if (!target || !target.closest) return;
 
@@ -861,6 +925,8 @@
       getUiCleanClassName,
       normalizeRightRailMode,
       deriveLayoutClasses,
+      isAdsManagerHidden,
+      isRightRailActive,
       isFeedPage: (typeof self !== 'undefined' && self.isFeedPage) || null,
       scanAndScaleFeedMedia,
       restoreFeedMedia,
