@@ -768,15 +768,16 @@
 
     // Check DOM hierarchy (rail container or any button / link / listitem / text / overlay item)
     const railContainer = getLeftRailContainer(target);
-    const isOverItem = Boolean(target.closest && target.closest(
+    const isOverItem = Boolean(railContainer || (target.closest && target.closest(
       ':is(.fb-layout-tweaks-left-rail, [data-pagelet="LeftRail"], div[role="navigation"]) :is(a, [role="button"], [role="listitem"], li, [data-visualcompletion])'
-    ));
+    )));
 
     // Dynamic physical bounding rect check:
-    // When rail is already expanded, dynamically measure the active drawer's right edge (no hardcoded width)
+    // Only measure physical bounding rect if cursor is NOT already over a known rail container/item
+    // (avoids calling getBoundingClientRect on every mousemove when user is browsing rail items)
     let isInsideDrawerBounds = false;
-    if (isRailExpanded) {
-      const activeRail = railContainer || document.querySelector('.fb-layout-tweaks-left-rail, [data-pagelet="LeftRail"], div[role="navigation"]:not(header *):not([role="banner"] *)');
+    if (isRailExpanded && !railContainer && !isOverItem) {
+      const activeRail = document.querySelector('.fb-layout-tweaks-left-rail, [data-pagelet="LeftRail"], div[role="navigation"]:not(header *):not([role="banner"] *)');
       if (activeRail) {
         const drawer = activeRail.querySelector(':scope > div') || activeRail;
         const rect = drawer.getBoundingClientRect();
