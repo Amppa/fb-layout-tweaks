@@ -25,6 +25,7 @@ test('DEFAULT_SETTINGS contains required core keys and valid types', () => {
   assert.strictEqual(defaults.feedWidth, 'w75', 'feedWidth should default to w75');
   assert.strictEqual(defaults.feedFontSize, 'f150', 'feedFontSize should default to f150');
   assert.strictEqual(defaults.feedMediaHeight, 'default', 'feedMediaHeight should default to default');
+  assert.strictEqual(defaults.trimRightRail, 'hidden', 'trimRightRail should default to hidden');
 
   // Verify all show* keys are booleans
   const showKeys = Object.keys(defaults).filter(k => k.startsWith('show'));

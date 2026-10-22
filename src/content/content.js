@@ -47,7 +47,9 @@
     // Section masters from popup: a trimmed-off section restores native items.
     const trimTopNav = isMasterEnabled && settings.trimTopNav !== false;
     const trimLeftItems = isSidebarActive && settings.trimLeftItems !== false;
-    const trimRightRail = isSidebarActive && settings.trimRightRail !== false;
+    const rightRailMode = normalizeRightRailMode(settings.trimRightRail, isSidebarActive);
+    const isHoverRightRail = rightRailMode === 'hover';
+    const isHideRightRail = rightRailMode === 'hidden';
     const trimMainFeed = isSidebarActive && settings.trimMainFeed !== false;
 
     for (const [key, value] of Object.entries(settings)) {
@@ -55,7 +57,7 @@
       // Fixed anchor (Profile) has no hide rule.
       if (key === 'showLeftProfile') continue;
       const sectionActive = key.startsWith('showTop') ? trimTopNav
-        : key.startsWith('showRight') ? trimRightRail
+        : key.startsWith('showRight') ? (rightRailMode !== 'visible')
         : trimLeftItems;
       const className = getUiCleanClassName(key);
       const isHidden = sectionActive && value === false;
@@ -64,7 +66,8 @@
 
     const isHoverExpand = isSidebarActive && Boolean(settings.hoverExpandLeftRail);
     root.classList.toggle('fb-layout-tweaks-hover-expand-left-rail', isHoverExpand);
-    root.classList.toggle('fb-layout-tweaks-hover-expand-right-rail', trimRightRail);
+    root.classList.toggle('fb-layout-tweaks-hover-expand-right-rail', isHoverRightRail);
+    root.classList.toggle('fb-layout-tweaks-hide-right-rail', isHideRightRail);
 
     const isCenterMainFeed = trimMainFeed && Boolean(settings.centerMainFeed);
     root.classList.toggle('fb-layout-tweaks-center-main-feed', isCenterMainFeed);
@@ -97,7 +100,7 @@
     if (!isHoverExpand && isRailExpanded) {
       setRailExpanded(false);
     }
-    if (!trimRightRail && isRightRailExpanded) {
+    if (!isHoverRightRail && isRightRailExpanded) {
       setRightRailExpanded(false);
     }
 
@@ -109,7 +112,7 @@
       triggerThrottledScan();
     }
 
-    if (trimRightRail && (settings.showRightSponsored === false || settings.showRightBirthdays === false || settings.showRightMetaAI === false)) {
+    if (isHoverRightRail && (settings.showRightSponsored === false || settings.showRightBirthdays === false || settings.showRightMetaAI === false)) {
       triggerThrottledScan();
     }
   }
@@ -149,9 +152,17 @@
     }
   }
 
+  function normalizeRightRailMode(rawVal, isSidebarActive) {
+    if (!isSidebarActive) return 'visible';
+    if (rawVal === 'hover' || rawVal === true) return 'hover';
+    if (rawVal === 'visible' || rawVal === false) return 'visible';
+    return 'hidden';
+  }
+
   function isRightRailActive() {
-    if (!currentSettings) return false;
-    return currentSettings.enabled !== false && currentSettings.trimRightRail !== false;
+    if (!currentSettings || currentSettings.enabled === false) return false;
+    const mode = currentSettings.trimRightRail;
+    return mode === 'hover' || mode === true;
   }
 
   function scanRightRailDynamicItems() {
@@ -605,7 +616,7 @@
         if (!currentSettings.hoverExpandLeftRail) {
           setRailExpanded(false);
         }
-        if (!currentSettings.trimRightRail) {
+        if (!isRightRailActive()) {
           setRightRailExpanded(false);
         }
       }
@@ -711,7 +722,7 @@
       if (isRailExpanded || (e.clientX <= 72 && currentSettings?.hoverExpandLeftRail)) {
         handleButtonHover(e);
       }
-      if (isRightRailExpanded || (typeof window !== 'undefined' && e.clientX >= (window.innerWidth - 72) && currentSettings?.trimRightRail)) {
+      if (isRightRailExpanded || (typeof window !== 'undefined' && e.clientX >= (window.innerWidth - 72) && isRightRailActive())) {
         handleRightRailHover(e);
       }
     }, { passive: true });
@@ -730,7 +741,7 @@
   function handleRightRailHover(e) {
     const isDebug = typeof document !== 'undefined' && Boolean(document.documentElement?.dataset?.fbLtDebug);
     const t0 = isDebug ? performance.now() : 0;
-    if (!currentSettings || currentSettings.enabled === false || currentSettings.trimRightRail === false) {
+    if (!isRightRailActive()) {
       if (isRightRailExpanded) setRightRailExpanded(false);
       return;
     }
@@ -810,6 +821,7 @@
   if (typeof module !== 'undefined' && module.exports) {
     module.exports = {
       getUiCleanClassName,
+      normalizeRightRailMode,
       isFeedPage: (typeof self !== 'undefined' && self.isFeedPage) || null,
       scanAndScaleFeedMedia,
       restoreFeedMedia,

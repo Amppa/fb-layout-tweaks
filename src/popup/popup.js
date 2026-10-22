@@ -11,11 +11,15 @@ document.addEventListener('DOMContentLoaded', async () => {
   if (versionEl) versionEl.textContent = chrome.runtime.getManifest().version;
 
   // Section quick toggles (ids match settings keys)
-  const sectionKeys = ['hoverExpandLeftRail', 'trimRightRail', 'trimMainFeed'];
+  const sectionKeys = ['hoverExpandLeftRail', 'trimMainFeed'];
   const sectionToggles = {};
   sectionKeys.forEach(key => {
     sectionToggles[key] = document.getElementById(key);
   });
+
+  // Right sidebar mode dropdown
+  const VALID_RIGHT_RAIL_MODES = new Set(['hidden', 'hover', 'visible']);
+  const trimRightRailSelect = document.getElementById('trimRightRail');
 
   // Load settings & locale: do not auto-detect system language, default to 'en'
   const { settings } = await chrome.storage.local.get('settings');
@@ -53,6 +57,18 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (key === 'trimMainFeed') updateFeedSubUI(toggle.checked);
       });
     }
+  }
+
+  // Right sidebar select handler
+  if (trimRightRailSelect) {
+    const rawVal = mergedSettings.trimRightRail;
+    const init = rawVal === true ? 'hover' : (rawVal === false ? 'visible' : rawVal);
+    trimRightRailSelect.value = VALID_RIGHT_RAIL_MODES.has(init) ? init : (DEFAULT_SETTINGS.trimRightRail || 'hidden');
+    trimRightRailSelect.addEventListener('change', async () => {
+      const val = VALID_RIGHT_RAIL_MODES.has(trimRightRailSelect.value) ? trimRightRailSelect.value : (DEFAULT_SETTINGS.trimRightRail || 'hidden');
+      const { settings: current } = await chrome.storage.local.get('settings');
+      await chrome.storage.local.set({ settings: { ...current, trimRightRail: val } });
+    });
   }
 
   // Feed sub-options (same enum values as options page, no subtitles)
@@ -115,6 +131,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
       }
       if (typeof newSettings.trimMainFeed === 'boolean') updateFeedSubUI(newSettings.trimMainFeed);
+      if (trimRightRailSelect && newSettings.trimRightRail !== undefined) {
+        const raw = newSettings.trimRightRail;
+        const norm = raw === true ? 'hover' : (raw === false ? 'visible' : raw);
+        trimRightRailSelect.value = VALID_RIGHT_RAIL_MODES.has(norm) ? norm : (DEFAULT_SETTINGS.trimRightRail || 'hidden');
+      }
       if (typeof newSettings.feedWidth === 'string' && feedWidthSelect) {
         feedWidthSelect.value = VALID_FEED_WIDTHS.has(newSettings.feedWidth) ? newSettings.feedWidth : (DEFAULT_SETTINGS.feedWidth || 'default');
       }

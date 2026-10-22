@@ -496,6 +496,24 @@ html.fb-layout-tweaks-hide-right-metaai .fb-layout-tweaks-hide-right-metaai-node
   display: none !important;
 }
 
+/* Right Rail Completely Hidden Mode (gated by trimRightRail === 'hidden') */
+html.fb-layout-tweaks-hide-right-rail :is(.fb-layout-tweaks-right-rail, [data-pagelet="RightRail"], #right_rail_container, div[role="complementary"]):not([role="dialog"] *):not(:is(.fb-layout-tweaks-right-rail, [data-pagelet="RightRail"], #right_rail_container, div[role="complementary"]) *),
+html.fb-layout-tweaks-hide-right-rail :is(.fb-layout-tweaks-right-rail, [data-pagelet="RightRail"], #right_rail_container, div[role="complementary"]):not([role="dialog"] *) {
+  display: none !important;
+  width: 0 !important;
+  min-width: 0 !important;
+  max-width: 0 !important;
+  flex-basis: 0 !important;
+}
+
+html.fb-layout-tweaks-hide-right-rail .fb-layout-tweaks-right-rail-parent:has(> :is(.fb-layout-tweaks-right-rail, [data-pagelet="RightRail"], #right_rail_container, div[role="complementary"]):only-child) {
+  display: none !important;
+  width: 0 !important;
+  min-width: 0 !important;
+  max-width: 0 !important;
+  flex-basis: 0 !important;
+}
+
 /* ==========================================================================
    Main Feed Centering (gated by centerMainFeed setting)
    Compensates asymmetric in-flow rail spacers so the feed stays on the
@@ -521,13 +539,23 @@ html.fb-layout-tweaks-center-main-feed :is([role="main"], [data-pagelet="Feed"])
   }
 
   /* Left collapsed + right native: shift right by half the width difference */
-  html.fb-layout-tweaks-center-main-feed.fb-layout-tweaks-hover-expand-left-rail:not(.fb-layout-tweaks-hover-expand-right-rail) :is([role="main"], [data-pagelet="Feed"]) {
+  html.fb-layout-tweaks-center-main-feed.fb-layout-tweaks-hover-expand-left-rail:not(.fb-layout-tweaks-hover-expand-right-rail):not(.fb-layout-tweaks-hide-right-rail) :is([role="main"], [data-pagelet="Feed"]) {
     transform: translateX(calc((var(--fb-lt-right-rail-expanded-width) - var(--fb-lt-rail-collapsed-width)) / 2)) !important;
   }
 
   /* Both rails native: shift by half the native width difference */
-  html.fb-layout-tweaks-center-main-feed:not(.fb-layout-tweaks-hover-expand-left-rail):not(.fb-layout-tweaks-hover-expand-right-rail) :is([role="main"], [data-pagelet="Feed"]) {
+  html.fb-layout-tweaks-center-main-feed:not(.fb-layout-tweaks-hover-expand-left-rail):not(.fb-layout-tweaks-hover-expand-right-rail):not(.fb-layout-tweaks-hide-right-rail) :is([role="main"], [data-pagelet="Feed"]) {
     transform: translateX(calc((var(--fb-lt-right-rail-expanded-width) - var(--fb-lt-left-rail-expanded-width)) / 2)) !important;
+  }
+
+  /* Left collapsed + right hidden: shift left by half the collapsed width (0 - 72) / 2 = -36px */
+  html.fb-layout-tweaks-center-main-feed.fb-layout-tweaks-hover-expand-left-rail.fb-layout-tweaks-hide-right-rail :is([role="main"], [data-pagelet="Feed"]) {
+    transform: translateX(calc((0px - var(--fb-lt-rail-collapsed-width)) / 2)) !important;
+  }
+
+  /* Left native + right hidden: shift left by half the left native width (0 - 360) / 2 = -180px */
+  html.fb-layout-tweaks-center-main-feed:not(.fb-layout-tweaks-hover-expand-left-rail).fb-layout-tweaks-hide-right-rail :is([role="main"], [data-pagelet="Feed"]) {
+    transform: translateX(calc((0px - var(--fb-lt-left-rail-expanded-width)) / 2)) !important;
   }
 }
 

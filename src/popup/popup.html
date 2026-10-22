@@ -47,10 +47,11 @@
             <div class="row-title" data-i18n="popupMinimizeRight">Minimize Right Sidebar</div>
           </div>
         </div>
-        <label class="switch">
-          <input type="checkbox" id="trimRightRail" aria-label="Toggle Right Sidebar minimize">
-          <span class="slider round"></span>
-        </label>
+        <select id="trimRightRail" class="select-dropdown" aria-label="Select right sidebar mode">
+          <option value="hidden" data-i18n="optRightRailHidden">Completely Hidden (Default)</option>
+          <option value="hover" data-i18n="optRightRailHover">Hover Expand</option>
+          <option value="visible" data-i18n="optRightRailVisible">Do Not Hide</option>
+        </select>
       </div>
       <div class="section-row">
         <div class="row-meta">

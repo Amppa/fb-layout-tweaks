@@ -132,6 +132,20 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   }
 
+  // Handle Right Sidebar mode select (enum with whitelist fallback)
+  const VALID_RIGHT_RAIL_MODES = new Set(['hidden', 'hover', 'visible']);
+  const trimRightRailSelect = document.getElementById('trimRightRail');
+  if (trimRightRailSelect) {
+    const rawVal = settings.trimRightRail;
+    const initMode = rawVal === true ? 'hover' : (rawVal === false ? 'visible' : rawVal);
+    trimRightRailSelect.value = VALID_RIGHT_RAIL_MODES.has(initMode) ? initMode : (DEFAULTS.trimRightRail || 'hidden');
+    trimRightRailSelect.addEventListener('change', async () => {
+      const val = VALID_RIGHT_RAIL_MODES.has(trimRightRailSelect.value) ? trimRightRailSelect.value : (DEFAULTS.trimRightRail || 'hidden');
+      const { settings: current } = await chrome.storage.local.get('settings');
+      await chrome.storage.local.set({ settings: { ...current, trimRightRail: val } });
+    });
+  }
+
   // Handle Feed Width select (enum with whitelist fallback)
   const VALID_FEED_WIDTHS = new Set(['default', 'w50', 'w75', 'w100']);
   const feedWidthSelect = document.getElementById('feedWidth');
@@ -241,6 +255,9 @@ document.addEventListener('DOMContentLoaded', async () => {
       if (sidebarScopeSelect) {
         sidebarScopeSelect.value = DEFAULTS.sidebarScope || 'homeOnly';
       }
+      if (trimRightRailSelect) {
+        trimRightRailSelect.value = DEFAULTS.trimRightRail || 'hidden';
+      }
       if (typeof feedWidthSelect !== 'undefined' && feedWidthSelect) {
         feedWidthSelect.value = DEFAULTS.feedWidth || 'default';
       }
@@ -276,6 +293,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
     if (sidebarScopeSelect && typeof next.sidebarScope === 'string') {
       sidebarScopeSelect.value = next.sidebarScope;
+    }
+    if (trimRightRailSelect && next.trimRightRail !== undefined) {
+      const raw = next.trimRightRail;
+      const norm = raw === true ? 'hover' : (raw === false ? 'visible' : raw);
+      trimRightRailSelect.value = VALID_RIGHT_RAIL_MODES.has(norm) ? norm : (DEFAULTS.trimRightRail || 'hidden');
     }
     if (typeof feedWidthSelect !== 'undefined' && feedWidthSelect && next.feedWidth !== undefined) {
       feedWidthSelect.value = VALID_FEED_WIDTHS.has(next.feedWidth) ? next.feedWidth : (DEFAULTS.feedWidth || 'default');

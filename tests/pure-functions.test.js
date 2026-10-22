@@ -15,7 +15,7 @@ const path = require('node:path');
 globalThis.self ??= globalThis;
 require('../src/shared/defaults.js');
 
-const { getUiCleanClassName } = require('../src/content/content.js');
+const { getUiCleanClassName, normalizeRightRailMode } = require('../src/content/content.js');
 const { getMsg, setLocaleMessages } = require('../src/shared/i18n.js');
 
 const ROOT_DIR = path.resolve(__dirname, '..');
@@ -157,5 +157,23 @@ test('isFeedPage correctly identifies feeds and home URLs vs non-feed pages', ()
   assert.strictEqual(isFeedPage('/zuck/'), false);
   assert.strictEqual(isFeedPage(''), false);
   assert.strictEqual(isFeedPage(null), false);
+});
+
+test('normalizeRightRailMode correctly resolves modes and falls back to hidden', () => {
+  assert.strictEqual(normalizeRightRailMode('hidden', true), 'hidden');
+  assert.strictEqual(normalizeRightRailMode('hover', true), 'hover');
+  assert.strictEqual(normalizeRightRailMode('visible', true), 'visible');
+
+  // Legacy boolean mappings
+  assert.strictEqual(normalizeRightRailMode(true, true), 'hover');
+  assert.strictEqual(normalizeRightRailMode(false, true), 'visible');
+
+  // Fallbacks
+  assert.strictEqual(normalizeRightRailMode(undefined, true), 'hidden');
+  assert.strictEqual(normalizeRightRailMode('invalid', true), 'hidden');
+
+  // Inactive sidebar scope forces visible
+  assert.strictEqual(normalizeRightRailMode('hidden', false), 'visible');
+  assert.strictEqual(normalizeRightRailMode('hover', false), 'visible');
 });
 

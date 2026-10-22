@@ -49,8 +49,8 @@ self.LEFT_SETTINGS = {
 };
 
 self.RIGHT_SETTINGS = {
-  // Section master (popup quick toggle, true = declutter active)
-  trimRightRail: true,
+  // Right sidebar mode: 'hidden' (default) | 'hover' | 'visible'
+  trimRightRail: 'hidden',
   // Section: Right Sidebar (true = visible; UI checkboxes are inverted: checked = hidden)
   showRightSponsored: false,
   showRightBirthdays: false,

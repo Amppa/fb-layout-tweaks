@@ -176,7 +176,16 @@
     "message": "Shrink to icon rail and expand when hovered"
   },
   "descMinimizeRightRail": {
-    "message": "Shrink contacts to avatar rail and expand when hovered"
+    "message": "Facebook continually updates its website content"
+  },
+  "optRightRailHidden": {
+    "message": "Completely Hidden (Default)"
+  },
+  "optRightRailHover": {
+    "message": "Hover Expand"
+  },
+  "optRightRailVisible": {
+    "message": "Do Not Hide"
   },
   "descHideRightSponsored": {
     "message": "Hide the sponsored section in the right sidebar"

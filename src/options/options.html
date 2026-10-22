@@ -309,21 +309,21 @@
           <div class="card-title" data-i18n="cardRightSidebar">Right Sidebar</div>
         </div>
 
-        <!-- Minimize: feature switch -->
+        <!-- Minimize: feature dropdown -->
         <div class="feature-item">
           <div class="feature-meta">
             <span class="feature-icon">⚡</span>
             <div>
               <div class="feature-title" data-i18n="itemMinimizeRightRail">Minimize</div>
-              <div class="feature-desc" data-i18n="descMinimizeRightRail">Shrink contacts to avatar rail and expand when
-                hovered</div>
+              <div class="feature-desc" data-i18n="descMinimizeRightRail">Facebook continually updates its website content</div>
             </div>
           </div>
           <div class="feature-action">
-            <label class="switch">
-              <input type="checkbox" id="trimRightRail" aria-label="Toggle Right Sidebar minimize">
-              <span class="slider round"></span>
-            </label>
+            <select id="trimRightRail" class="select-dropdown" aria-label="Select right sidebar mode">
+              <option value="hidden" data-i18n="optRightRailHidden">Completely Hidden (Default)</option>
+              <option value="hover" data-i18n="optRightRailHover">Hover Expand</option>
+              <option value="visible" data-i18n="optRightRailVisible">Do Not Hide</option>
+            </select>
           </div>
         </div>
 

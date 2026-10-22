@@ -176,7 +176,16 @@
     "message": "收合為純圖示，滑鼠懸停時展開完整選單"
   },
   "descMinimizeRightRail": {
-    "message": "收合為大頭貼圖示列，滑鼠懸停時展開完整名單"
+    "message": "facebook會持續改版網站內容"
+  },
+  "optRightRailHidden": {
+    "message": "完全隱藏（預設）"
+  },
+  "optRightRailHover": {
+    "message": "懸停式"
+  },
+  "optRightRailVisible": {
+    "message": "不隱藏"
   },
   "descHideRightSponsored": {
     "message": "隱藏右側欄的贊助區塊"
