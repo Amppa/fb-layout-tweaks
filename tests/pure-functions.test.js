@@ -294,7 +294,7 @@ test('deriveLayoutClasses returns complete set of active layout tokens based on 
   assert.ok(defaultClasses.has('fb-layout-tweaks-hover-expand-left-rail'));
   assert.ok(defaultClasses.has('fb-layout-tweaks-hide-right-rail'));
   assert.ok(defaultClasses.has('fb-layout-tweaks-center-main-feed'));
-  assert.ok(defaultClasses.has('fb-layout-tweaks-feed-width-75'));
+  assert.strictEqual(defaultClasses.has('fb-layout-tweaks-feed-width-75'), false); // 680px default width uses standard feed layout
   assert.ok(defaultClasses.has('fb-layout-tweaks-feed-font-150'));
 
   // Feed/Sidebar inactive (non-feed page with homeOnly scope)

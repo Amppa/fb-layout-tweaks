@@ -63,7 +63,7 @@ self.MAIN_SETTINGS = {
   // Section: Main Feed (true = keep feed centered when sidebars are asymmetric)
   centerMainFeed: true,
   // Feed width: 'default' (680px) | 'w50' | 'w75' | 'w100'
-  feedWidth: 'w75',
+  feedWidth: 'default',
   // Feed font size: 'default' (100%) | 'f150' | 'f200' | 'f300'
   feedFontSize: 'f150',
   // Feed media height scale: 'default' (100%) | 'h75' (75%) | 'h50' (50%) | 'h25' (25%)

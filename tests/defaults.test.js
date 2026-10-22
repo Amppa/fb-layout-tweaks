@@ -22,7 +22,7 @@ test('DEFAULT_SETTINGS contains required core keys and valid types', () => {
   assert.strictEqual(typeof defaults.trimTopNav, 'boolean', 'trimTopNav should be boolean');
   assert.strictEqual(typeof defaults.trimLeftItems, 'boolean', 'trimLeftItems should be boolean');
   assert.strictEqual(defaults.sidebarScope, 'homeOnly', 'sidebarScope should default to homeOnly');
-  assert.strictEqual(defaults.feedWidth, 'w75', 'feedWidth should default to w75');
+  assert.strictEqual(defaults.feedWidth, 'default', 'feedWidth should default to default');
   assert.strictEqual(defaults.feedFontSize, 'f150', 'feedFontSize should default to f150');
   assert.strictEqual(defaults.feedMediaHeight, 'default', 'feedMediaHeight should default to default');
   assert.strictEqual(defaults.trimRightRail, 'hidden', 'trimRightRail should default to hidden');
