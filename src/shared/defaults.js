@@ -16,6 +16,7 @@ self.TOP_SETTINGS = {
   showTopFriends: true,
   showTopMarketplace: false,
   showTopGroups: true,
+  showTopFeeds: true,
   showTopGaming: false
 };
 

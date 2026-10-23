@@ -23,7 +23,7 @@ Click the extension icon in your Chrome toolbar to:
 
 ### 2. Options Page (Granular Settings)
 Right-click the extension icon and select **Options** (or click **Detailed Settings** from the popup):
-- **Top Navigation Items**: Show or hide individual items (Reels, Marketplace, Groups, Gaming).
+- **Top Navigation Items**: Show or hide individual items (Reels, Marketplace, Groups, Feeds, Gaming).
 - **Left Sidebar Items & Behavior**: Fine-tune 20+ sidebar shortcuts and toggle icon-only hover expand mode.
 - **Right Sidebar Items & Behavior**: Hide Sponsored, Birthdays, Meta AI, and toggle avatar rail mode.
 - **Main Feed**: Toggle feed enlargement, keep feed centered, choose feed width (Original 680px, 1000px, 1600px, 50%, 75%, 100%), and scale text size (up to 300%).

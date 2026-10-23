@@ -448,6 +448,12 @@ html.fb-layout-tweaks-hide-top-groups :is(header, [role="banner"], [data-pagelet
   display: none !important;
 }
 
+/* Feeds */
+html.fb-layout-tweaks-hide-top-feeds :is(header, [role="banner"], [data-pagelet="Header"], div[role="navigation"][aria-label="Facebook"]) :is(li, div[role="tab"]):has(a[href*="sk=h_chr"], a[href*="filter=all"]),
+html.fb-layout-tweaks-hide-top-feeds :is(header, [role="banner"], [data-pagelet="Header"], div[role="navigation"][aria-label="Facebook"]) :is(a[href*="sk=h_chr"], a[href*="filter=all"]) {
+  display: none !important;
+}
+
 /* Gaming */
 html.fb-layout-tweaks-hide-top-gaming :is(header, [role="banner"], [data-pagelet="Header"]) :is(li, div[role="tab"]):has(a[href*="/gaming"]),
 html.fb-layout-tweaks-hide-top-gaming :is(header, [role="banner"], [data-pagelet="Header"]) a[href*="/gaming"] {
