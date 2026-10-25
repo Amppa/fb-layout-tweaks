@@ -20,6 +20,7 @@ const {
   tagShareGroupPanel,
   resetLeftRailLabelScanCache,
   resetRightRailScanCache,
+  needsDynamicScan,
   SCAN_MIN_INTERVAL_MS,
   LABEL_SCAN_COOLDOWN_MS,
   RAIL_MISS_COOLDOWN_MS,
@@ -286,6 +287,28 @@ test('right-rail scan skips querying when tagged node is already connected', () 
   // Second scan: already tagged node is connected, should skip querying h3 entirely
   scanRightRailDynamicItems(settings);
   assert.strictEqual(h3Queries, 1, 'should not re-query h3 while tagged node remains connected');
+
+  delete globalThis.document;
+});
+
+test('needsDynamicScan ignores extendShareToGroupList when no dialog is open', () => {
+  globalThis.document = {
+    querySelector: () => null
+  };
+  const settings = {
+    enabled: true,
+    trimLeftItems: false,
+    trimRightRail: 'visible',
+    trimMainFeed: true,
+    feedMediaHeight: 'default',
+    extendShareToGroupList: true
+  };
+
+  assert.strictEqual(needsDynamicScan(settings), false);
+
+  // If a dialog is present, dynamic scan should be requested
+  globalThis.document.querySelector = (sel) => (sel.includes('dialog') ? {} : null);
+  assert.strictEqual(needsDynamicScan(settings), true);
 
   delete globalThis.document;
 });

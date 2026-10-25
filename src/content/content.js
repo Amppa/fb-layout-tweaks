@@ -1037,6 +1037,37 @@
     return false;
   }
 
+  function hasOpenDialog() {
+    return typeof document !== 'undefined' && Boolean(
+      document.querySelector('[role="dialog"], [aria-modal="true"]')
+    );
+  }
+
+  // Check if current settings require dynamic DOM subtree scanning
+  function needsDynamicScan(settings) {
+    if (!settings || settings.enabled === false) return false;
+    const isLeftActive = isLeftSidebarActive(settings);
+    const isAdsManagerActive = isLeftActive && settings.showLeftAdsManager === false;
+    const isCrisisResponseActive = isLeftActive && settings.showLeftCrisisResponse === false;
+    const isFeedMediaActive = isSidebarScopeActive(settings) &&
+      settings.trimMainFeed !== false &&
+      Boolean(settings.feedMediaHeight) && settings.feedMediaHeight !== 'default';
+    const isRightRailDynamicActive = (settings.trimRightRail === 'hover' || settings.trimRightRail === true) && (
+      settings.showRightSponsored === false ||
+      settings.showRightBirthdays === false ||
+      settings.showRightMetaAI === false
+    );
+    const isShareGroupActive = settings.extendShareToGroupList === true && hasOpenDialog();
+    const leftRailNeeded = isLeftRailTaggingNeeded(settings);
+    const rightRailNeeded = isRightRailTaggingNeeded(settings);
+    const now = nowMs();
+    const railsNeedTagging = typeof document !== 'undefined' && (
+      (leftRailNeeded && !isConnectedEl(leftRailTaggedEl) && now >= leftRailMissAfter) ||
+      (rightRailNeeded && !isConnectedEl(rightRailTaggedEl) && now >= rightRailMissAfter)
+    );
+    return isAdsManagerActive || isCrisisResponseActive || isFeedMediaActive || isRightRailDynamicActive || isShareGroupActive || railsNeedTagging;
+  }
+
   // Load initial settings and set up observers when running in extension environment
   if (typeof chrome !== 'undefined' && chrome.storage && typeof document !== 'undefined') {
     if (typeof window !== 'undefined') {
@@ -1054,31 +1085,6 @@
       applyUiCleanClasses(currentSettings);
       scheduleHealthChecks();
     });
-
-    // Check if current settings require dynamic DOM subtree scanning
-    function needsDynamicScan(settings) {
-      if (!settings || settings.enabled === false) return false;
-      const isLeftActive = isLeftSidebarActive(settings);
-      const isAdsManagerActive = isLeftActive && settings.showLeftAdsManager === false;
-      const isCrisisResponseActive = isLeftActive && settings.showLeftCrisisResponse === false;
-      const isFeedMediaActive = isSidebarScopeActive(settings) &&
-        settings.trimMainFeed !== false &&
-        Boolean(settings.feedMediaHeight) && settings.feedMediaHeight !== 'default';
-      const isRightRailDynamicActive = (settings.trimRightRail === 'hover' || settings.trimRightRail === true) && (
-        settings.showRightSponsored === false ||
-        settings.showRightBirthdays === false ||
-        settings.showRightMetaAI === false
-      );
-      const isShareGroupActive = settings.extendShareToGroupList === true;
-      const leftRailNeeded = isLeftRailTaggingNeeded(settings);
-      const rightRailNeeded = isRightRailTaggingNeeded(settings);
-      const now = nowMs();
-      const railsNeedTagging = typeof document !== 'undefined' && (
-        (leftRailNeeded && !isConnectedEl(leftRailTaggedEl) && now >= leftRailMissAfter) ||
-        (rightRailNeeded && !isConnectedEl(rightRailTaggedEl) && now >= rightRailMissAfter)
-      );
-      return isAdsManagerActive || isCrisisResponseActive || isFeedMediaActive || isRightRailDynamicActive || isShareGroupActive || railsNeedTagging;
-    }
 
     // Observe for dynamic content loads (e.g. "See More" bookmark expansion)
     try {
@@ -1358,7 +1364,9 @@
       FEED_MEDIA_PIXEL_LIMITS,
       LAYOUT_ANCHOR_SELECTORS,
       countLayoutAnchors,
-      hasRelevantMutations
+      hasRelevantMutations,
+      hasOpenDialog,
+      needsDynamicScan
     };
   }
 })();
