@@ -17,6 +17,15 @@
     return (typeof performance !== 'undefined' && performance.now) ? performance.now() : Date.now();
   }
 
+  const LABEL_SCAN_COOLDOWN_MS = 1000;
+  let adsLabelScanAfter = 0;
+  let crisisLabelScanAfter = 0;
+
+  function resetLeftRailLabelScanCache() {
+    adsLabelScanAfter = 0;
+    crisisLabelScanAfter = 0;
+  }
+
   function setRailExpanded(expanded) {
     if (isRailExpanded === expanded) return;
     isRailExpanded = expanded;
@@ -104,6 +113,7 @@
 
   function applyUiCleanClasses(settings) {
     if (!settings) return;
+    resetLeftRailLabelScanCache();
     const root = document.documentElement;
     if (!root) return;
 
@@ -251,9 +261,15 @@
       const row = link.closest('li, div[role="listitem"], div[role="button"]') || link;
       row.classList.add(CRISIS_RESPONSE_NODE_CLASS);
     }
+    if (links.length > 0) return;
 
-    // Fallback: match the visible label when the row has no anchor.
+    // Fallback: match the visible label when the row has no anchor. Cache
+    // misses so rollouts without the bookmark do not re-walk the rail every scan.
+    const now = nowMs();
+    if (now < crisisLabelScanAfter) return;
+
     const spans = scope.querySelectorAll('span');
+    let found = false;
     for (const span of spans) {
       if (span.children.length !== 0) continue;
       const label = span.textContent.trim().replace(/\s+/g, ' ').toLowerCase();
@@ -271,7 +287,9 @@
         parent = target.parentElement;
       }
       target.classList.add(CRISIS_RESPONSE_NODE_CLASS);
+      found = true;
     }
+    if (!found) crisisLabelScanAfter = now + LABEL_SCAN_COOLDOWN_MS;
   }
 
   function scanLeftRailDynamicItems(settings = currentSettings) {
@@ -309,18 +327,26 @@
           }
           candidateCount += candidates.length;
 
-          // Performance: only fall back to scanning spans if attribute selectors found no candidates
+          // Performance: only fall back to scanning spans if attribute selectors
+          // found no candidates, and remember misses so accounts without this
+          // bookmark do not re-walk the rail on every scan.
           if (candidates.length === 0) {
-            const spans = root.querySelectorAll('span');
-            spansCount += spans.length;
-            for (const span of spans) {
-              if (span.children.length === 0) {
-                const text = span.textContent.trim();
-                if (text === '廣告管理員' || text.toLowerCase() === 'ads manager') {
-                  const row = span.closest('li, div[role="listitem"], div[role="button"], div[data-visualcompletion]') || span.closest('a') || span;
-                  row.classList.add(ADS_MANAGER_NODE_CLASS);
+            const now = nowMs();
+            if (now >= adsLabelScanAfter) {
+              const spans = root.querySelectorAll('span');
+              spansCount += spans.length;
+              let found = false;
+              for (const span of spans) {
+                if (span.children.length === 0) {
+                  const text = span.textContent.trim();
+                  if (text === '廣告管理員' || text.toLowerCase() === 'ads manager') {
+                    const row = span.closest('li, div[role="listitem"], div[role="button"], div[data-visualcompletion]') || span.closest('a') || span;
+                    row.classList.add(ADS_MANAGER_NODE_CLASS);
+                    found = true;
+                  }
                 }
               }
+              if (!found) adsLabelScanAfter = now + LABEL_SCAN_COOLDOWN_MS;
             }
           }
         }
@@ -1176,6 +1202,10 @@
       isAdsManagerHidden,
       isLeftSidebarActive,
       scanLeftRailDynamicItems,
+      tagShareGroupPanel,
+      resetLeftRailLabelScanCache,
+      SCAN_MIN_INTERVAL_MS,
+      LABEL_SCAN_COOLDOWN_MS,
       isRightRailActive,
       isFeedPage: (typeof self !== 'undefined' && self.isFeedPage) || null,
       scanAndScaleFeedMedia,
