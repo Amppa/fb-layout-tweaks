@@ -13,6 +13,70 @@
   let rightCollapseTimer = null;
   let isRightRailExpanded = false;
 
+  function nowMs() {
+    return (typeof performance !== 'undefined' && performance.now) ? performance.now() : Date.now();
+  }
+
+  const LABEL_SCAN_COOLDOWN_MS = 1000;
+  let adsLabelScanAfter = 0;
+  let crisisLabelScanAfter = 0;
+  let adsManagerTaggedEl = null;
+  let crisisResponseTaggedEl = null;
+
+  function resetLeftRailLabelScanCache() {
+    adsLabelScanAfter = 0;
+    crisisLabelScanAfter = 0;
+    adsManagerTaggedEl = null;
+    crisisResponseTaggedEl = null;
+  }
+
+  const RAIL_MISS_COOLDOWN_MS = 250;
+  const RIGHT_RAIL_SCAN_COOLDOWN_MS = 1000;
+  let leftRailTaggedEl = null;
+  let rightRailTaggedEl = null;
+  let leftRailMissAfter = 0;
+  let rightRailMissAfter = 0;
+  let rightSponsoredScanAfter = 0;
+  let rightBirthdaysScanAfter = 0;
+  let rightMetaAiScanAfter = 0;
+  let rightSponsoredTaggedEl = null;
+  let rightBirthdaysTaggedEl = null;
+  let rightMetaAiTaggedEl = null;
+
+  function isConnectedEl(el) {
+    return Boolean(el && el.isConnected !== false);
+  }
+
+  function isDescendantOf(child, parent) {
+    if (!child || !parent) return false;
+    if (child === parent) return true;
+    if (typeof parent.contains === 'function') {
+      try {
+        return parent.contains(child);
+      } catch (_) {}
+    }
+    let curr = child.parentElement;
+    while (curr) {
+      if (curr === parent) return true;
+      curr = curr.parentElement;
+    }
+    return false;
+  }
+
+  function resetRailTaggingMissCache() {
+    leftRailMissAfter = 0;
+    rightRailMissAfter = 0;
+  }
+
+  function resetRightRailScanCache() {
+    rightSponsoredScanAfter = 0;
+    rightBirthdaysScanAfter = 0;
+    rightMetaAiScanAfter = 0;
+    rightSponsoredTaggedEl = null;
+    rightBirthdaysTaggedEl = null;
+    rightMetaAiTaggedEl = null;
+  }
+
   function setRailExpanded(expanded) {
     if (isRailExpanded === expanded) return;
     isRailExpanded = expanded;
@@ -100,14 +164,14 @@
 
   function applyUiCleanClasses(settings) {
     if (!settings) return;
+    resetLeftRailLabelScanCache();
+    resetRailTaggingMissCache();
+    resetRightRailScanCache();
     const root = document.documentElement;
     if (!root) return;
 
     const isMasterEnabled = settings.enabled !== false;
-    const isSidebarActive = isMasterEnabled && (
-      settings.sidebarScope === 'global' ||
-      (typeof self !== 'undefined' && self.isFeedPage ? self.isFeedPage(typeof window !== 'undefined' ? window.location.pathname : '') : true)
-    );
+    const isSidebarActive = isSidebarScopeActive(settings);
 
     const targetClasses = deriveLayoutClasses(settings, isSidebarActive);
 
@@ -183,9 +247,40 @@
     return currentSettings.showLeftAdsManager === false;
   }
 
+  // Sidebar scope gate shared by layout classes, rail tagging, and feed scans.
+  function isSidebarScopeActive(settings) {
+    if (!settings || settings.enabled === false) return false;
+    if (settings.sidebarScope === 'global') return true;
+    if (typeof window === 'undefined' || !window.location) return true;
+    return (typeof self !== 'undefined' && self.isFeedPage)
+      ? self.isFeedPage(window.location.pathname)
+      : true;
+  }
+
+  // Left sidebar scans only matter when the sidebar master switch is on and the
+  // current page is in the configured sidebar scope (mirrors applyUiCleanClasses).
+  function isLeftSidebarActive(settings) {
+    return isSidebarScopeActive(settings) && settings.trimLeftItems !== false;
+  }
+
+  // The left rail class also drives hover-expand, which works independently of
+  // the trimLeftItems switch.
+  function isLeftRailTaggingNeeded(settings) {
+    return isSidebarScopeActive(settings)
+      && (settings.trimLeftItems !== false || settings.hoverExpandLeftRail === true);
+  }
+
+  // Right-rail tagging is needed for both hidden and hover modes; only visible
+  // mode has no right-rail CSS to apply.
+  function isRightRailTaggingNeeded(settings) {
+    return isSidebarScopeActive(settings)
+      && normalizeRightRailMode(settings.trimRightRail, true) !== 'visible';
+  }
+
   const ADS_MANAGER_NODE_CLASS = 'fb-layout-tweaks-hide-left-ads-manager-node';
 
   function clearAdsManagerTags() {
+    adsManagerTaggedEl = null;
     if (typeof document === 'undefined') return;
     const tagged = document.querySelectorAll(`.${ADS_MANAGER_NODE_CLASS}`);
     for (const el of tagged) {
@@ -199,6 +294,7 @@
   const CRISIS_RESPONSE_NODE_CLASS = 'fb-layout-tweaks-hide-left-crisis-response-node';
 
   function clearCrisisResponseTags() {
+    crisisResponseTaggedEl = null;
     if (typeof document === 'undefined') return;
     const tagged = document.querySelectorAll(`.${CRISIS_RESPONSE_NODE_CLASS}`);
     for (const el of tagged) {
@@ -226,18 +322,31 @@
       : root;
     if (!scope) return;
 
+    if (isConnectedEl(crisisResponseTaggedEl) && isDescendantOf(crisisResponseTaggedEl, scope)) return;
+    crisisResponseTaggedEl = null;
+
     const alreadyTagged = scope.querySelector(`.${CRISIS_RESPONSE_NODE_CLASS}`);
-    if (alreadyTagged && alreadyTagged.isConnected !== false) return;
+    if (alreadyTagged && alreadyTagged.isConnected !== false) {
+      crisisResponseTaggedEl = alreadyTagged;
+      return;
+    }
 
     // Prefer the bookmark href; it is stable and language-independent.
     const links = scope.querySelectorAll('a[href*="crisisresponse"], a[href*="crisis_response"]');
     for (const link of links) {
       const row = link.closest('li, div[role="listitem"], div[role="button"]') || link;
       row.classList.add(CRISIS_RESPONSE_NODE_CLASS);
+      if (!crisisResponseTaggedEl) crisisResponseTaggedEl = row;
     }
+    if (links.length > 0) return;
 
-    // Fallback: match the visible label when the row has no anchor.
+    // Fallback: match the visible label when the row has no anchor. Cache
+    // misses so rollouts without the bookmark do not re-walk the rail every scan.
+    const now = nowMs();
+    if (now < crisisLabelScanAfter) return;
+
     const spans = scope.querySelectorAll('span');
+    let found = false;
     for (const span of spans) {
       if (span.children.length !== 0) continue;
       const label = span.textContent.trim().replace(/\s+/g, ' ').toLowerCase();
@@ -255,20 +364,27 @@
         parent = target.parentElement;
       }
       target.classList.add(CRISIS_RESPONSE_NODE_CLASS);
+      crisisResponseTaggedEl = target;
+      found = true;
     }
+    if (!found) crisisLabelScanAfter = now + LABEL_SCAN_COOLDOWN_MS;
   }
 
   function scanLeftRailDynamicItems(settings = currentSettings) {
     try {
       if (!settings || settings.enabled === false) return;
+      if (!isLeftSidebarActive(settings)) return;
 
       const hideAdsManager = settings.showLeftAdsManager === false;
       const hideCrisisResponse = settings.showLeftCrisisResponse === false;
       if (!hideAdsManager && !hideCrisisResponse) return;
 
-      const leftRail = document.querySelector(
-        '.fb-layout-tweaks-left-rail, [data-pagelet="LeftRail"], div[role="navigation"]:not(header *):not([role="banner"] *)'
-      );
+      if (!isConnectedEl(leftRailTaggedEl) && nowMs() < leftRailMissAfter) return;
+      const leftRail = isConnectedEl(leftRailTaggedEl)
+        ? leftRailTaggedEl
+        : document.querySelector(
+          '.fb-layout-tweaks-left-rail, [data-pagelet="LeftRail"], div[role="navigation"]:not(header *):not([role="banner"] *)'
+        );
       if (!leftRail) return;
       const root = leftRail;
 
@@ -276,34 +392,49 @@
       let candidateCount = 0;
 
       if (hideAdsManager) {
-        // O(1) Fast-path: if Ads Manager is already tagged and connected in the DOM, skip querying spans
-        const alreadyTagged = root.querySelector(`.${ADS_MANAGER_NODE_CLASS}`);
-        if (alreadyTagged && alreadyTagged.isConnected !== false) {
+        // Fast-path: check in-memory reference first, then fallback to DOM class query
+        const isTagged = (isConnectedEl(adsManagerTaggedEl) && isDescendantOf(adsManagerTaggedEl, root))
+          || Boolean(root.querySelector(`.${ADS_MANAGER_NODE_CLASS}`));
+        if (isTagged) {
+          if (!adsManagerTaggedEl || !isDescendantOf(adsManagerTaggedEl, root)) {
+            adsManagerTaggedEl = root.querySelector(`.${ADS_MANAGER_NODE_CLASS}`);
+          }
           if (!hideCrisisResponse) {
             return { spansCount: 0, candidateCount: 0, cached: true };
           }
         } else {
+          adsManagerTaggedEl = null;
           const candidates = root.querySelectorAll(
             'a[href*="adsmanager"], a[href*="ads/manager"], a[href*="ad_center"], a[aria-label*="廣告管理員"], a[aria-label*="Ads Manager" i]'
           );
           for (const el of candidates) {
             const row = el.closest('li, div[role="listitem"], div[role="button"], div[data-visualcompletion]') || el;
             row.classList.add(ADS_MANAGER_NODE_CLASS);
+            if (!adsManagerTaggedEl) adsManagerTaggedEl = row;
           }
           candidateCount += candidates.length;
 
-          // Performance: only fall back to scanning spans if attribute selectors found no candidates
+          // Performance: only fall back to scanning spans if attribute selectors
+          // found no candidates, and remember misses so accounts without this
+          // bookmark do not re-walk the rail on every scan.
           if (candidates.length === 0) {
-            const spans = root.querySelectorAll('span');
-            spansCount += spans.length;
-            for (const span of spans) {
-              if (span.children.length === 0) {
-                const text = span.textContent.trim();
-                if (text === '廣告管理員' || text.toLowerCase() === 'ads manager') {
-                  const row = span.closest('li, div[role="listitem"], div[role="button"], div[data-visualcompletion]') || span.closest('a') || span;
-                  row.classList.add(ADS_MANAGER_NODE_CLASS);
+            const now = nowMs();
+            if (now >= adsLabelScanAfter) {
+              const spans = root.querySelectorAll('span');
+              spansCount += spans.length;
+              let found = false;
+              for (const span of spans) {
+                if (span.children.length === 0) {
+                  const text = span.textContent.trim();
+                  if (text === '廣告管理員' || text.toLowerCase() === 'ads manager') {
+                    const row = span.closest('li, div[role="listitem"], div[role="button"], div[data-visualcompletion]') || span.closest('a') || span;
+                    row.classList.add(ADS_MANAGER_NODE_CLASS);
+                    if (!adsManagerTaggedEl) adsManagerTaggedEl = row;
+                    found = true;
+                  }
                 }
               }
+              if (!found) adsLabelScanAfter = now + LABEL_SCAN_COOLDOWN_MS;
             }
           }
         }
@@ -326,79 +457,123 @@
     return 'hidden';
   }
 
-  function isRightRailActive() {
-    if (!currentSettings || currentSettings.enabled === false) return false;
-    const mode = currentSettings.trimRightRail;
+  function isRightRailActive(settings = currentSettings) {
+    if (!settings || settings.enabled === false) return false;
+    const mode = settings.trimRightRail;
     return mode === 'hover' || mode === true;
   }
 
-  function scanRightRailDynamicItems() {
+  function scanRightRailDynamicItems(settings = currentSettings) {
     try {
-      if (!isRightRailActive()) return;
-      const rail = document.getElementById('right_rail_container')
-        || document.querySelector('[data-pagelet="RightRail"] div[role="complementary"]')
-        || document.querySelector('div[role="complementary"][data-pagelet="RightRail"]')
-        || document.querySelector('[data-pagelet="RightRail"]')
-        || document.querySelector('div[role="complementary"]:not([role="dialog"] *):not([aria-modal="true"] *):not([role="main"] *):not([data-pagelet*="Photo"] *):not([data-pagelet*="Media"] *)');
+      if (!isRightRailActive(settings)) return;
+      if (!settings) return;
+      if (!isConnectedEl(rightRailTaggedEl) && nowMs() < rightRailMissAfter) return;
+      const rail = isConnectedEl(rightRailTaggedEl)
+        ? rightRailTaggedEl
+        : (document.getElementById('right_rail_container')
+          || document.querySelector('[data-pagelet="RightRail"] div[role="complementary"]')
+          || document.querySelector('div[role="complementary"][data-pagelet="RightRail"]')
+          || document.querySelector('[data-pagelet="RightRail"]')
+          || document.querySelector('div[role="complementary"]:not([role="dialog"] *):not([aria-modal="true"] *):not([role="main"] *):not([data-pagelet*="Photo"] *):not([data-pagelet*="Media"] *)'));
       if (!rail) return;
       if (rail.closest('[role="dialog"], [aria-modal="true"], [role="main"], [data-pagelet*="Photo"], [data-pagelet*="Media"], [data-pagelet*="Tahoe"]')) return;
+
+      const now = nowMs();
 
       // Sponsored: heading-text anchor only (no stable link). Walk up from the
       // heading while the ancestor holds a single h3; the first multi-h3
       // ancestor is the section boundary, so the last single-h3 node is the
       // Sponsored section root. Aborts at rail/depth cap to avoid over-hiding.
-      if (currentSettings.showRightSponsored === false) {
-        const headings = rail.querySelectorAll('h3');
-        for (const h of headings) {
-          if (h.closest('.fb-layout-tweaks-hide-right-sponsored-node')) continue;
-          const title = h.textContent.replace(/[\u200b-\u200f\ufeff]/g, '').trim().toLowerCase();
-          if (title !== 'sponsored' && !title.startsWith('贊助')) continue;
-          let node = h.parentElement;
-          let section = null;
-          for (let depth = 0; depth < 15 && node && node !== rail; depth++) {
-            if (node.querySelectorAll(':scope h3').length > 1) break;
-            section = node;
-            node = node.parentElement;
-          }
-          if (section && node && node !== rail) {
-            section.classList.add('fb-layout-tweaks-hide-right-sponsored-node');
+      if (settings.showRightSponsored === false) {
+        if (!isConnectedEl(rightSponsoredTaggedEl)) {
+          rightSponsoredTaggedEl = null;
+          if (now >= rightSponsoredScanAfter) {
+            const headings = rail.querySelectorAll('h3');
+            let found = false;
+            for (const h of headings) {
+              if (h.closest('.fb-layout-tweaks-hide-right-sponsored-node')) continue;
+              const title = h.textContent.replace(/[\u200b-\u200f\ufeff]/g, '').trim().toLowerCase();
+              if (title !== 'sponsored' && !title.startsWith('贊助')) continue;
+              let node = h.parentElement;
+              let section = null;
+              for (let depth = 0; depth < 15 && node && node !== rail; depth++) {
+                if (node.querySelectorAll(':scope h3').length > 1) break;
+                section = node;
+                node = node.parentElement;
+              }
+              if (section && node && node !== rail) {
+                section.classList.add('fb-layout-tweaks-hide-right-sponsored-node');
+                rightSponsoredTaggedEl = section;
+                found = true;
+                break;
+              }
+            }
+            rightSponsoredScanAfter = found ? 0 : now + RIGHT_RAIL_SCAN_COOLDOWN_MS;
           }
         }
+      } else {
+        rightSponsoredTaggedEl = null;
       }
 
       // Birthdays: hide the whole section (heading + row). Anchor on the stable
       // /events/birthdays/ link, then walk up to the smallest ancestor holding an h3.
-      if (currentSettings.showRightBirthdays === false) {
-        const links = rail.querySelectorAll('a[href*="/events/birthdays/"]');
-        for (const el of links) {
-          if (el.closest('.fb-layout-tweaks-hide-right-birthdays-node')) continue;
-          let node = el.parentElement;
-          while (node && node !== rail) {
-            const heading = node.querySelector(':scope h3');
-            if (heading) {
-              const title = heading.textContent.trim().toLowerCase();
-              if (title === 'birthdays' || title === '生日') {
-                node.classList.add('fb-layout-tweaks-hide-right-birthdays-node');
+      if (settings.showRightBirthdays === false) {
+        if (!isConnectedEl(rightBirthdaysTaggedEl)) {
+          rightBirthdaysTaggedEl = null;
+          if (now >= rightBirthdaysScanAfter) {
+            const links = rail.querySelectorAll('a[href*="/events/birthdays/"]');
+            let found = false;
+            for (const el of links) {
+              if (el.closest('.fb-layout-tweaks-hide-right-birthdays-node')) continue;
+              let node = el.parentElement;
+              while (node && node !== rail) {
+                const heading = node.querySelector(':scope h3');
+                if (heading) {
+                  const title = heading.textContent.trim().toLowerCase();
+                  if (title === 'birthdays' || title === '生日') {
+                    node.classList.add('fb-layout-tweaks-hide-right-birthdays-node');
+                    rightBirthdaysTaggedEl = node;
+                    found = true;
+                  }
+                  break;
+                }
+                node = node.parentElement;
               }
-              break;
+              if (found) break;
             }
-            node = node.parentElement;
+            rightBirthdaysScanAfter = found ? 0 : now + RIGHT_RAIL_SCAN_COOLDOWN_MS;
           }
         }
+      } else {
+        rightBirthdaysTaggedEl = null;
       }
 
       // Meta AI row fallback (primary rule is static CSS on the aria-label icon).
-      if (currentSettings.showRightMetaAI === false) {
-        const spans = rail.querySelectorAll('span');
-        for (const span of spans) {
-          if (span.closest('.fb-layout-tweaks-hide-right-metaai-node')) continue;
-          const hasName = Array.from(span.childNodes).some(
-            n => n.nodeType === Node.TEXT_NODE && n.textContent.trim() === 'Meta AI'
-          );
-          if (!hasName) continue;
-          const row = span.closest('li');
-          if (row) row.classList.add('fb-layout-tweaks-hide-right-metaai-node');
+      if (settings.showRightMetaAI === false) {
+        if (!isConnectedEl(rightMetaAiTaggedEl)) {
+          rightMetaAiTaggedEl = null;
+          if (now >= rightMetaAiScanAfter) {
+            const spans = rail.querySelectorAll('span');
+            let found = false;
+            for (const span of spans) {
+              if (span.closest('.fb-layout-tweaks-hide-right-metaai-node')) continue;
+              const hasName = Array.from(span.childNodes).some(
+                n => n.nodeType === Node.TEXT_NODE && n.textContent.trim() === 'Meta AI'
+              );
+              if (!hasName) continue;
+              const row = span.closest('li');
+              if (row) {
+                row.classList.add('fb-layout-tweaks-hide-right-metaai-node');
+                rightMetaAiTaggedEl = row;
+                found = true;
+                break;
+              }
+            }
+            rightMetaAiScanAfter = found ? 0 : now + RIGHT_RAIL_SCAN_COOLDOWN_MS;
+          }
         }
+      } else {
+        rightMetaAiTaggedEl = null;
       }
     } catch (e) {
       // Non-fatal
@@ -425,39 +600,46 @@
     try {
       if (typeof document === 'undefined') return;
 
-      const searchInputs = document.querySelectorAll('input[type="search"]');
-      for (const input of searchInputs) {
-        // The picker pairs its group list with a search field in the same panel.
-        let panel = input.parentElement;
-        let matchedPanel = null;
-        let groupLink = null;
-        for (let depth = 0; depth < 8 && panel && panel !== document.body; depth++) {
-          groupLink = panel.querySelector('div[role="list"] a[href*="/groups/"]');
-          if (groupLink) {
-            matchedPanel = panel;
-            break;
+      // The group picker only exists inside an open share dialog. Gate on that
+      // first so ordinary feed mutations never scan the whole document.
+      const dialogs = document.querySelectorAll('[role="dialog"], [aria-modal="true"]');
+      if (!dialogs.length) return;
+
+      for (const dialog of dialogs) {
+        const searchInputs = dialog.querySelectorAll('input[type="search"]');
+        for (const input of searchInputs) {
+          // The picker pairs its group list with a search field in the same panel.
+          let panel = input.parentElement;
+          let matchedPanel = null;
+          let groupLink = null;
+          for (let depth = 0; depth < 8 && panel && panel !== document.body; depth++) {
+            groupLink = panel.querySelector('div[role="list"] a[href*="/groups/"]');
+            if (groupLink) {
+              matchedPanel = panel;
+              break;
+            }
+            panel = panel.parentElement;
           }
-          panel = panel.parentElement;
-        }
-        if (!matchedPanel || !groupLink) continue;
+          if (!matchedPanel || !groupLink) continue;
 
-        const list = groupLink.closest('div[role="list"]');
-        // Skip navigation rails and other non-picker group lists.
-        if (!list || list.closest('[role="navigation"], [role="banner"], [data-pagelet="LeftRail"]')) continue;
+          const list = groupLink.closest('div[role="list"]');
+          // Skip navigation rails and other non-picker group lists.
+          if (!list || list.closest('[role="navigation"], [role="banner"], [data-pagelet="LeftRail"]')) continue;
 
-        matchedPanel.classList.add(SHARE_GROUP_PANEL_CLASS);
+          matchedPanel.classList.add(SHARE_GROUP_PANEL_CLASS);
 
-        // The nearest scrollable ancestor holds the fixed height that caps rows.
-        let scroller = list.parentElement;
-        while (scroller && scroller !== matchedPanel) {
-          const overflowY = window.getComputedStyle(scroller).overflowY;
-          if (overflowY === 'auto' || overflowY === 'scroll') {
-            scroller.classList.add(SHARE_GROUP_SCROLL_CLASS);
-            break;
+          // The nearest scrollable ancestor holds the fixed height that caps rows.
+          let scroller = list.parentElement;
+          while (scroller && scroller !== matchedPanel) {
+            const overflowY = window.getComputedStyle(scroller).overflowY;
+            if (overflowY === 'auto' || overflowY === 'scroll') {
+              scroller.classList.add(SHARE_GROUP_SCROLL_CLASS);
+              break;
+            }
+            scroller = scroller.parentElement;
           }
-          scroller = scroller.parentElement;
+          return;
         }
-        return;
       }
     } catch (e) {
       // Non-fatal
@@ -466,56 +648,88 @@
 
   function tagRailContainers(force = false) {
     try {
-      if (!force && typeof document !== 'undefined') {
-        const leftTagged = document.querySelector('.fb-layout-tweaks-left-rail');
-        const rightNeeded = isRightRailActive();
-        const rightTagged = rightNeeded ? document.querySelector('.fb-layout-tweaks-right-rail') : true;
-        if (leftTagged && leftTagged.isConnected && rightTagged && (rightTagged === true || rightTagged.isConnected)) {
-          return { leftCount: 1, rightCount: rightNeeded ? 1 : 0 };
+      if (typeof document === 'undefined') return;
+
+      const now = nowMs();
+      const leftNeeded = isLeftRailTaggingNeeded(currentSettings);
+      const rightNeeded = isRightRailTaggingNeeded(currentSettings);
+
+      if (!force) {
+        const leftOk = !leftNeeded || isConnectedEl(leftRailTaggedEl) || now < leftRailMissAfter;
+        const rightOk = !rightNeeded || isConnectedEl(rightRailTaggedEl) || now < rightRailMissAfter;
+        if (leftOk && rightOk) {
+          return {
+            leftCount: isConnectedEl(leftRailTaggedEl) ? 1 : 0,
+            rightCount: isConnectedEl(rightRailTaggedEl) ? 1 : 0
+          };
         }
       }
 
-      // Tag genuine Left Rail containers (skip nested descendants)
       let leftCount = 0;
       let rightCount = 0;
-      const leftCandidates = document.querySelectorAll(
-        '[data-pagelet="LeftRail"], div[role="navigation"]:not(header *):not([role="banner"] *):not([data-pagelet="Header"] *)'
-      );
-      for (const el of leftCandidates) {
-        if (el.parentElement && el.parentElement.closest('[data-pagelet="LeftRail"], .fb-layout-tweaks-left-rail')) {
-          continue;
+
+      if ((force || leftNeeded) && (force || now >= leftRailMissAfter)) {
+        const leftCandidates = document.querySelectorAll(
+          '[data-pagelet="LeftRail"], div[role="navigation"]:not(header *):not([role="banner"] *):not([data-pagelet="Header"] *)'
+        );
+        let firstTagged = null;
+        for (const el of leftCandidates) {
+          if (el.parentElement && el.parentElement.closest('[data-pagelet="LeftRail"], .fb-layout-tweaks-left-rail')) {
+            continue;
+          }
+          leftCount++;
+          if (!el.classList.contains('fb-layout-tweaks-left-rail')) {
+            el.classList.add('fb-layout-tweaks-left-rail');
+          }
+          if (!firstTagged) firstTagged = el;
+          let parent = el.parentElement;
+          if (parent && parent !== document.body && !parent.classList.contains('fb-layout-tweaks-left-rail-parent')) {
+            parent.classList.add('fb-layout-tweaks-left-rail-parent');
+          }
         }
-        leftCount++;
-        if (!el.classList.contains('fb-layout-tweaks-left-rail')) {
-          el.classList.add('fb-layout-tweaks-left-rail');
-        }
-        let parent = el.parentElement;
-        if (parent && parent !== document.body && !parent.classList.contains('fb-layout-tweaks-left-rail-parent')) {
-          parent.classList.add('fb-layout-tweaks-left-rail-parent');
+        if (firstTagged) {
+          leftRailTaggedEl = firstTagged;
+          leftRailMissAfter = 0;
+        } else {
+          leftRailTaggedEl = null;
+          leftRailMissAfter = now + RAIL_MISS_COOLDOWN_MS;
         }
       }
 
       // Tag genuine Right Rail containers (strictly excluding photo/dialog overlays and nested descendants)
-      const rightCandidates = document.querySelectorAll(
-        '#right_rail_container, [data-pagelet="RightRail"], div[role="complementary"]'
-      );
-      for (const el of rightCandidates) {
-        if (el.closest(RIGHT_RAIL_EXCLUDE_ANCESTORS)) {
-          el.classList.remove('fb-layout-tweaks-right-rail');
-          continue;
+      if ((force || rightNeeded) && (force || now >= rightRailMissAfter)) {
+        const rightCandidates = document.querySelectorAll(
+          '#right_rail_container, [data-pagelet="RightRail"], div[role="complementary"]'
+        );
+        let firstTagged = null;
+        for (const el of rightCandidates) {
+          if (el.closest(RIGHT_RAIL_EXCLUDE_ANCESTORS)) {
+            el.classList.remove('fb-layout-tweaks-right-rail');
+            continue;
+          }
+          if (el.parentElement && el.parentElement.closest('#right_rail_container, [data-pagelet="RightRail"], .fb-layout-tweaks-right-rail')) {
+            continue;
+          }
+          rightCount++;
+          if (!el.classList.contains('fb-layout-tweaks-right-rail')) {
+            el.classList.add('fb-layout-tweaks-right-rail');
+          }
+          if (!firstTagged) firstTagged = el;
+          let parent = el.parentElement;
+          if (parent && parent !== document.body && !parent.classList.contains('fb-layout-tweaks-right-rail-parent')) {
+            parent.classList.add('fb-layout-tweaks-right-rail-parent');
+          }
         }
-        if (el.parentElement && el.parentElement.closest('#right_rail_container, [data-pagelet="RightRail"], .fb-layout-tweaks-right-rail')) {
-          continue;
-        }
-        rightCount++;
-        if (!el.classList.contains('fb-layout-tweaks-right-rail')) {
-          el.classList.add('fb-layout-tweaks-right-rail');
-        }
-        let parent = el.parentElement;
-        if (parent && parent !== document.body && !parent.classList.contains('fb-layout-tweaks-right-rail-parent')) {
-          parent.classList.add('fb-layout-tweaks-right-rail-parent');
+        if (firstTagged) {
+          if (rightRailTaggedEl !== firstTagged) resetRightRailScanCache();
+          rightRailTaggedEl = firstTagged;
+          rightRailMissAfter = 0;
+        } else {
+          rightRailTaggedEl = null;
+          rightRailMissAfter = now + RAIL_MISS_COOLDOWN_MS;
         }
       }
+
       return { leftCount, rightCount };
     } catch (e) {
       // Non-fatal
@@ -554,6 +768,8 @@
   // rendering is not mistaken for breakage.
   let lastReportedHealthOk = null;
   let healthCheckTimers = [];
+  const HEALTH_RECOVERY_COOLDOWN_MS = 2000;
+  let lastHealthRecoveryAt = 0;
 
   function clearHealthCheckTimers() {
     for (const t of healthCheckTimers) {
@@ -603,6 +819,9 @@
   function recoverHealthIfFound() {
     if (lastReportedHealthOk !== false) return;
     if (!isHealthCheckApplicable()) return;
+    const now = nowMs();
+    if (lastHealthRecoveryAt && now - lastHealthRecoveryAt < HEALTH_RECOVERY_COOLDOWN_MS) return;
+    lastHealthRecoveryAt = now;
     if (countLayoutAnchors() > 0) reportHealth(true);
   }
 
@@ -651,8 +870,11 @@
         `img:not([data-fb-lt-scaled-mode="${mode}"])`
       );
 
+      // Pass 1: Read & Collect phase (zero writes to avoid forced reflows)
+      const tasks = [];
+
       for (const el of mediaElements) {
-        // Incremental stamp cache: if already scaled to current mode, skip to avoid forced reflow
+        // Incremental stamp cache: if already scaled to current mode, skip
         if (el.dataset.fbLtScaledMode === mode) continue;
 
         // Skip dialogs, banners, and navigations
@@ -664,35 +886,53 @@
         const h = el.naturalHeight || parseFloat(el.getAttribute('height')) || el.clientHeight || 0;
         if (w < 140 && h < 90) continue;
 
-        // Walk up ancestors to find the padding-top aspect wrapper
-        // Prioritize inline styles first to avoid triggering getComputedStyle reflows on intermediate nodes
+        // Walk up ancestors to find the padding-top aspect wrapper.
+        // First check all inline styles up to depth 12 to avoid getComputedStyle calls on intermediate nodes.
         let curr = el.parentElement;
         let wrapper = null;
+        const ancestors = [];
         let d = 0;
         while (curr && curr !== document.body && d < 12) {
-          d++;
+          ancestors.push(curr);
           const inlineStyle = curr.getAttribute('style') || '';
           if (inlineStyle.includes('padding-top') || inlineStyle.includes('--x-paddingTop')) {
             wrapper = curr;
             break;
           }
-          const cs = window.getComputedStyle(curr);
-          if (parseFloat(cs.paddingTop) > 40) {
-            wrapper = curr;
-            break;
-          }
           curr = curr.parentElement;
+          d++;
+        }
+
+        // Fallback: check computed paddingTop if inline style was absent
+        if (!wrapper && typeof window !== 'undefined' && typeof window.getComputedStyle === 'function') {
+          for (const a of ancestors) {
+            const cs = window.getComputedStyle(a);
+            if (cs && parseFloat(cs.paddingTop) > 40) {
+              wrapper = a;
+              break;
+            }
+          }
         }
 
         if (wrapper) {
-          const wcs = window.getComputedStyle(wrapper);
-          if (!wrapper.dataset.fbLtOrigPadding) {
-            wrapper.dataset.fbLtOrigPadding = String(parseFloat(wcs.paddingTop) || 0);
-            wrapper.dataset.fbLtOrigWidth = String(parseFloat(wcs.width) || wrapper.getBoundingClientRect().width || 0);
-            wrapper.dataset.fbLtOrigStyle = wrapper.getAttribute('style') || '__EMPTY__';
+          let origPadding = wrapper.dataset.fbLtOrigPadding ? parseFloat(wrapper.dataset.fbLtOrigPadding) : null;
+          let origWidth = wrapper.dataset.fbLtOrigWidth ? parseFloat(wrapper.dataset.fbLtOrigWidth) : null;
+
+          if (origPadding === null || origWidth === null) {
+            const wcs = (typeof window !== 'undefined' && typeof window.getComputedStyle === 'function')
+              ? window.getComputedStyle(wrapper)
+              : null;
+            if (origPadding === null) {
+              origPadding = parseFloat(wcs && wcs.paddingTop) || 0;
+            }
+            if (origWidth === null) {
+              origWidth = parseFloat(wcs && wcs.width) ||
+                wrapper.offsetWidth ||
+                wrapper.clientWidth ||
+                (typeof wrapper.getBoundingClientRect === 'function' ? wrapper.getBoundingClientRect().width : 0) ||
+                0;
+            }
           }
-          const origPadding = parseFloat(wrapper.dataset.fbLtOrigPadding);
-          const origWidth = parseFloat(wrapper.dataset.fbLtOrigWidth);
 
           let factor = 1.0;
           if (isFactorMode) {
@@ -704,40 +944,71 @@
 
           if (factor < 1.0 && origPadding > 0) {
             const targetPadding = Math.round(origPadding * factor);
-            wrapper.style.setProperty('padding-top', `${targetPadding}px`, 'important');
-            if (origWidth > 0) {
-              const targetWidth = Math.round(origWidth * factor);
-              wrapper.style.setProperty('width', `${targetWidth}px`, 'important');
-              wrapper.style.setProperty('max-width', `${targetWidth}px`, 'important');
-              wrapper.style.setProperty('margin-inline', 'auto', 'important');
-            }
-            wrapper.style.setProperty('overflow', 'hidden', 'important');
+            const targetWidth = origWidth > 0 ? Math.round(origWidth * factor) : 0;
 
-            if (!el.dataset.fbLtOrigStyle) {
-              el.dataset.fbLtOrigStyle = el.getAttribute('style') || '__EMPTY__';
-            }
-            el.style.setProperty('object-fit', 'contain', 'important');
-            el.style.setProperty('object-position', 'center', 'important');
-            el.dataset.fbLtScaledMode = mode;
-
-            // Also clamp immediate parent if it has fixed height
-            let parent = wrapper.parentElement;
-            if (parent && parent !== document.body && !parent.matches('[role="article"], [role="main"], [data-pagelet^="FeedUnit"], .post-card')) {
-              const pcs = window.getComputedStyle(parent);
+            let parentInfo = null;
+            const parent = wrapper.parentElement;
+            if (parent && parent !== document.body && (!parent.matches || !parent.matches('[role="article"], [role="main"], [data-pagelet^="FeedUnit"], .post-card'))) {
               const pInline = parent.getAttribute('style') || '';
-              if (pInline.includes('height:') || parseFloat(pcs.height) > (targetPadding + 40)) {
-                if (!parent.dataset.fbLtOrigStyle) {
-                  parent.dataset.fbLtOrigStyle = pInline || '__EMPTY__';
-                  parent.dataset.fbLtOrigHeight = String(parseFloat(pcs.height) || 0);
-                }
-                const origH = parseFloat(parent.dataset.fbLtOrigHeight);
-                if (origH > 0) {
-                  parent.style.setProperty('max-height', `${Math.round(origH * factor)}px`, 'important');
-                  parent.style.setProperty('overflow', 'hidden', 'important');
+              let origH = parent.dataset.fbLtOrigHeight ? parseFloat(parent.dataset.fbLtOrigHeight) : 0;
+              if (!origH && typeof window !== 'undefined' && typeof window.getComputedStyle === 'function') {
+                const pcs = window.getComputedStyle(parent);
+                const computedH = pcs ? parseFloat(pcs.height) : 0;
+                if (pInline.includes('height:') || computedH > (targetPadding + 40)) {
+                  origH = computedH;
                 }
               }
+              if (origH > 0) {
+                parentInfo = { parent, origH, pInline };
+              }
             }
+
+            tasks.push({
+              el,
+              wrapper,
+              origPadding,
+              origWidth,
+              targetPadding,
+              targetWidth,
+              factor,
+              parentInfo
+            });
           }
+        }
+      }
+
+      // Pass 2: Batch DOM write phase
+      for (const task of tasks) {
+        const { el, wrapper, origPadding, origWidth, targetPadding, targetWidth, factor, parentInfo } = task;
+
+        if (!wrapper.dataset.fbLtOrigPadding) {
+          wrapper.dataset.fbLtOrigPadding = String(origPadding);
+          wrapper.dataset.fbLtOrigWidth = String(origWidth);
+          wrapper.dataset.fbLtOrigStyle = wrapper.getAttribute('style') || '__EMPTY__';
+        }
+        wrapper.style.setProperty('padding-top', `${targetPadding}px`, 'important');
+        if (targetWidth > 0) {
+          wrapper.style.setProperty('width', `${targetWidth}px`, 'important');
+          wrapper.style.setProperty('max-width', `${targetWidth}px`, 'important');
+          wrapper.style.setProperty('margin-inline', 'auto', 'important');
+        }
+        wrapper.style.setProperty('overflow', 'hidden', 'important');
+
+        if (!el.dataset.fbLtOrigStyle) {
+          el.dataset.fbLtOrigStyle = el.getAttribute('style') || '__EMPTY__';
+        }
+        el.style.setProperty('object-fit', 'contain', 'important');
+        el.style.setProperty('object-position', 'center', 'important');
+        el.dataset.fbLtScaledMode = mode;
+
+        if (parentInfo) {
+          const { parent, origH, pInline } = parentInfo;
+          if (!parent.dataset.fbLtOrigStyle) {
+            parent.dataset.fbLtOrigStyle = pInline || '__EMPTY__';
+            parent.dataset.fbLtOrigHeight = String(origH);
+          }
+          parent.style.setProperty('max-height', `${Math.round(origH * factor)}px`, 'important');
+          parent.style.setProperty('overflow', 'hidden', 'important');
         }
       }
     } catch (_) {
@@ -771,76 +1042,129 @@
     }
   }
 
+  const SCAN_MIN_INTERVAL_MS = 150;
   let scanScheduled = false;
-  function triggerThrottledScan() {
-    if (scanScheduled) return;
-    scanScheduled = true;
-    requestAnimationFrame(() => {
-      scanScheduled = false;
-      const isDebug = typeof document !== 'undefined' && Boolean(document.documentElement?.dataset?.fbLtDebug);
-      if (!isDebug) {
-        checkUrlChange();
-        tagRailContainers();
-        scanLeftRailDynamicItems();
-        scanRightRailDynamicItems();
-        if (currentSettings && currentSettings.enabled !== false && currentSettings.extendShareToGroupList === true) {
-          tagShareGroupPanel();
-        }
-        if (currentSettings && currentSettings.enabled !== false && currentSettings.trimMainFeed !== false && currentSettings.feedMediaHeight && currentSettings.feedMediaHeight !== 'default') {
-          scanAndScaleFeedMedia(currentSettings.feedMediaHeight);
-        }
-        recoverHealthIfFound();
-        return;
-      }
+  let lastScanAt = 0;
 
-      const t0 = performance.now();
+  function runThrottledScan() {
+    scanScheduled = false;
+    lastScanAt = nowMs();
+    const isDebug = typeof document !== 'undefined' && Boolean(document.documentElement?.dataset?.fbLtDebug);
+    if (!isDebug) {
       checkUrlChange();
-      const t1 = performance.now();
-      const tagStats = tagRailContainers();
-      const t2 = performance.now();
-      const leftStats = scanLeftRailDynamicItems();
-      const t3 = performance.now();
+      tagRailContainers();
+      scanLeftRailDynamicItems();
       scanRightRailDynamicItems();
-      const t4 = performance.now();
       if (currentSettings && currentSettings.enabled !== false && currentSettings.extendShareToGroupList === true) {
         tagShareGroupPanel();
       }
-      if (currentSettings && currentSettings.enabled !== false && currentSettings.trimMainFeed !== false && currentSettings.feedMediaHeight && currentSettings.feedMediaHeight !== 'default') {
+      if (currentSettings && isSidebarScopeActive(currentSettings) && currentSettings.trimMainFeed !== false && currentSettings.feedMediaHeight && currentSettings.feedMediaHeight !== 'default') {
         scanAndScaleFeedMedia(currentSettings.feedMediaHeight);
       }
+      recoverHealthIfFound();
+      return;
+    }
 
-      try {
-        document.dispatchEvent(new CustomEvent('__fb_lt_perf__', {
-          detail: {
-            type: 'scan',
-            totalMs: t4 - t0,
-            urlCheckMs: t1 - t0,
-            tagRailMs: t2 - t1,
-            tagLeftCount: tagStats?.leftCount || 0,
-            tagRightCount: tagStats?.rightCount || 0,
-            leftRailMs: t3 - t2,
-            leftRailSpans: leftStats?.spansCount || 0,
-            leftRailCandidates: leftStats?.candidateCount || 0,
-            rightRailMs: t4 - t3,
-            dockMs: 0,
-            dockBubbles: 0,
-            dockRectCalls: 0,
-            timestamp: Date.now()
-          }
-        }));
-      } catch (_) {}
-    });
+    const t0 = performance.now();
+    checkUrlChange();
+    const t1 = performance.now();
+    const tagStats = tagRailContainers();
+    const t2 = performance.now();
+    const leftStats = scanLeftRailDynamicItems();
+    const t3 = performance.now();
+    scanRightRailDynamicItems();
+    const t4 = performance.now();
+    if (currentSettings && currentSettings.enabled !== false && currentSettings.extendShareToGroupList === true) {
+      tagShareGroupPanel();
+    }
+    if (currentSettings && isSidebarScopeActive(currentSettings) && currentSettings.trimMainFeed !== false && currentSettings.feedMediaHeight && currentSettings.feedMediaHeight !== 'default') {
+      scanAndScaleFeedMedia(currentSettings.feedMediaHeight);
+    }
+
+    try {
+      document.dispatchEvent(new CustomEvent('__fb_lt_perf__', {
+        detail: {
+          type: 'scan',
+          totalMs: t4 - t0,
+          urlCheckMs: t1 - t0,
+          tagRailMs: t2 - t1,
+          tagLeftCount: tagStats?.leftCount || 0,
+          tagRightCount: tagStats?.rightCount || 0,
+          leftRailMs: t3 - t2,
+          leftRailSpans: leftStats?.spansCount || 0,
+          leftRailCandidates: leftStats?.candidateCount || 0,
+          rightRailMs: t4 - t3,
+          dockMs: 0,
+          dockBubbles: 0,
+          dockRectCalls: 0,
+          timestamp: Date.now()
+        }
+      }));
+    } catch (_) {}
   }
+
+  function triggerThrottledScan() {
+    if (scanScheduled) return;
+    scanScheduled = true;
+
+    const wait = Math.max(0, SCAN_MIN_INTERVAL_MS - (nowMs() - lastScanAt));
+    if (wait === 0) {
+      requestAnimationFrame(runThrottledScan);
+      return;
+    }
+    setTimeout(() => requestAnimationFrame(runThrottledScan), wait);
+  }
+
+  const IRRELEVANT_TAG_NAMES = new Set(['SCRIPT', 'STYLE', 'LINK', 'META', 'NOSCRIPT']);
 
   function hasRelevantMutations(mutations) {
     if (!mutations || !mutations.length) return false;
     for (let i = 0; i < mutations.length; i++) {
       const m = mutations[i];
-      if (m && m.addedNodes && m.addedNodes.length > 0) {
+      const added = m?.addedNodes;
+      if (!added || added.length === 0) continue;
+      for (let j = 0; j < added.length; j++) {
+        const node = added[j];
+        if (!node) continue;
+        const isElement = node.nodeType ? node.nodeType === 1 : Boolean(node.tagName);
+        if (!isElement) continue;
+        const tag = (node.tagName || node.nodeName || '').toUpperCase();
+        if (tag && IRRELEVANT_TAG_NAMES.has(tag)) continue;
         return true;
       }
     }
     return false;
+  }
+
+  function hasOpenDialog() {
+    return typeof document !== 'undefined' && Boolean(
+      document.querySelector('[role="dialog"], [aria-modal="true"]')
+    );
+  }
+
+  // Check if current settings require dynamic DOM subtree scanning
+  function needsDynamicScan(settings) {
+    if (!settings || settings.enabled === false) return false;
+    const isLeftActive = isLeftSidebarActive(settings);
+    const isAdsManagerActive = isLeftActive && settings.showLeftAdsManager === false && !isConnectedEl(adsManagerTaggedEl);
+    const isCrisisResponseActive = isLeftActive && settings.showLeftCrisisResponse === false && !isConnectedEl(crisisResponseTaggedEl);
+    const isFeedMediaActive = isSidebarScopeActive(settings) &&
+      settings.trimMainFeed !== false &&
+      Boolean(settings.feedMediaHeight) && settings.feedMediaHeight !== 'default';
+    const isRightRailDynamicActive = (settings.trimRightRail === 'hover' || settings.trimRightRail === true) && (
+      (settings.showRightSponsored === false && !isConnectedEl(rightSponsoredTaggedEl)) ||
+      (settings.showRightBirthdays === false && !isConnectedEl(rightBirthdaysTaggedEl)) ||
+      (settings.showRightMetaAI === false && !isConnectedEl(rightMetaAiTaggedEl))
+    );
+    const isShareGroupActive = settings.extendShareToGroupList === true && hasOpenDialog();
+    const leftRailNeeded = isLeftRailTaggingNeeded(settings);
+    const rightRailNeeded = isRightRailTaggingNeeded(settings);
+    const now = nowMs();
+    const railsNeedTagging = typeof document !== 'undefined' && (
+      (leftRailNeeded && !isConnectedEl(leftRailTaggedEl) && now >= leftRailMissAfter) ||
+      (rightRailNeeded && !isConnectedEl(rightRailTaggedEl) && now >= rightRailMissAfter)
+    );
+    return isAdsManagerActive || isCrisisResponseActive || isFeedMediaActive || isRightRailDynamicActive || isShareGroupActive || railsNeedTagging;
   }
 
   // Load initial settings and set up observers when running in extension environment
@@ -861,32 +1185,13 @@
       scheduleHealthChecks();
     });
 
-    // Check if current settings require dynamic DOM subtree scanning
-    function needsDynamicScan(settings) {
-      if (!settings || settings.enabled === false) return false;
-      const isAdsManagerActive = settings.showLeftAdsManager === false;
-      const isCrisisResponseActive = settings.showLeftCrisisResponse === false;
-      const isFeedMediaActive = settings.trimMainFeed !== false &&
-        Boolean(settings.feedMediaHeight) && settings.feedMediaHeight !== 'default';
-      const isRightRailDynamicActive = (settings.trimRightRail === 'hover' || settings.trimRightRail === true) && (
-        settings.showRightSponsored === false ||
-        settings.showRightBirthdays === false ||
-        settings.showRightMetaAI === false
-      );
-      const isShareGroupActive = settings.extendShareToGroupList === true;
-      const railsNeedTagging = typeof document !== 'undefined' && (
-        !document.querySelector('.fb-layout-tweaks-left-rail') ||
-        (isRightRailActive() && !document.querySelector('.fb-layout-tweaks-right-rail'))
-      );
-      return isAdsManagerActive || isCrisisResponseActive || isFeedMediaActive || isRightRailDynamicActive || isShareGroupActive || railsNeedTagging;
-    }
-
     // Observe for dynamic content loads (e.g. "See More" bookmark expansion)
     try {
       const observer = new MutationObserver((mutations) => {
-        if (currentSettings?.enabled !== false && needsDynamicScan(currentSettings) && hasRelevantMutations(mutations)) {
-          triggerThrottledScan();
-        }
+        if (currentSettings?.enabled === false) return;
+        if (!hasRelevantMutations(mutations)) return;
+        if (!needsDynamicScan(currentSettings)) return;
+        triggerThrottledScan();
       });
       observer.observe(document.documentElement, { childList: true, subtree: true });
     } catch (e) {
@@ -1136,7 +1441,20 @@
       normalizeRightRailMode,
       deriveLayoutClasses,
       isAdsManagerHidden,
+      isSidebarScopeActive,
+      isLeftSidebarActive,
+      isLeftRailTaggingNeeded,
+      isRightRailTaggingNeeded,
       scanLeftRailDynamicItems,
+      scanRightRailDynamicItems,
+      tagShareGroupPanel,
+      resetLeftRailLabelScanCache,
+      resetRightRailScanCache,
+      SCAN_MIN_INTERVAL_MS,
+      LABEL_SCAN_COOLDOWN_MS,
+      RAIL_MISS_COOLDOWN_MS,
+      RIGHT_RAIL_SCAN_COOLDOWN_MS,
+      HEALTH_RECOVERY_COOLDOWN_MS,
       isRightRailActive,
       isFeedPage: (typeof self !== 'undefined' && self.isFeedPage) || null,
       scanAndScaleFeedMedia,
@@ -1145,7 +1463,9 @@
       FEED_MEDIA_PIXEL_LIMITS,
       LAYOUT_ANCHOR_SELECTORS,
       countLayoutAnchors,
-      hasRelevantMutations
+      hasRelevantMutations,
+      hasOpenDialog,
+      needsDynamicScan
     };
   }
 })();
