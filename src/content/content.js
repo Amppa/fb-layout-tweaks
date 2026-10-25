@@ -907,9 +907,10 @@
     // Observe for dynamic content loads (e.g. "See More" bookmark expansion)
     try {
       const observer = new MutationObserver((mutations) => {
-        if (currentSettings?.enabled !== false && needsDynamicScan(currentSettings) && hasRelevantMutations(mutations)) {
-          triggerThrottledScan();
-        }
+        if (currentSettings?.enabled === false) return;
+        if (!hasRelevantMutations(mutations)) return;
+        if (!needsDynamicScan(currentSettings)) return;
+        triggerThrottledScan();
       });
       observer.observe(document.documentElement, { childList: true, subtree: true });
     } catch (e) {
