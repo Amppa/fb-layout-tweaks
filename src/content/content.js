@@ -13,6 +13,10 @@
   let rightCollapseTimer = null;
   let isRightRailExpanded = false;
 
+  function nowMs() {
+    return (typeof performance !== 'undefined' && performance.now) ? performance.now() : Date.now();
+  }
+
   function setRailExpanded(expanded) {
     if (isRailExpanded === expanded) return;
     isRailExpanded = expanded;
@@ -778,65 +782,77 @@
     }
   }
 
+  const SCAN_MIN_INTERVAL_MS = 150;
   let scanScheduled = false;
-  function triggerThrottledScan() {
-    if (scanScheduled) return;
-    scanScheduled = true;
-    requestAnimationFrame(() => {
-      scanScheduled = false;
-      const isDebug = typeof document !== 'undefined' && Boolean(document.documentElement?.dataset?.fbLtDebug);
-      if (!isDebug) {
-        checkUrlChange();
-        tagRailContainers();
-        scanLeftRailDynamicItems();
-        scanRightRailDynamicItems();
-        if (currentSettings && currentSettings.enabled !== false && currentSettings.extendShareToGroupList === true) {
-          tagShareGroupPanel();
-        }
-        if (currentSettings && currentSettings.enabled !== false && currentSettings.trimMainFeed !== false && currentSettings.feedMediaHeight && currentSettings.feedMediaHeight !== 'default') {
-          scanAndScaleFeedMedia(currentSettings.feedMediaHeight);
-        }
-        recoverHealthIfFound();
-        return;
-      }
+  let lastScanAt = 0;
 
-      const t0 = performance.now();
+  function runThrottledScan() {
+    scanScheduled = false;
+    lastScanAt = nowMs();
+    const isDebug = typeof document !== 'undefined' && Boolean(document.documentElement?.dataset?.fbLtDebug);
+    if (!isDebug) {
       checkUrlChange();
-      const t1 = performance.now();
-      const tagStats = tagRailContainers();
-      const t2 = performance.now();
-      const leftStats = scanLeftRailDynamicItems();
-      const t3 = performance.now();
+      tagRailContainers();
+      scanLeftRailDynamicItems();
       scanRightRailDynamicItems();
-      const t4 = performance.now();
       if (currentSettings && currentSettings.enabled !== false && currentSettings.extendShareToGroupList === true) {
         tagShareGroupPanel();
       }
       if (currentSettings && currentSettings.enabled !== false && currentSettings.trimMainFeed !== false && currentSettings.feedMediaHeight && currentSettings.feedMediaHeight !== 'default') {
         scanAndScaleFeedMedia(currentSettings.feedMediaHeight);
       }
+      recoverHealthIfFound();
+      return;
+    }
 
-      try {
-        document.dispatchEvent(new CustomEvent('__fb_lt_perf__', {
-          detail: {
-            type: 'scan',
-            totalMs: t4 - t0,
-            urlCheckMs: t1 - t0,
-            tagRailMs: t2 - t1,
-            tagLeftCount: tagStats?.leftCount || 0,
-            tagRightCount: tagStats?.rightCount || 0,
-            leftRailMs: t3 - t2,
-            leftRailSpans: leftStats?.spansCount || 0,
-            leftRailCandidates: leftStats?.candidateCount || 0,
-            rightRailMs: t4 - t3,
-            dockMs: 0,
-            dockBubbles: 0,
-            dockRectCalls: 0,
-            timestamp: Date.now()
-          }
-        }));
-      } catch (_) {}
-    });
+    const t0 = performance.now();
+    checkUrlChange();
+    const t1 = performance.now();
+    const tagStats = tagRailContainers();
+    const t2 = performance.now();
+    const leftStats = scanLeftRailDynamicItems();
+    const t3 = performance.now();
+    scanRightRailDynamicItems();
+    const t4 = performance.now();
+    if (currentSettings && currentSettings.enabled !== false && currentSettings.extendShareToGroupList === true) {
+      tagShareGroupPanel();
+    }
+    if (currentSettings && currentSettings.enabled !== false && currentSettings.trimMainFeed !== false && currentSettings.feedMediaHeight && currentSettings.feedMediaHeight !== 'default') {
+      scanAndScaleFeedMedia(currentSettings.feedMediaHeight);
+    }
+
+    try {
+      document.dispatchEvent(new CustomEvent('__fb_lt_perf__', {
+        detail: {
+          type: 'scan',
+          totalMs: t4 - t0,
+          urlCheckMs: t1 - t0,
+          tagRailMs: t2 - t1,
+          tagLeftCount: tagStats?.leftCount || 0,
+          tagRightCount: tagStats?.rightCount || 0,
+          leftRailMs: t3 - t2,
+          leftRailSpans: leftStats?.spansCount || 0,
+          leftRailCandidates: leftStats?.candidateCount || 0,
+          rightRailMs: t4 - t3,
+          dockMs: 0,
+          dockBubbles: 0,
+          dockRectCalls: 0,
+          timestamp: Date.now()
+        }
+      }));
+    } catch (_) {}
+  }
+
+  function triggerThrottledScan() {
+    if (scanScheduled) return;
+    scanScheduled = true;
+
+    const wait = Math.max(0, SCAN_MIN_INTERVAL_MS - (nowMs() - lastScanAt));
+    if (wait === 0) {
+      requestAnimationFrame(runThrottledScan);
+      return;
+    }
+    setTimeout(() => requestAnimationFrame(runThrottledScan), wait);
   }
 
   function hasRelevantMutations(mutations) {
