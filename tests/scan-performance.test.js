@@ -11,17 +11,59 @@ globalThis.self ??= globalThis;
 require('../src/shared/defaults.js');
 
 const {
+  isSidebarScopeActive,
   isLeftSidebarActive,
+  isLeftRailTaggingNeeded,
+  isRightRailTaggingNeeded,
   scanLeftRailDynamicItems,
   tagShareGroupPanel,
   resetLeftRailLabelScanCache,
+  resetRightRailScanCache,
   SCAN_MIN_INTERVAL_MS,
-  LABEL_SCAN_COOLDOWN_MS
+  LABEL_SCAN_COOLDOWN_MS,
+  RAIL_MISS_COOLDOWN_MS,
+  RIGHT_RAIL_SCAN_COOLDOWN_MS,
+  HEALTH_RECOVERY_COOLDOWN_MS
 } = require('../src/content/content.js');
 
-test('scan throttle and label cooldown constants stay bounded', () => {
+test('scan throttle and cooldown constants stay bounded', () => {
   assert.strictEqual(SCAN_MIN_INTERVAL_MS, 150);
   assert.strictEqual(LABEL_SCAN_COOLDOWN_MS, 1000);
+  assert.ok(RAIL_MISS_COOLDOWN_MS > 0 && RAIL_MISS_COOLDOWN_MS <= 1000);
+  assert.ok(RIGHT_RAIL_SCAN_COOLDOWN_MS > 0 && RIGHT_RAIL_SCAN_COOLDOWN_MS <= 2000);
+  assert.ok(HEALTH_RECOVERY_COOLDOWN_MS >= 1000 && HEALTH_RECOVERY_COOLDOWN_MS <= 10000);
+});
+
+test('right-rail scan cache can be reset without throwing', () => {
+  assert.doesNotThrow(() => resetRightRailScanCache());
+});
+
+test('isSidebarScopeActive ignores trimLeftItems but respects scope', () => {
+  assert.strictEqual(isSidebarScopeActive({ enabled: false, sidebarScope: 'global' }), false);
+  assert.strictEqual(isSidebarScopeActive({ enabled: true, trimLeftItems: false, sidebarScope: 'global' }), true);
+
+  globalThis.window = { location: { pathname: '/' } };
+  assert.strictEqual(isSidebarScopeActive({ enabled: true, sidebarScope: 'homeOnly' }), true);
+
+  globalThis.window = { location: { pathname: '/groups/123/' } };
+  assert.strictEqual(isSidebarScopeActive({ enabled: true, sidebarScope: 'homeOnly' }), false);
+
+  delete globalThis.window;
+  assert.strictEqual(isSidebarScopeActive({ enabled: true, sidebarScope: 'homeOnly' }), true);
+});
+
+test('rail tagging needs are scoped and mode-aware', () => {
+  const base = { enabled: true, sidebarScope: 'global' };
+
+  assert.strictEqual(isLeftRailTaggingNeeded({ ...base, trimLeftItems: true }), true);
+  assert.strictEqual(isLeftRailTaggingNeeded({ ...base, trimLeftItems: false, hoverExpandLeftRail: false }), false);
+  assert.strictEqual(isLeftRailTaggingNeeded({ ...base, trimLeftItems: false, hoverExpandLeftRail: true }), true);
+  assert.strictEqual(isLeftRailTaggingNeeded({ enabled: false, trimLeftItems: true }), false);
+
+  assert.strictEqual(isRightRailTaggingNeeded({ ...base, trimRightRail: 'hidden' }), true);
+  assert.strictEqual(isRightRailTaggingNeeded({ ...base, trimRightRail: 'hover' }), true);
+  assert.strictEqual(isRightRailTaggingNeeded({ ...base, trimRightRail: 'visible' }), false);
+  assert.strictEqual(isRightRailTaggingNeeded({ enabled: false, trimRightRail: 'hidden' }), false);
 });
 
 test('isLeftSidebarActive respects master switch and sidebar scope', () => {

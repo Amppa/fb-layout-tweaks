@@ -73,7 +73,7 @@ graph TD
 ### Dual-Layer Targeting: Static Selectors + Dynamic Scanner
 Facebook uses compiled React components with dynamic, hashed classes (`.x193iq5w`).
 - **Primary Layer (Attribute & URL Matching)**: Matches stable attributes such as `href*="/friends/"`, `href*="/marketplace/"`, SVG paths, or `aria-label`.
-- **Secondary Layer (Dynamic Text Scanner)**: Lazy-loaded or dynamic items (e.g., **Ads Manager** nested under "See More") receive `.fb-layout-tweaks-hide-left-ads-manager-node` via a throttled scanner (`requestAnimationFrame`) triggered by `MutationObserver`.
+- **Secondary Layer (Dynamic Text Scanner)**: Lazy-loaded or dynamic items (e.g., **Ads Manager** nested under "See More") receive `.fb-layout-tweaks-hide-left-ads-manager-node` via a scanner triggered by `MutationObserver`. Scans are capped at one per 150ms, gated by sidebar scope and open dialogs, and reuse cached rail references with short miss cooldowns to avoid repeated document-wide queries.
 
 ### Main Feed Expansion & Font Scaling Mechanics
 - **Parent Container Uncap**: Facebook imposes a `max-width: 1464px` clamp on the three-column wrapper. The extension uses `:has(> :is([role="main"], [data-pagelet="Feed"]))` to release the parent container to `100%`, allowing the feed to widen past 1464px on high-resolution displays.
