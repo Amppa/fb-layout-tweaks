@@ -73,7 +73,9 @@ self.MAIN_SETTINGS = {
 
 self.OTHER_SETTINGS = {
   // Section: Others (true = lengthen the "Share to group" list to show at least 6 groups)
-  extendShareToGroupList: true
+  extendShareToGroupList: true,
+  // Stop Facebook from refreshing the feed when returning to the tab
+  stopAutoRefresh: false
 };
 
 self.DEFAULT_SETTINGS = {

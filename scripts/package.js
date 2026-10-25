@@ -161,7 +161,7 @@ function buildFirefox() {
     staged.browser_specific_settings = {
       gecko: {
         id: process.env.FIREFOX_EXTENSION_ID || 'fb-layout-tweaks@amppa.github.io',
-        strict_min_version: '121.0',
+        strict_min_version: '128.0',
       },
     };
     fs.writeFileSync(stagedManifestPath, `${JSON.stringify(staged, null, 2)}\n`);

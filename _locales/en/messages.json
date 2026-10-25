@@ -265,6 +265,12 @@
   "descExtendShareToGroupList": {
     "message": "Original list about 240px, extended to 500px"
   },
+  "itemStopAutoRefresh": {
+    "message": "Stop Facebook Auto-Refresh"
+  },
+  "descStopAutoRefresh": {
+    "message": "Keep the feed from refreshing when you return to the tab"
+  },
   "itemLanguage": {
     "message": "Language"
   },

@@ -27,6 +27,7 @@ test('DEFAULT_SETTINGS contains required core keys and valid types', () => {
   assert.strictEqual(defaults.feedMediaHeight, 'default', 'feedMediaHeight should default to default');
   assert.strictEqual(defaults.trimRightRail, 'hidden', 'trimRightRail should default to hidden');
   assert.strictEqual(defaults.extendShareToGroupList, true, 'extendShareToGroupList should default to true');
+  assert.strictEqual(defaults.stopAutoRefresh, false, 'stopAutoRefresh should default to false');
   assert.strictEqual(defaults.locale, 'auto', 'locale should default to auto');
 
   // Verify all show* keys are booleans
@@ -105,4 +106,19 @@ test('Popup section masters have linked switches in options.html', () => {
   for (const key of ['trimTopNav', 'trimLeftItems']) {
     assert.ok(html.includes(`id="${key}"`), `options.html should contain a switch with id="${key}"`);
   }
+});
+
+test('Stop auto-refresh guard runs in the MAIN world at document_start', () => {
+  const manifest = JSON.parse(fs.readFileSync(path.join(ROOT_DIR, 'manifest.json'), 'utf8'));
+  const guard = (manifest.content_scripts || []).find(entry =>
+    (entry.js || []).includes('src/content/page-visibility-guard.js')
+  );
+
+  assert.ok(guard, 'manifest.json must register page-visibility-guard.js');
+  assert.strictEqual(guard.world, 'MAIN', 'guard must run in the MAIN world');
+  assert.strictEqual(guard.run_at, 'document_start', 'guard must run at document_start');
+  assert.ok(
+    fs.existsSync(path.join(ROOT_DIR, 'src', 'content', 'page-visibility-guard.js')),
+    'guard file must exist'
+  );
 });

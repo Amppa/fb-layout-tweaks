@@ -127,6 +127,13 @@
       }
     }
 
+    // Stop auto refresh: the MAIN-world guard reads this flag at event time.
+    if (isMasterEnabled && settings.stopAutoRefresh === true) {
+      root.dataset.fbLtStopAutoRefresh = '1';
+    } else {
+      root.removeAttribute('data-fb-lt-stop-auto-refresh');
+    }
+
     const isHoverExpand = targetClasses.has('fb-layout-tweaks-hover-expand-left-rail');
     const isHoverRightRail = targetClasses.has('fb-layout-tweaks-hover-expand-right-rail');
     const feedMediaHeight = (isMasterEnabled && isSidebarActive && settings.trimMainFeed !== false)

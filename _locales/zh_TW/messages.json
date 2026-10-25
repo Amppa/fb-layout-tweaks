@@ -265,6 +265,12 @@
   "descExtendShareToGroupList": {
     "message": "原本清單約 240px，加長到 500px"
   },
+  "itemStopAutoRefresh": {
+    "message": "停止 Facebook 自動重新整理"
+  },
+  "descStopAutoRefresh": {
+    "message": "切回分頁時不再自動重刷動態消息，保留捲動位置"
+  },
   "itemLanguage": {
     "message": "語言"
   },

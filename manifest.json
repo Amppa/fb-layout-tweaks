@@ -32,6 +32,17 @@
       "matches": [
         "*://*.facebook.com/*"
       ],
+      "js": [
+        "src/content/page-visibility-guard.js"
+      ],
+      "run_at": "document_start",
+      "world": "MAIN",
+      "all_frames": false
+    },
+    {
+      "matches": [
+        "*://*.facebook.com/*"
+      ],
       "css": [
         "src/content/content.css"
       ],
