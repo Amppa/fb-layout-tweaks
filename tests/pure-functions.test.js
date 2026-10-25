@@ -298,6 +298,7 @@ test('deriveLayoutClasses returns complete set of active layout tokens based on 
   assert.strictEqual(defaultClasses.has('fb-layout-tweaks-feed-width-75'), false); // 680px default width uses standard feed layout
   assert.ok(defaultClasses.has('fb-layout-tweaks-feed-font-150'));
   assert.ok(defaultClasses.has('fb-layout-tweaks-extend-share-to-group-list'));
+  assert.ok(defaultClasses.has('fb-layout-tweaks-hide-left-crisis-response'));
 
   // Feed/Sidebar inactive (non-feed page with homeOnly scope)
   const nonFeedClasses = deriveLayoutClasses(DEFAULT_SETTINGS, false);

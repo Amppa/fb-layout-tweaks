@@ -45,6 +45,7 @@ self.LEFT_SETTINGS = {
   showLeftMessengerKids: false,
   showLeftMetaQuest: false,
   showLeftFundraisers: false,
+  showLeftCrisisResponse: false,
   showLeftOrdersPayments: false,
   hoverExpandLeftRail: true
 };

@@ -151,6 +151,9 @@
   "itemFundraisers": {
     "message": "募款活動"
   },
+  "itemCrisisResponse": {
+    "message": "危機回應"
+  },
   "itemOrdersPayments": {
     "message": "訂單與付款"
   },

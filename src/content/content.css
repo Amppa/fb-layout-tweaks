@@ -408,6 +408,17 @@ html.fb-layout-tweaks-hide-left-fundraisers :is(.fb-layout-tweaks-left-rail, [da
   display: none !important;
 }
 
+/* Crisis Response (危機回應) */
+html.fb-layout-tweaks-hide-left-crisis-response :is(.fb-layout-tweaks-left-rail, [data-pagelet="LeftRail"], div[role="navigation"]:not(header *):not([role="banner"] *)) :is(li, div[role="listitem"], div[role="button"]):has(a[href*="crisisresponse"], a[href*="crisis_response"]),
+html.fb-layout-tweaks-hide-left-crisis-response :is(.fb-layout-tweaks-left-rail, [data-pagelet="LeftRail"], div[role="navigation"]:not(header *):not([role="banner"] *)) a[href*="crisisresponse"],
+html.fb-layout-tweaks-hide-left-crisis-response :is(.fb-layout-tweaks-left-rail, [data-pagelet="LeftRail"], div[role="navigation"]:not(header *):not([role="banner"] *)) a[href*="crisis_response"] {
+  display: none !important;
+}
+
+html.fb-layout-tweaks-hide-left-crisis-response .fb-layout-tweaks-hide-left-crisis-response-node {
+  display: none !important;
+}
+
 /* Orders & Payments (訂單與付款) */
 html.fb-layout-tweaks-hide-left-orders-payments :is(.fb-layout-tweaks-left-rail, [data-pagelet="LeftRail"]) :is(li, div[role="listitem"]):has(a[href*="/facebook_pay"], a[href*="/orders"]) {
   display: none !important;

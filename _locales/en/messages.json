@@ -151,6 +151,9 @@
   "itemFundraisers": {
     "message": "Fundraisers"
   },
+  "itemCrisisResponse": {
+    "message": "Crisis Response"
+  },
   "itemOrdersPayments": {
     "message": "Orders & Payments"
   },

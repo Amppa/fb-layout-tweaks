@@ -163,8 +163,11 @@
       clearShareGroupPanelTags();
     }
 
-    if (isMasterEnabled && settings.showLeftAdsManager === false) {
+    if (isMasterEnabled && (settings.showLeftAdsManager === false || settings.showLeftCrisisResponse === false)) {
       triggerThrottledScan();
+    }
+    if (!isMasterEnabled || settings.showLeftCrisisResponse !== false) {
+      clearCrisisResponseTags();
     }
 
     if (isHoverRightRail && (settings.showRightSponsored === false || settings.showRightBirthdays === false || settings.showRightMetaAI === false)) {
@@ -177,43 +180,124 @@
     return currentSettings.showLeftAdsManager === false;
   }
 
+  // Crisis Response is rendered as a bookmark without a stable href in some
+  // rollouts, so fall back to matching its visible label.
+  const CRISIS_RESPONSE_LABELS = new Set(['crisis response', '危機回應', '危機應變', '危机响应']);
+  const CRISIS_RESPONSE_NODE_CLASS = 'fb-layout-tweaks-hide-left-crisis-response-node';
+
+  function clearCrisisResponseTags() {
+    if (typeof document === 'undefined') return;
+    const tagged = document.querySelectorAll(`.${CRISIS_RESPONSE_NODE_CLASS}`);
+    for (const el of tagged) {
+      el.classList.remove(CRISIS_RESPONSE_NODE_CLASS);
+    }
+  }
+
+  function findCrisisRow(span, root) {
+    // The row is the smallest ancestor that also contains the item icon.
+    let node = span;
+    let depth = 0;
+    while (node && node !== root && depth < 10) {
+      if (node.querySelector('img')) return node;
+      node = node.parentElement;
+      depth++;
+    }
+    return span.closest('li, div[role="listitem"], div[role="button"], div[role="link"], div[data-visualcompletion], a')
+      || span.parentElement;
+  }
+
+  function tagCrisisResponseRows(root) {
+    if (typeof document === 'undefined' || !root) return;
+    const scope = (root === document.body)
+      ? (document.querySelector('.fb-layout-tweaks-left-rail, [data-pagelet="LeftRail"], div[role="navigation"]:not(header *):not([role="banner"] *)') || null)
+      : root;
+    if (!scope) return;
+
+    const alreadyTagged = scope.querySelector(`.${CRISIS_RESPONSE_NODE_CLASS}`);
+    if (alreadyTagged && alreadyTagged.isConnected !== false) return;
+
+    // Prefer the bookmark href; it is stable and language-independent.
+    const links = scope.querySelectorAll('a[href*="crisisresponse"], a[href*="crisis_response"]');
+    for (const link of links) {
+      const row = link.closest('li, div[role="listitem"], div[role="button"]') || link;
+      row.classList.add(CRISIS_RESPONSE_NODE_CLASS);
+    }
+
+    // Fallback: match the visible label when the row has no anchor.
+    const spans = scope.querySelectorAll('span');
+    for (const span of spans) {
+      if (span.children.length !== 0) continue;
+      const label = span.textContent.trim().replace(/\s+/g, ' ').toLowerCase();
+      if (!CRISIS_RESPONSE_LABELS.has(label)) continue;
+
+      const row = findCrisisRow(span, scope);
+      if (!row) continue;
+
+      // Climb to the outermost wrapper that contains only this label, so the
+      // whole bookmark row (anchor, list item, padding) disappears.
+      let target = row;
+      let parent = target.parentElement;
+      while (parent && parent !== scope && parent.textContent.trim().replace(/\s+/g, ' ').toLowerCase() === label) {
+        target = parent;
+        parent = target.parentElement;
+      }
+      target.classList.add(CRISIS_RESPONSE_NODE_CLASS);
+    }
+  }
+
   function scanLeftRailDynamicItems(settings = currentSettings) {
     try {
       if (!settings || settings.enabled === false) return;
 
-      if (settings.showLeftAdsManager === false) {
-        const leftRail = document.querySelector(
-          '.fb-layout-tweaks-left-rail, [data-pagelet="LeftRail"], div[role="navigation"]:not(header *):not([role="banner"] *)'
-        );
-        const root = leftRail || (typeof document !== 'undefined' ? document.body : null);
-        if (!root) return;
+      const hideAdsManager = settings.showLeftAdsManager === false;
+      const hideCrisisResponse = settings.showLeftCrisisResponse === false;
+      if (!hideAdsManager && !hideCrisisResponse) return;
 
+      const leftRail = document.querySelector(
+        '.fb-layout-tweaks-left-rail, [data-pagelet="LeftRail"], div[role="navigation"]:not(header *):not([role="banner"] *)'
+      );
+      const root = leftRail || (typeof document !== 'undefined' ? document.body : null);
+      if (!root) return;
+
+      let spansCount = 0;
+      let candidateCount = 0;
+
+      if (hideAdsManager) {
         // O(1) Fast-path: if Ads Manager is already tagged and connected in the DOM, skip querying spans
         const alreadyTagged = root.querySelector('.fb-layout-tweaks-hide-left-ads-manager-node');
-        if (alreadyTagged && (alreadyTagged.isConnected !== false)) {
-          return { spansCount: 0, candidateCount: 0, cached: true };
-        }
+        if (alreadyTagged && alreadyTagged.isConnected !== false) {
+          if (!hideCrisisResponse) {
+            return { spansCount: 0, candidateCount: 0, cached: true };
+          }
+        } else {
+          const candidates = root.querySelectorAll(
+            'a[href*="adsmanager"], a[href*="ads/manager"], a[href*="ad_center"], a[aria-label*="廣告管理員"], a[aria-label*="Ads Manager" i]'
+          );
+          for (const el of candidates) {
+            const row = el.closest('li, div[role="listitem"], div[role="button"], div[data-visualcompletion]') || el;
+            row.classList.add('fb-layout-tweaks-hide-left-ads-manager-node');
+          }
 
-        const candidates = root.querySelectorAll(
-          'a[href*="adsmanager"], a[href*="ads/manager"], a[href*="ad_center"], a[aria-label*="廣告管理員"], a[aria-label*="Ads Manager" i]'
-        );
-        for (const el of candidates) {
-          const row = el.closest('li, div[role="listitem"], div[role="button"], div[data-visualcompletion]') || el;
-          row.classList.add('fb-layout-tweaks-hide-left-ads-manager-node');
-        }
-
-        const spans = root.querySelectorAll('span');
-        for (const span of spans) {
-          if (span.children.length === 0) {
-            const text = span.textContent.trim();
-            if (text === '廣告管理員' || text.toLowerCase() === 'ads manager') {
-              const row = span.closest('li, div[role="listitem"], div[role="button"], div[data-visualcompletion]') || span.closest('a') || span;
-              row.classList.add('fb-layout-tweaks-hide-left-ads-manager-node');
+          const spans = root.querySelectorAll('span');
+          spansCount += spans.length;
+          candidateCount += candidates.length;
+          for (const span of spans) {
+            if (span.children.length === 0) {
+              const text = span.textContent.trim();
+              if (text === '廣告管理員' || text.toLowerCase() === 'ads manager') {
+                const row = span.closest('li, div[role="listitem"], div[role="button"], div[data-visualcompletion]') || span.closest('a') || span;
+                row.classList.add('fb-layout-tweaks-hide-left-ads-manager-node');
+              }
             }
           }
         }
-        return { spansCount: spans.length, candidateCount: candidates.length };
       }
+
+      if (hideCrisisResponse && document.documentElement.classList.contains('fb-layout-tweaks-hide-left-crisis-response')) {
+        tagCrisisResponseRows(root);
+      }
+
+      return { spansCount, candidateCount };
     } catch (e) {
       // Non-fatal
     }
@@ -765,6 +849,7 @@
     function needsDynamicScan(settings) {
       if (!settings || settings.enabled === false) return false;
       const isAdsManagerActive = settings.showLeftAdsManager === false;
+      const isCrisisResponseActive = settings.showLeftCrisisResponse === false;
       const isFeedMediaActive = settings.trimMainFeed !== false &&
         Boolean(settings.feedMediaHeight) && settings.feedMediaHeight !== 'default';
       const isRightRailDynamicActive = (settings.trimRightRail === 'hover' || settings.trimRightRail === true) && (
@@ -777,7 +862,7 @@
         !document.querySelector('.fb-layout-tweaks-left-rail') ||
         (isRightRailActive() && !document.querySelector('.fb-layout-tweaks-right-rail'))
       );
-      return isAdsManagerActive || isFeedMediaActive || isRightRailDynamicActive || isShareGroupActive || railsNeedTagging;
+      return isAdsManagerActive || isCrisisResponseActive || isFeedMediaActive || isRightRailDynamicActive || isShareGroupActive || railsNeedTagging;
     }
 
     // Observe for dynamic content loads (e.g. "See More" bookmark expansion)
