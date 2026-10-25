@@ -169,6 +169,9 @@
     if (!isMasterEnabled || settings.showLeftCrisisResponse !== false) {
       clearCrisisResponseTags();
     }
+    if (!isMasterEnabled || settings.showLeftAdsManager !== false) {
+      clearAdsManagerTags();
+    }
 
     if (isHoverRightRail && (settings.showRightSponsored === false || settings.showRightBirthdays === false || settings.showRightMetaAI === false)) {
       triggerThrottledScan();
@@ -178,6 +181,16 @@
   function isAdsManagerHidden() {
     if (!currentSettings) return false;
     return currentSettings.showLeftAdsManager === false;
+  }
+
+  const ADS_MANAGER_NODE_CLASS = 'fb-layout-tweaks-hide-left-ads-manager-node';
+
+  function clearAdsManagerTags() {
+    if (typeof document === 'undefined') return;
+    const tagged = document.querySelectorAll(`.${ADS_MANAGER_NODE_CLASS}`);
+    for (const el of tagged) {
+      el.classList.remove(ADS_MANAGER_NODE_CLASS);
+    }
   }
 
   // Crisis Response is rendered as a bookmark without a stable href in some
@@ -256,15 +269,15 @@
       const leftRail = document.querySelector(
         '.fb-layout-tweaks-left-rail, [data-pagelet="LeftRail"], div[role="navigation"]:not(header *):not([role="banner"] *)'
       );
-      const root = leftRail || (typeof document !== 'undefined' ? document.body : null);
-      if (!root) return;
+      if (!leftRail) return;
+      const root = leftRail;
 
       let spansCount = 0;
       let candidateCount = 0;
 
       if (hideAdsManager) {
         // O(1) Fast-path: if Ads Manager is already tagged and connected in the DOM, skip querying spans
-        const alreadyTagged = root.querySelector('.fb-layout-tweaks-hide-left-ads-manager-node');
+        const alreadyTagged = root.querySelector(`.${ADS_MANAGER_NODE_CLASS}`);
         if (alreadyTagged && alreadyTagged.isConnected !== false) {
           if (!hideCrisisResponse) {
             return { spansCount: 0, candidateCount: 0, cached: true };
@@ -275,18 +288,21 @@
           );
           for (const el of candidates) {
             const row = el.closest('li, div[role="listitem"], div[role="button"], div[data-visualcompletion]') || el;
-            row.classList.add('fb-layout-tweaks-hide-left-ads-manager-node');
+            row.classList.add(ADS_MANAGER_NODE_CLASS);
           }
-
-          const spans = root.querySelectorAll('span');
-          spansCount += spans.length;
           candidateCount += candidates.length;
-          for (const span of spans) {
-            if (span.children.length === 0) {
-              const text = span.textContent.trim();
-              if (text === '廣告管理員' || text.toLowerCase() === 'ads manager') {
-                const row = span.closest('li, div[role="listitem"], div[role="button"], div[data-visualcompletion]') || span.closest('a') || span;
-                row.classList.add('fb-layout-tweaks-hide-left-ads-manager-node');
+
+          // Performance: only fall back to scanning spans if attribute selectors found no candidates
+          if (candidates.length === 0) {
+            const spans = root.querySelectorAll('span');
+            spansCount += spans.length;
+            for (const span of spans) {
+              if (span.children.length === 0) {
+                const text = span.textContent.trim();
+                if (text === '廣告管理員' || text.toLowerCase() === 'ads manager') {
+                  const row = span.closest('li, div[role="listitem"], div[role="button"], div[data-visualcompletion]') || span.closest('a') || span;
+                  row.classList.add(ADS_MANAGER_NODE_CLASS);
+                }
               }
             }
           }

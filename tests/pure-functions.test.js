@@ -398,6 +398,64 @@ test('scanLeftRailDynamicItems short-circuits when ads manager is already tagged
   delete globalThis.document;
 });
 
+test('scanLeftRailDynamicItems skips querySelectorAll(span) when attribute candidates are found', () => {
+  const { scanLeftRailDynamicItems } = require('../src/content/content.js');
+  let queriedSpans = false;
+
+  const mockCandidate = {
+    closest: () => ({ classList: { add: () => {} } }),
+    classList: { add: () => {} }
+  };
+
+  const mockRail = {
+    isConnected: true,
+    querySelector: () => null,
+    querySelectorAll: (sel) => {
+      if (sel.includes('adsmanager')) {
+        return [mockCandidate];
+      }
+      if (sel === 'span') {
+        queriedSpans = true;
+        return [];
+      }
+      return [];
+    }
+  };
+
+  globalThis.document = {
+    querySelector: (sel) => {
+      if (sel.includes('fb-layout-tweaks-left-rail') || sel.includes('LeftRail')) return mockRail;
+      return null;
+    }
+  };
+
+  const result = scanLeftRailDynamicItems({ enabled: true, showLeftAdsManager: false });
+  assert.strictEqual(result.candidateCount, 1);
+  assert.strictEqual(result.spansCount, 0);
+  assert.strictEqual(queriedSpans, false, 'Should not query spans when attribute candidate was found');
+
+  delete globalThis.document;
+});
+
+test('scanLeftRailDynamicItems does not fallback to document.body when leftRail is not found', () => {
+  const { scanLeftRailDynamicItems } = require('../src/content/content.js');
+  let bodyAccessed = false;
+
+  globalThis.document = {
+    querySelector: () => null,
+    get body() {
+      bodyAccessed = true;
+      return { querySelector: () => null, querySelectorAll: () => [] };
+    }
+  };
+
+  const result = scanLeftRailDynamicItems({ enabled: true, showLeftAdsManager: false });
+  assert.strictEqual(result, undefined);
+  assert.strictEqual(bodyAccessed, false, 'Should not access or query document.body');
+
+  delete globalThis.document;
+});
+
 test('hasRelevantMutations filters mutation records and only triggers when nodes are added', () => {
   const { hasRelevantMutations } = require('../src/content/content.js');
   assert.strictEqual(typeof hasRelevantMutations, 'function');

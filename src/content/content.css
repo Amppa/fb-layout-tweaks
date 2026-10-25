@@ -364,19 +364,18 @@ html.fb-layout-tweaks-hide-left-metaai :is(.fb-layout-tweaks-left-rail, [data-pa
 }
 
 /* Ads Manager (廣告管理員) */
-html.fb-layout-tweaks-hide-left-ads-manager a[href*="adsmanager"],
-html.fb-layout-tweaks-hide-left-ads-manager a[href*="ads/manager"],
-html.fb-layout-tweaks-hide-left-ads-manager a[href*="ads/manage"],
-html.fb-layout-tweaks-hide-left-ads-manager a[href*="ad_center"],
-html.fb-layout-tweaks-hide-left-ads-manager a[href*="adcenter"],
-html.fb-layout-tweaks-hide-left-ads-manager a[aria-label*="廣告管理員"],
-html.fb-layout-tweaks-hide-left-ads-manager a[aria-label*="Ads Manager" i],
-html.fb-layout-tweaks-hide-left-ads-manager :is(li, div[role="listitem"], div[role="button"], div[data-visualcompletion]):has(a[href*="adsmanager"]),
-html.fb-layout-tweaks-hide-left-ads-manager :is(li, div[role="listitem"], div[role="button"], div[data-visualcompletion]):has(a[href*="ads/manager"]),
-html.fb-layout-tweaks-hide-left-ads-manager :is(li, div[role="listitem"], div[role="button"], div[data-visualcompletion]):has(a[href*="ad_center"]),
-html.fb-layout-tweaks-hide-left-ads-manager :is(li, div[role="listitem"], div[role="button"], div[data-visualcompletion]):has(a[aria-label*="廣告管理員"]),
-html.fb-layout-tweaks-hide-left-ads-manager div:has(> a[href*="adsmanager"]),
-html.fb-layout-tweaks-hide-left-ads-manager div:has(> div > a[href*="adsmanager"]),
+html.fb-layout-tweaks-hide-left-ads-manager :is(.fb-layout-tweaks-left-rail, [data-pagelet="LeftRail"], div[role="navigation"]:not(header *):not([role="banner"] *)) :is(
+  a[href*="adsmanager"],
+  a[href*="ads/manager"],
+  a[href*="ads/manage"],
+  a[href*="ad_center"],
+  a[href*="adcenter"],
+  a[aria-label*="廣告管理員"],
+  a[aria-label*="Ads Manager" i],
+  :is(li, div[role="listitem"], div[role="button"], div[data-visualcompletion]):has(a[href*="adsmanager"], a[href*="ads/manager"], a[href*="ad_center"], a[aria-label*="廣告管理員"]),
+  div:has(> a[href*="adsmanager"]),
+  div:has(> div > a[href*="adsmanager"])
+),
 html.fb-layout-tweaks-hide-left-ads-manager .fb-layout-tweaks-hide-left-ads-manager-node {
   display: none !important;
 }
