@@ -479,5 +479,18 @@ test('hasRelevantMutations filters mutation records and only triggers when nodes
     { addedNodes: [], removedNodes: [{ tagName: 'DIV' }] },
     { addedNodes: [{ tagName: 'SPAN' }], removedNodes: [] }
   ]), true);
+
+  // Non-element additions (text nodes nodeType: 3, comments nodeType: 8)
+  assert.strictEqual(hasRelevantMutations([
+    { addedNodes: [{ nodeType: 3, textContent: 'hello' }], removedNodes: [] },
+    { addedNodes: [{ nodeType: 8, textContent: 'comment' }], removedNodes: [] }
+  ]), false);
+
+  // Metadata/script/style elements
+  assert.strictEqual(hasRelevantMutations([
+    { addedNodes: [{ nodeType: 1, tagName: 'SCRIPT' }], removedNodes: [] },
+    { addedNodes: [{ nodeType: 1, tagName: 'STYLE' }], removedNodes: [] },
+    { addedNodes: [{ nodeType: 1, tagName: 'LINK' }], removedNodes: [] }
+  ]), false);
 });
 

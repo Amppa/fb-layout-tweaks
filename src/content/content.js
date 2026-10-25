@@ -1063,11 +1063,21 @@
     setTimeout(() => requestAnimationFrame(runThrottledScan), wait);
   }
 
+  const IRRELEVANT_TAG_NAMES = new Set(['SCRIPT', 'STYLE', 'LINK', 'META', 'NOSCRIPT']);
+
   function hasRelevantMutations(mutations) {
     if (!mutations || !mutations.length) return false;
     for (let i = 0; i < mutations.length; i++) {
       const m = mutations[i];
-      if (m && m.addedNodes && m.addedNodes.length > 0) {
+      const added = m?.addedNodes;
+      if (!added || added.length === 0) continue;
+      for (let j = 0; j < added.length; j++) {
+        const node = added[j];
+        if (!node) continue;
+        const isElement = node.nodeType ? node.nodeType === 1 : Boolean(node.tagName);
+        if (!isElement) continue;
+        const tag = (node.tagName || node.nodeName || '').toUpperCase();
+        if (tag && IRRELEVANT_TAG_NAMES.has(tag)) continue;
         return true;
       }
     }
