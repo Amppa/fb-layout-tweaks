@@ -711,3 +711,20 @@ html[class*="fb-layout-tweaks-feed-media-"] :is(div[role="feed"], [data-pagelet=
   margin-inline: auto !important;
   overflow: hidden !important;
 }
+
+/* ==========================================================================
+   Share to Group: lengthen the group picker (Facebook shows ~3 rows)
+   Facebook caps the picker at height: calc(100vh - 500px). Those classes are
+   transient hashes, so content.js tags the panel and its scroll container.
+   ========================================================================== */
+html.fb-layout-tweaks-extend-share-to-group-list .fb-layout-tweaks-share-group-panel {
+  height: auto !important;
+  min-height: 500px !important;
+  max-height: calc(100vh - 120px) !important;
+}
+
+html.fb-layout-tweaks-extend-share-to-group-list .fb-layout-tweaks-share-group-scroll {
+  height: auto !important;
+  min-height: 440px !important;
+  max-height: calc(100vh - 180px) !important;
+}

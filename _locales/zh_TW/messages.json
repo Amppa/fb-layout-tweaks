@@ -55,6 +55,9 @@
   "cardMainFeed": {
     "message": "中間區塊（主欄）"
   },
+  "cardOthers": {
+    "message": "其他"
+  },
   "cardGlobalSettings": {
     "message": "全域設定"
   },
@@ -255,6 +258,12 @@
   },
   "optMediaHeight25": {
     "message": "25%"
+  },
+  "itemExtendShareToGroupList": {
+    "message": "加長「分享到社團」清單"
+  },
+  "descExtendShareToGroupList": {
+    "message": "原本清單約 240px，加長到 500px"
   },
   "itemLanguage": {
     "message": "語言"

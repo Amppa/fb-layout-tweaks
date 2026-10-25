@@ -3,8 +3,8 @@
  * Single source of truth shared by the service worker (via importScripts)
  * and extension pages (via <script> tag).
  *
- * Settings are authored in four section groups (TOP / LEFT / RIGHT / MAIN) and
- * flattened into DEFAULT_SETTINGS. Storage and all consumers use the flat
+ * Settings are authored in five section groups (TOP / LEFT / RIGHT / MAIN / OTHER)
+ * and flattened into DEFAULT_SETTINGS. Storage and all consumers use the flat
  * shape, so grouping is organizational only (no migration needed).
  */
 
@@ -71,6 +71,11 @@ self.MAIN_SETTINGS = {
   feedMediaHeight: 'default'
 };
 
+self.OTHER_SETTINGS = {
+  // Section: Others (true = lengthen the "Share to group" list to show at least 6 groups)
+  extendShareToGroupList: true
+};
+
 self.DEFAULT_SETTINGS = {
   enabled: true,
   locale: 'auto',
@@ -78,7 +83,8 @@ self.DEFAULT_SETTINGS = {
   ...self.TOP_SETTINGS,
   ...self.LEFT_SETTINGS,
   ...self.RIGHT_SETTINGS,
-  ...self.MAIN_SETTINGS
+  ...self.MAIN_SETTINGS,
+  ...self.OTHER_SETTINGS
 };
 
 self.SETTINGS_ENUMS = {
@@ -194,6 +200,7 @@ if (typeof module !== 'undefined' && module.exports) {
     LEFT_SETTINGS: self.LEFT_SETTINGS,
     RIGHT_SETTINGS: self.RIGHT_SETTINGS,
     MAIN_SETTINGS: self.MAIN_SETTINGS,
+    OTHER_SETTINGS: self.OTHER_SETTINGS,
     SETTINGS_ENUMS: self.SETTINGS_ENUMS,
     sanitizeSettingValue: self.sanitizeSettingValue,
     bindSelectDropdown: self.bindSelectDropdown,

@@ -69,6 +69,10 @@
       classes.add('fb-layout-tweaks-center-main-feed');
     }
 
+    if (Boolean(settings.extendShareToGroupList)) {
+      classes.add('fb-layout-tweaks-extend-share-to-group-list');
+    }
+
     if (trimMainFeed) {
       const feedWidth = settings.feedWidth;
       if (feedWidth === 'w50') classes.add('fb-layout-tweaks-feed-width-50');
@@ -144,6 +148,12 @@
 
     if (isMasterEnabled) {
       tagRailContainers();
+    }
+
+    if (isMasterEnabled && settings.extendShareToGroupList === true) {
+      tagShareGroupPanel();
+    } else {
+      clearShareGroupPanelTags();
     }
 
     if (isMasterEnabled && settings.showLeftAdsManager === false) {
@@ -289,6 +299,63 @@
   }
 
   const RIGHT_RAIL_EXCLUDE_ANCESTORS = '[role="dialog"], [aria-modal="true"], [role="main"], [data-pagelet*="Photo"], [data-pagelet*="Media"], [data-pagelet*="Tahoe"]';
+
+  // Share → To a group: Facebook caps the group picker with
+  // height: calc(100vh - 500px) (about 3 rows). Tag the panel and its scroll
+  // container so content.css can lengthen the visible list.
+  const SHARE_GROUP_PANEL_CLASS = 'fb-layout-tweaks-share-group-panel';
+  const SHARE_GROUP_SCROLL_CLASS = 'fb-layout-tweaks-share-group-scroll';
+
+  function clearShareGroupPanelTags() {
+    if (typeof document === 'undefined') return;
+    const tagged = document.querySelectorAll(`.${SHARE_GROUP_PANEL_CLASS}, .${SHARE_GROUP_SCROLL_CLASS}`);
+    for (const el of tagged) {
+      el.classList.remove(SHARE_GROUP_PANEL_CLASS, SHARE_GROUP_SCROLL_CLASS);
+    }
+  }
+
+  function tagShareGroupPanel() {
+    try {
+      if (typeof document === 'undefined') return;
+
+      const searchInputs = document.querySelectorAll('input[type="search"]');
+      for (const input of searchInputs) {
+        // The picker pairs its group list with a search field in the same panel.
+        let panel = input.parentElement;
+        let matchedPanel = null;
+        let groupLink = null;
+        for (let depth = 0; depth < 8 && panel && panel !== document.body; depth++) {
+          groupLink = panel.querySelector('div[role="list"] a[href*="/groups/"]');
+          if (groupLink) {
+            matchedPanel = panel;
+            break;
+          }
+          panel = panel.parentElement;
+        }
+        if (!matchedPanel || !groupLink) continue;
+
+        const list = groupLink.closest('div[role="list"]');
+        // Skip navigation rails and other non-picker group lists.
+        if (!list || list.closest('[role="navigation"], [role="banner"], [data-pagelet="LeftRail"]')) continue;
+
+        matchedPanel.classList.add(SHARE_GROUP_PANEL_CLASS);
+
+        // The nearest scrollable ancestor holds the fixed height that caps rows.
+        let scroller = list.parentElement;
+        while (scroller && scroller !== matchedPanel) {
+          const overflowY = window.getComputedStyle(scroller).overflowY;
+          if (overflowY === 'auto' || overflowY === 'scroll') {
+            scroller.classList.add(SHARE_GROUP_SCROLL_CLASS);
+            break;
+          }
+          scroller = scroller.parentElement;
+        }
+        return;
+      }
+    } catch (e) {
+      // Non-fatal
+    }
+  }
 
   function tagRailContainers(force = false) {
     try {
@@ -609,6 +676,9 @@
         tagRailContainers();
         scanLeftRailDynamicItems();
         scanRightRailDynamicItems();
+        if (currentSettings && currentSettings.enabled !== false && currentSettings.extendShareToGroupList === true) {
+          tagShareGroupPanel();
+        }
         if (currentSettings && currentSettings.enabled !== false && currentSettings.trimMainFeed !== false && currentSettings.feedMediaHeight && currentSettings.feedMediaHeight !== 'default') {
           scanAndScaleFeedMedia(currentSettings.feedMediaHeight);
         }
@@ -625,6 +695,9 @@
       const t3 = performance.now();
       scanRightRailDynamicItems();
       const t4 = performance.now();
+      if (currentSettings && currentSettings.enabled !== false && currentSettings.extendShareToGroupList === true) {
+        tagShareGroupPanel();
+      }
       if (currentSettings && currentSettings.enabled !== false && currentSettings.trimMainFeed !== false && currentSettings.feedMediaHeight && currentSettings.feedMediaHeight !== 'default') {
         scanAndScaleFeedMedia(currentSettings.feedMediaHeight);
       }
@@ -692,11 +765,12 @@
         settings.showRightBirthdays === false ||
         settings.showRightMetaAI === false
       );
+      const isShareGroupActive = settings.extendShareToGroupList === true;
       const railsNeedTagging = typeof document !== 'undefined' && (
         !document.querySelector('.fb-layout-tweaks-left-rail') ||
         (isRightRailActive() && !document.querySelector('.fb-layout-tweaks-right-rail'))
       );
-      return isAdsManagerActive || isFeedMediaActive || isRightRailDynamicActive || railsNeedTagging;
+      return isAdsManagerActive || isFeedMediaActive || isRightRailDynamicActive || isShareGroupActive || railsNeedTagging;
     }
 
     // Observe for dynamic content loads (e.g. "See More" bookmark expansion)

@@ -26,6 +26,7 @@ test('DEFAULT_SETTINGS contains required core keys and valid types', () => {
   assert.strictEqual(defaults.feedFontSize, 'f150', 'feedFontSize should default to f150');
   assert.strictEqual(defaults.feedMediaHeight, 'default', 'feedMediaHeight should default to default');
   assert.strictEqual(defaults.trimRightRail, 'hidden', 'trimRightRail should default to hidden');
+  assert.strictEqual(defaults.extendShareToGroupList, true, 'extendShareToGroupList should default to true');
   assert.strictEqual(defaults.locale, 'auto', 'locale should default to auto');
 
   // Verify all show* keys are booleans

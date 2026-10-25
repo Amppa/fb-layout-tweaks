@@ -297,6 +297,7 @@ test('deriveLayoutClasses returns complete set of active layout tokens based on 
   assert.ok(defaultClasses.has('fb-layout-tweaks-center-main-feed'));
   assert.strictEqual(defaultClasses.has('fb-layout-tweaks-feed-width-75'), false); // 680px default width uses standard feed layout
   assert.ok(defaultClasses.has('fb-layout-tweaks-feed-font-150'));
+  assert.ok(defaultClasses.has('fb-layout-tweaks-extend-share-to-group-list'));
 
   // Feed/Sidebar inactive (non-feed page with homeOnly scope)
   const nonFeedClasses = deriveLayoutClasses(DEFAULT_SETTINGS, false);
@@ -314,7 +315,8 @@ test('deriveLayoutClasses returns complete set of active layout tokens based on 
     feedFontSize: 'f200',
     feedMediaHeight: 'h50',
     showTopReels: false,
-    showLeftFriends: false
+    showLeftFriends: false,
+    extendShareToGroupList: false
   };
   const customClasses = deriveLayoutClasses(customSettings, true);
   assert.ok(customClasses.has('fb-layout-tweaks-hover-expand-right-rail'));
@@ -324,6 +326,7 @@ test('deriveLayoutClasses returns complete set of active layout tokens based on 
   assert.ok(customClasses.has('fb-layout-tweaks-feed-media-h50'));
   assert.ok(customClasses.has('fb-layout-tweaks-hide-top-reels'));
   assert.ok(customClasses.has('fb-layout-tweaks-hide-left-friends'));
+  assert.strictEqual(customClasses.has('fb-layout-tweaks-extend-share-to-group-list'), false);
 });
 
 test('updateSettings executes sequential updates without race condition data loss', async () => {

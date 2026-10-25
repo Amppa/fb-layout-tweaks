@@ -7,6 +7,7 @@ A lightweight Chrome extension (Manifest V3) that declutters Facebook desktop na
 - **Declutter Navigation**: Hide unwanted items in Top Navigation, Left Sidebar, and Right Sidebar with instant zero-FOUC hiding.
 - **Icon-Only Sidebars**: Shrink left and right sidebars into 72px icon rails that expand smoothly on hover as non-pushing overlays.
 - **Customizable Main Feed**: Adjust feed post display width (1000px, 1600px, 50%, 75%, 100%), scale post body text size (150%, 200%, 300%), and maintain centered alignment.
+- **Longer Share to Group List**: Extend the "Share to a group" picker to show at least 6 groups instead of 3.
 - **Instant Sync**: All settings update across open Facebook tabs in real time without reloading.
 
 ---
@@ -27,6 +28,7 @@ Right-click the extension icon and select **Options** (or click **Detailed Setti
 - **Left Sidebar Items & Behavior**: Fine-tune 20+ sidebar shortcuts and toggle icon-only hover expand mode.
 - **Right Sidebar Items & Behavior**: Hide Sponsored, Birthdays, Meta AI, and toggle avatar rail mode.
 - **Main Feed**: Toggle feed enlargement, keep feed centered, choose feed width (Original 680px, 1000px, 1600px, 50%, 75%, 100%), and scale text size (up to 300%).
+- **Others**: Lengthen the "Share to a group" list to show at least 6 groups at once.
 - **Language Switch**: Switch between English and Traditional Chinese (繁體中文).
 
 ---

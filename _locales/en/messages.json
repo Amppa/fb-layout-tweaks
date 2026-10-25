@@ -55,6 +55,9 @@
   "cardMainFeed": {
     "message": "Main Feed"
   },
+  "cardOthers": {
+    "message": "Others"
+  },
   "cardGlobalSettings": {
     "message": "Global Settings"
   },
@@ -255,6 +258,12 @@
   },
   "optMediaHeight25": {
     "message": "25%"
+  },
+  "itemExtendShareToGroupList": {
+    "message": "Extend Share to Group List"
+  },
+  "descExtendShareToGroupList": {
+    "message": "Original list about 240px, extended to 500px"
   },
   "itemLanguage": {
     "message": "Language"
