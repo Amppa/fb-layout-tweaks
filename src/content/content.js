@@ -870,8 +870,11 @@
         `img:not([data-fb-lt-scaled-mode="${mode}"])`
       );
 
+      // Pass 1: Read & Collect phase (zero writes to avoid forced reflows)
+      const tasks = [];
+
       for (const el of mediaElements) {
-        // Incremental stamp cache: if already scaled to current mode, skip to avoid forced reflow
+        // Incremental stamp cache: if already scaled to current mode, skip
         if (el.dataset.fbLtScaledMode === mode) continue;
 
         // Skip dialogs, banners, and navigations
@@ -883,35 +886,53 @@
         const h = el.naturalHeight || parseFloat(el.getAttribute('height')) || el.clientHeight || 0;
         if (w < 140 && h < 90) continue;
 
-        // Walk up ancestors to find the padding-top aspect wrapper
-        // Prioritize inline styles first to avoid triggering getComputedStyle reflows on intermediate nodes
+        // Walk up ancestors to find the padding-top aspect wrapper.
+        // First check all inline styles up to depth 12 to avoid getComputedStyle calls on intermediate nodes.
         let curr = el.parentElement;
         let wrapper = null;
+        const ancestors = [];
         let d = 0;
         while (curr && curr !== document.body && d < 12) {
-          d++;
+          ancestors.push(curr);
           const inlineStyle = curr.getAttribute('style') || '';
           if (inlineStyle.includes('padding-top') || inlineStyle.includes('--x-paddingTop')) {
             wrapper = curr;
             break;
           }
-          const cs = window.getComputedStyle(curr);
-          if (parseFloat(cs.paddingTop) > 40) {
-            wrapper = curr;
-            break;
-          }
           curr = curr.parentElement;
+          d++;
+        }
+
+        // Fallback: check computed paddingTop if inline style was absent
+        if (!wrapper && typeof window !== 'undefined' && typeof window.getComputedStyle === 'function') {
+          for (const a of ancestors) {
+            const cs = window.getComputedStyle(a);
+            if (cs && parseFloat(cs.paddingTop) > 40) {
+              wrapper = a;
+              break;
+            }
+          }
         }
 
         if (wrapper) {
-          const wcs = window.getComputedStyle(wrapper);
-          if (!wrapper.dataset.fbLtOrigPadding) {
-            wrapper.dataset.fbLtOrigPadding = String(parseFloat(wcs.paddingTop) || 0);
-            wrapper.dataset.fbLtOrigWidth = String(parseFloat(wcs.width) || wrapper.getBoundingClientRect().width || 0);
-            wrapper.dataset.fbLtOrigStyle = wrapper.getAttribute('style') || '__EMPTY__';
+          let origPadding = wrapper.dataset.fbLtOrigPadding ? parseFloat(wrapper.dataset.fbLtOrigPadding) : null;
+          let origWidth = wrapper.dataset.fbLtOrigWidth ? parseFloat(wrapper.dataset.fbLtOrigWidth) : null;
+
+          if (origPadding === null || origWidth === null) {
+            const wcs = (typeof window !== 'undefined' && typeof window.getComputedStyle === 'function')
+              ? window.getComputedStyle(wrapper)
+              : null;
+            if (origPadding === null) {
+              origPadding = parseFloat(wcs && wcs.paddingTop) || 0;
+            }
+            if (origWidth === null) {
+              origWidth = parseFloat(wcs && wcs.width) ||
+                wrapper.offsetWidth ||
+                wrapper.clientWidth ||
+                (typeof wrapper.getBoundingClientRect === 'function' ? wrapper.getBoundingClientRect().width : 0) ||
+                0;
+            }
           }
-          const origPadding = parseFloat(wrapper.dataset.fbLtOrigPadding);
-          const origWidth = parseFloat(wrapper.dataset.fbLtOrigWidth);
 
           let factor = 1.0;
           if (isFactorMode) {
@@ -923,40 +944,71 @@
 
           if (factor < 1.0 && origPadding > 0) {
             const targetPadding = Math.round(origPadding * factor);
-            wrapper.style.setProperty('padding-top', `${targetPadding}px`, 'important');
-            if (origWidth > 0) {
-              const targetWidth = Math.round(origWidth * factor);
-              wrapper.style.setProperty('width', `${targetWidth}px`, 'important');
-              wrapper.style.setProperty('max-width', `${targetWidth}px`, 'important');
-              wrapper.style.setProperty('margin-inline', 'auto', 'important');
-            }
-            wrapper.style.setProperty('overflow', 'hidden', 'important');
+            const targetWidth = origWidth > 0 ? Math.round(origWidth * factor) : 0;
 
-            if (!el.dataset.fbLtOrigStyle) {
-              el.dataset.fbLtOrigStyle = el.getAttribute('style') || '__EMPTY__';
-            }
-            el.style.setProperty('object-fit', 'contain', 'important');
-            el.style.setProperty('object-position', 'center', 'important');
-            el.dataset.fbLtScaledMode = mode;
-
-            // Also clamp immediate parent if it has fixed height
-            let parent = wrapper.parentElement;
-            if (parent && parent !== document.body && !parent.matches('[role="article"], [role="main"], [data-pagelet^="FeedUnit"], .post-card')) {
-              const pcs = window.getComputedStyle(parent);
+            let parentInfo = null;
+            const parent = wrapper.parentElement;
+            if (parent && parent !== document.body && (!parent.matches || !parent.matches('[role="article"], [role="main"], [data-pagelet^="FeedUnit"], .post-card'))) {
               const pInline = parent.getAttribute('style') || '';
-              if (pInline.includes('height:') || parseFloat(pcs.height) > (targetPadding + 40)) {
-                if (!parent.dataset.fbLtOrigStyle) {
-                  parent.dataset.fbLtOrigStyle = pInline || '__EMPTY__';
-                  parent.dataset.fbLtOrigHeight = String(parseFloat(pcs.height) || 0);
-                }
-                const origH = parseFloat(parent.dataset.fbLtOrigHeight);
-                if (origH > 0) {
-                  parent.style.setProperty('max-height', `${Math.round(origH * factor)}px`, 'important');
-                  parent.style.setProperty('overflow', 'hidden', 'important');
+              let origH = parent.dataset.fbLtOrigHeight ? parseFloat(parent.dataset.fbLtOrigHeight) : 0;
+              if (!origH && typeof window !== 'undefined' && typeof window.getComputedStyle === 'function') {
+                const pcs = window.getComputedStyle(parent);
+                const computedH = pcs ? parseFloat(pcs.height) : 0;
+                if (pInline.includes('height:') || computedH > (targetPadding + 40)) {
+                  origH = computedH;
                 }
               }
+              if (origH > 0) {
+                parentInfo = { parent, origH, pInline };
+              }
             }
+
+            tasks.push({
+              el,
+              wrapper,
+              origPadding,
+              origWidth,
+              targetPadding,
+              targetWidth,
+              factor,
+              parentInfo
+            });
           }
+        }
+      }
+
+      // Pass 2: Batch DOM write phase
+      for (const task of tasks) {
+        const { el, wrapper, origPadding, origWidth, targetPadding, targetWidth, factor, parentInfo } = task;
+
+        if (!wrapper.dataset.fbLtOrigPadding) {
+          wrapper.dataset.fbLtOrigPadding = String(origPadding);
+          wrapper.dataset.fbLtOrigWidth = String(origWidth);
+          wrapper.dataset.fbLtOrigStyle = wrapper.getAttribute('style') || '__EMPTY__';
+        }
+        wrapper.style.setProperty('padding-top', `${targetPadding}px`, 'important');
+        if (targetWidth > 0) {
+          wrapper.style.setProperty('width', `${targetWidth}px`, 'important');
+          wrapper.style.setProperty('max-width', `${targetWidth}px`, 'important');
+          wrapper.style.setProperty('margin-inline', 'auto', 'important');
+        }
+        wrapper.style.setProperty('overflow', 'hidden', 'important');
+
+        if (!el.dataset.fbLtOrigStyle) {
+          el.dataset.fbLtOrigStyle = el.getAttribute('style') || '__EMPTY__';
+        }
+        el.style.setProperty('object-fit', 'contain', 'important');
+        el.style.setProperty('object-position', 'center', 'important');
+        el.dataset.fbLtScaledMode = mode;
+
+        if (parentInfo) {
+          const { parent, origH, pInline } = parentInfo;
+          if (!parent.dataset.fbLtOrigStyle) {
+            parent.dataset.fbLtOrigStyle = pInline || '__EMPTY__';
+            parent.dataset.fbLtOrigHeight = String(origH);
+          }
+          parent.style.setProperty('max-height', `${Math.round(origH * factor)}px`, 'important');
+          parent.style.setProperty('overflow', 'hidden', 'important');
         }
       }
     } catch (_) {
