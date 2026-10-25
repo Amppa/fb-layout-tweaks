@@ -4,6 +4,9 @@
  */
 
 document.addEventListener('DOMContentLoaded', async () => {
+  // Sync fast-path: hydrate with system locale messages immediately to prevent FOUC
+  applyI18n();
+
   const openBtn = document.getElementById('openSettingsBtn');
   const enableToggle = document.getElementById('enableToggle');
   const sectionsEl = document.getElementById('popupSections');

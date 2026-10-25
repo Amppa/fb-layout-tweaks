@@ -16,7 +16,7 @@ globalThis.self ??= globalThis;
 require('../src/shared/defaults.js');
 
 const { getUiCleanClassName, normalizeRightRailMode, deriveLayoutClasses } = require('../src/content/content.js');
-const { getMsg, setLocaleMessages, resolveEffectiveLocale } = require('../src/shared/i18n.js');
+const { getMsg, setLocaleMessages, resolveEffectiveLocale, applyI18n } = require('../src/shared/i18n.js');
 
 const ROOT_DIR = path.resolve(__dirname, '..');
 
@@ -129,6 +129,44 @@ test('getMsg resolves messages in order: in-memory localeMessages -> chrome.i18n
   delete globalThis.chrome;
   setLocaleMessages(null);
   assert.strictEqual(getMsg('greeting'), '');
+});
+
+test('applyI18n replaces text and attributes, then sets data-i18n-ready attribute', () => {
+  setLocaleMessages({
+    testTitle: { message: '測試標題' },
+    testAttr: { message: '測試提示' }
+  });
+
+  const docElement = {
+    hasAttribute: (a) => false,
+    setAttribute: (a, v) => { docElement[a] = v; }
+  };
+  const textEl = {
+    getAttribute: (attr) => (attr === 'data-i18n' ? 'testTitle' : null),
+    textContent: 'Original Title'
+  };
+  const titleEl = {
+    getAttribute: (attr) => (attr === 'data-i18n-title' ? 'testAttr' : null),
+    title: 'Original Tooltip'
+  };
+
+  globalThis.document = {
+    documentElement: docElement,
+    querySelectorAll: (sel) => {
+      if (sel === '[data-i18n]') return [textEl];
+      if (sel === '[data-i18n-title]') return [titleEl];
+      return [];
+    }
+  };
+
+  applyI18n();
+
+  assert.strictEqual(textEl.textContent, '測試標題');
+  assert.strictEqual(titleEl.title, '測試提示');
+  assert.strictEqual(docElement['data-i18n-ready'], 'true');
+
+  delete globalThis.document;
+  setLocaleMessages(null);
 });
 
 test('isFeedPage correctly identifies feeds and home URLs vs non-feed pages', () => {

@@ -37,6 +37,7 @@ function getMsg(key) {
 }
 
 function applyI18n() {
+  if (typeof document === 'undefined') return;
   document.querySelectorAll('[data-i18n]').forEach(el => {
     const key = el.getAttribute('data-i18n');
     const msg = getMsg(key);
@@ -47,6 +48,18 @@ function applyI18n() {
     const msg = getMsg(key);
     if (msg) el.title = msg;
   });
+  if (document.documentElement) {
+    document.documentElement.setAttribute('data-i18n-ready', 'true');
+  }
+}
+
+// Safety timeout: ensure UI is never permanently hidden if script execution fails
+if (typeof setTimeout !== 'undefined' && typeof document !== 'undefined') {
+  setTimeout(() => {
+    if (document.documentElement && !document.documentElement.hasAttribute('data-i18n-ready')) {
+      document.documentElement.setAttribute('data-i18n-ready', 'true');
+    }
+  }, 2000);
 }
 
 if (typeof self !== 'undefined') {

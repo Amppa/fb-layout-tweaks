@@ -6,6 +6,15 @@
  * injected page styles use Facebook's own variables instead.
  */
 
+html:not([data-i18n-ready]) body {
+  visibility: hidden;
+  opacity: 0;
+}
+html[data-i18n-ready] body {
+  visibility: visible;
+  opacity: 1;
+  transition: opacity 0.08s ease-out;
+}
 :root {
   --bg-primary: #0e0e10;
   --bg-card: #18181c;

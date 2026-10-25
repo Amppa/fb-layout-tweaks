@@ -7,6 +7,9 @@
  */
 
 document.addEventListener('DOMContentLoaded', async () => {
+  // Sync fast-path: hydrate with system locale messages immediately to prevent FOUC
+  applyI18n();
+
   const masterToggle = document.getElementById('enabled');
   const masterStatus = document.getElementById('masterStatus');
   const uiCleanList = document.getElementById('uiCleanList');
