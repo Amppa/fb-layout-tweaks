@@ -187,6 +187,18 @@
     return currentSettings.showLeftAdsManager === false;
   }
 
+  // Left sidebar scans only matter when the sidebar master switch is on and the
+  // current page is in the configured sidebar scope (mirrors applyUiCleanClasses).
+  function isLeftSidebarActive(settings) {
+    if (!settings || settings.enabled === false) return false;
+    if (settings.trimLeftItems === false) return false;
+    if (settings.sidebarScope === 'global') return true;
+    if (typeof window === 'undefined' || !window.location) return true;
+    return (typeof self !== 'undefined' && self.isFeedPage)
+      ? self.isFeedPage(window.location.pathname)
+      : true;
+  }
+
   const ADS_MANAGER_NODE_CLASS = 'fb-layout-tweaks-hide-left-ads-manager-node';
 
   function clearAdsManagerTags() {
@@ -265,6 +277,7 @@
   function scanLeftRailDynamicItems(settings = currentSettings) {
     try {
       if (!settings || settings.enabled === false) return;
+      if (!isLeftSidebarActive(settings)) return;
 
       const hideAdsManager = settings.showLeftAdsManager === false;
       const hideCrisisResponse = settings.showLeftCrisisResponse === false;
@@ -887,8 +900,9 @@
     // Check if current settings require dynamic DOM subtree scanning
     function needsDynamicScan(settings) {
       if (!settings || settings.enabled === false) return false;
-      const isAdsManagerActive = settings.showLeftAdsManager === false;
-      const isCrisisResponseActive = settings.showLeftCrisisResponse === false;
+      const isLeftActive = isLeftSidebarActive(settings);
+      const isAdsManagerActive = isLeftActive && settings.showLeftAdsManager === false;
+      const isCrisisResponseActive = isLeftActive && settings.showLeftCrisisResponse === false;
       const isFeedMediaActive = settings.trimMainFeed !== false &&
         Boolean(settings.feedMediaHeight) && settings.feedMediaHeight !== 'default';
       const isRightRailDynamicActive = (settings.trimRightRail === 'hover' || settings.trimRightRail === true) && (
@@ -898,7 +912,7 @@
       );
       const isShareGroupActive = settings.extendShareToGroupList === true;
       const railsNeedTagging = typeof document !== 'undefined' && (
-        !document.querySelector('.fb-layout-tweaks-left-rail') ||
+        (isLeftActive && !document.querySelector('.fb-layout-tweaks-left-rail')) ||
         (isRightRailActive() && !document.querySelector('.fb-layout-tweaks-right-rail'))
       );
       return isAdsManagerActive || isCrisisResponseActive || isFeedMediaActive || isRightRailDynamicActive || isShareGroupActive || railsNeedTagging;
@@ -1160,6 +1174,7 @@
       normalizeRightRailMode,
       deriveLayoutClasses,
       isAdsManagerHidden,
+      isLeftSidebarActive,
       scanLeftRailDynamicItems,
       isRightRailActive,
       isFeedPage: (typeof self !== 'undefined' && self.isFeedPage) || null,
