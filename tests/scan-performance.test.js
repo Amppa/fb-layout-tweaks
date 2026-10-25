@@ -16,6 +16,7 @@ const {
   isLeftRailTaggingNeeded,
   isRightRailTaggingNeeded,
   scanLeftRailDynamicItems,
+  scanRightRailDynamicItems,
   tagShareGroupPanel,
   resetLeftRailLabelScanCache,
   resetRightRailScanCache,
@@ -230,6 +231,61 @@ test('crisis label fallback is cached after a miss', () => {
   resetLeftRailLabelScanCache();
   scanLeftRailDynamicItems(settings);
   assert.strictEqual(spanQueries, 2);
+
+  delete globalThis.document;
+});
+
+test('right-rail scan skips querying when tagged node is already connected', () => {
+  resetRightRailScanCache();
+  let h3Queries = 0;
+  const mockRightRail = {
+    isConnected: true,
+    closest: () => null,
+    querySelectorAll: (sel) => {
+      if (sel === 'h3') {
+        h3Queries++;
+        return [h3El];
+      }
+      return [];
+    }
+  };
+  const container = {
+    parentElement: mockRightRail,
+    isConnected: true,
+    querySelectorAll: (sel) => (sel.includes('h3') ? [h3El, {}] : [])
+  };
+  const sectionEl = {
+    parentElement: container,
+    classList: { add: () => {} },
+    isConnected: true,
+    querySelectorAll: () => []
+  };
+  const h3El = {
+    textContent: 'Sponsored',
+    closest: () => null,
+    parentElement: {
+      querySelectorAll: () => [],
+      parentElement: sectionEl,
+      classList: { add: () => {} }
+    }
+  };
+  globalThis.document = {
+    getElementById: () => mockRightRail
+  };
+  const settings = {
+    enabled: true,
+    trimRightRail: 'hover',
+    showRightSponsored: false,
+    showRightBirthdays: true,
+    showRightMetaAI: true
+  };
+
+  scanRightRailDynamicItems(settings);
+  assert.strictEqual(h3Queries, 1);
+
+  // Second scan: already tagged node is connected, should skip querying h3 entirely
+  scanRightRailDynamicItems(settings);
+  assert.strictEqual(h3Queries, 1, 'should not re-query h3 while tagged node remains connected');
 
   delete globalThis.document;
 });

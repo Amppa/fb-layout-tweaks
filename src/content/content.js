@@ -35,6 +35,9 @@
   let rightSponsoredScanAfter = 0;
   let rightBirthdaysScanAfter = 0;
   let rightMetaAiScanAfter = 0;
+  let rightSponsoredTaggedEl = null;
+  let rightBirthdaysTaggedEl = null;
+  let rightMetaAiTaggedEl = null;
 
   function isConnectedEl(el) {
     return Boolean(el && el.isConnected !== false);
@@ -49,6 +52,9 @@
     rightSponsoredScanAfter = 0;
     rightBirthdaysScanAfter = 0;
     rightMetaAiScanAfter = 0;
+    rightSponsoredTaggedEl = null;
+    rightBirthdaysTaggedEl = null;
+    rightMetaAiTaggedEl = null;
   }
 
   function setRailExpanded(expanded) {
@@ -414,15 +420,16 @@
     return 'hidden';
   }
 
-  function isRightRailActive() {
-    if (!currentSettings || currentSettings.enabled === false) return false;
-    const mode = currentSettings.trimRightRail;
+  function isRightRailActive(settings = currentSettings) {
+    if (!settings || settings.enabled === false) return false;
+    const mode = settings.trimRightRail;
     return mode === 'hover' || mode === true;
   }
 
-  function scanRightRailDynamicItems() {
+  function scanRightRailDynamicItems(settings = currentSettings) {
     try {
-      if (!isRightRailActive()) return;
+      if (!isRightRailActive(settings)) return;
+      if (!settings) return;
       if (!isConnectedEl(rightRailTaggedEl) && nowMs() < rightRailMissAfter) return;
       const rail = isConnectedEl(rightRailTaggedEl)
         ? rightRailTaggedEl
@@ -440,67 +447,96 @@
       // heading while the ancestor holds a single h3; the first multi-h3
       // ancestor is the section boundary, so the last single-h3 node is the
       // Sponsored section root. Aborts at rail/depth cap to avoid over-hiding.
-      if (currentSettings.showRightSponsored === false && now >= rightSponsoredScanAfter) {
-        const headings = rail.querySelectorAll('h3');
-        let found = false;
-        for (const h of headings) {
-          if (h.closest('.fb-layout-tweaks-hide-right-sponsored-node')) continue;
-          const title = h.textContent.replace(/[\u200b-\u200f\ufeff]/g, '').trim().toLowerCase();
-          if (title !== 'sponsored' && !title.startsWith('贊助')) continue;
-          found = true;
-          let node = h.parentElement;
-          let section = null;
-          for (let depth = 0; depth < 15 && node && node !== rail; depth++) {
-            if (node.querySelectorAll(':scope h3').length > 1) break;
-            section = node;
-            node = node.parentElement;
-          }
-          if (section && node && node !== rail) {
-            section.classList.add('fb-layout-tweaks-hide-right-sponsored-node');
+      if (settings.showRightSponsored === false) {
+        if (!isConnectedEl(rightSponsoredTaggedEl)) {
+          rightSponsoredTaggedEl = null;
+          if (now >= rightSponsoredScanAfter) {
+            const headings = rail.querySelectorAll('h3');
+            let found = false;
+            for (const h of headings) {
+              if (h.closest('.fb-layout-tweaks-hide-right-sponsored-node')) continue;
+              const title = h.textContent.replace(/[\u200b-\u200f\ufeff]/g, '').trim().toLowerCase();
+              if (title !== 'sponsored' && !title.startsWith('贊助')) continue;
+              let node = h.parentElement;
+              let section = null;
+              for (let depth = 0; depth < 15 && node && node !== rail; depth++) {
+                if (node.querySelectorAll(':scope h3').length > 1) break;
+                section = node;
+                node = node.parentElement;
+              }
+              if (section && node && node !== rail) {
+                section.classList.add('fb-layout-tweaks-hide-right-sponsored-node');
+                rightSponsoredTaggedEl = section;
+                found = true;
+                break;
+              }
+            }
+            rightSponsoredScanAfter = found ? 0 : now + RIGHT_RAIL_SCAN_COOLDOWN_MS;
           }
         }
-        rightSponsoredScanAfter = found ? 0 : now + RIGHT_RAIL_SCAN_COOLDOWN_MS;
+      } else {
+        rightSponsoredTaggedEl = null;
       }
 
       // Birthdays: hide the whole section (heading + row). Anchor on the stable
       // /events/birthdays/ link, then walk up to the smallest ancestor holding an h3.
-      if (currentSettings.showRightBirthdays === false && now >= rightBirthdaysScanAfter) {
-        const links = rail.querySelectorAll('a[href*="/events/birthdays/"]');
-        let found = false;
-        for (const el of links) {
-          found = true;
-          if (el.closest('.fb-layout-tweaks-hide-right-birthdays-node')) continue;
-          let node = el.parentElement;
-          while (node && node !== rail) {
-            const heading = node.querySelector(':scope h3');
-            if (heading) {
-              const title = heading.textContent.trim().toLowerCase();
-              if (title === 'birthdays' || title === '生日') {
-                node.classList.add('fb-layout-tweaks-hide-right-birthdays-node');
+      if (settings.showRightBirthdays === false) {
+        if (!isConnectedEl(rightBirthdaysTaggedEl)) {
+          rightBirthdaysTaggedEl = null;
+          if (now >= rightBirthdaysScanAfter) {
+            const links = rail.querySelectorAll('a[href*="/events/birthdays/"]');
+            let found = false;
+            for (const el of links) {
+              if (el.closest('.fb-layout-tweaks-hide-right-birthdays-node')) continue;
+              let node = el.parentElement;
+              while (node && node !== rail) {
+                const heading = node.querySelector(':scope h3');
+                if (heading) {
+                  const title = heading.textContent.trim().toLowerCase();
+                  if (title === 'birthdays' || title === '生日') {
+                    node.classList.add('fb-layout-tweaks-hide-right-birthdays-node');
+                    rightBirthdaysTaggedEl = node;
+                    found = true;
+                  }
+                  break;
+                }
+                node = node.parentElement;
               }
-              break;
+              if (found) break;
             }
-            node = node.parentElement;
+            rightBirthdaysScanAfter = found ? 0 : now + RIGHT_RAIL_SCAN_COOLDOWN_MS;
           }
         }
-        rightBirthdaysScanAfter = found ? 0 : now + RIGHT_RAIL_SCAN_COOLDOWN_MS;
+      } else {
+        rightBirthdaysTaggedEl = null;
       }
 
       // Meta AI row fallback (primary rule is static CSS on the aria-label icon).
-      if (currentSettings.showRightMetaAI === false && now >= rightMetaAiScanAfter) {
-        const spans = rail.querySelectorAll('span');
-        let found = false;
-        for (const span of spans) {
-          if (span.closest('.fb-layout-tweaks-hide-right-metaai-node')) continue;
-          const hasName = Array.from(span.childNodes).some(
-            n => n.nodeType === Node.TEXT_NODE && n.textContent.trim() === 'Meta AI'
-          );
-          if (!hasName) continue;
-          found = true;
-          const row = span.closest('li');
-          if (row) row.classList.add('fb-layout-tweaks-hide-right-metaai-node');
+      if (settings.showRightMetaAI === false) {
+        if (!isConnectedEl(rightMetaAiTaggedEl)) {
+          rightMetaAiTaggedEl = null;
+          if (now >= rightMetaAiScanAfter) {
+            const spans = rail.querySelectorAll('span');
+            let found = false;
+            for (const span of spans) {
+              if (span.closest('.fb-layout-tweaks-hide-right-metaai-node')) continue;
+              const hasName = Array.from(span.childNodes).some(
+                n => n.nodeType === Node.TEXT_NODE && n.textContent.trim() === 'Meta AI'
+              );
+              if (!hasName) continue;
+              const row = span.closest('li');
+              if (row) {
+                row.classList.add('fb-layout-tweaks-hide-right-metaai-node');
+                rightMetaAiTaggedEl = row;
+                found = true;
+                break;
+              }
+            }
+            rightMetaAiScanAfter = found ? 0 : now + RIGHT_RAIL_SCAN_COOLDOWN_MS;
+          }
         }
-        rightMetaAiScanAfter = found ? 0 : now + RIGHT_RAIL_SCAN_COOLDOWN_MS;
+      } else {
+        rightMetaAiTaggedEl = null;
       }
     } catch (e) {
       // Non-fatal
@@ -1305,6 +1341,7 @@
       isLeftRailTaggingNeeded,
       isRightRailTaggingNeeded,
       scanLeftRailDynamicItems,
+      scanRightRailDynamicItems,
       tagShareGroupPanel,
       resetLeftRailLabelScanCache,
       resetRightRailScanCache,
