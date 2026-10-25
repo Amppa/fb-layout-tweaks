@@ -20,10 +20,14 @@
   const LABEL_SCAN_COOLDOWN_MS = 1000;
   let adsLabelScanAfter = 0;
   let crisisLabelScanAfter = 0;
+  let adsManagerTaggedEl = null;
+  let crisisResponseTaggedEl = null;
 
   function resetLeftRailLabelScanCache() {
     adsLabelScanAfter = 0;
     crisisLabelScanAfter = 0;
+    adsManagerTaggedEl = null;
+    crisisResponseTaggedEl = null;
   }
 
   const RAIL_MISS_COOLDOWN_MS = 250;
@@ -41,6 +45,22 @@
 
   function isConnectedEl(el) {
     return Boolean(el && el.isConnected !== false);
+  }
+
+  function isDescendantOf(child, parent) {
+    if (!child || !parent) return false;
+    if (child === parent) return true;
+    if (typeof parent.contains === 'function') {
+      try {
+        return parent.contains(child);
+      } catch (_) {}
+    }
+    let curr = child.parentElement;
+    while (curr) {
+      if (curr === parent) return true;
+      curr = curr.parentElement;
+    }
+    return false;
   }
 
   function resetRailTaggingMissCache() {
@@ -260,6 +280,7 @@
   const ADS_MANAGER_NODE_CLASS = 'fb-layout-tweaks-hide-left-ads-manager-node';
 
   function clearAdsManagerTags() {
+    adsManagerTaggedEl = null;
     if (typeof document === 'undefined') return;
     const tagged = document.querySelectorAll(`.${ADS_MANAGER_NODE_CLASS}`);
     for (const el of tagged) {
@@ -273,6 +294,7 @@
   const CRISIS_RESPONSE_NODE_CLASS = 'fb-layout-tweaks-hide-left-crisis-response-node';
 
   function clearCrisisResponseTags() {
+    crisisResponseTaggedEl = null;
     if (typeof document === 'undefined') return;
     const tagged = document.querySelectorAll(`.${CRISIS_RESPONSE_NODE_CLASS}`);
     for (const el of tagged) {
@@ -300,14 +322,21 @@
       : root;
     if (!scope) return;
 
+    if (isConnectedEl(crisisResponseTaggedEl) && isDescendantOf(crisisResponseTaggedEl, scope)) return;
+    crisisResponseTaggedEl = null;
+
     const alreadyTagged = scope.querySelector(`.${CRISIS_RESPONSE_NODE_CLASS}`);
-    if (alreadyTagged && alreadyTagged.isConnected !== false) return;
+    if (alreadyTagged && alreadyTagged.isConnected !== false) {
+      crisisResponseTaggedEl = alreadyTagged;
+      return;
+    }
 
     // Prefer the bookmark href; it is stable and language-independent.
     const links = scope.querySelectorAll('a[href*="crisisresponse"], a[href*="crisis_response"]');
     for (const link of links) {
       const row = link.closest('li, div[role="listitem"], div[role="button"]') || link;
       row.classList.add(CRISIS_RESPONSE_NODE_CLASS);
+      if (!crisisResponseTaggedEl) crisisResponseTaggedEl = row;
     }
     if (links.length > 0) return;
 
@@ -335,6 +364,7 @@
         parent = target.parentElement;
       }
       target.classList.add(CRISIS_RESPONSE_NODE_CLASS);
+      crisisResponseTaggedEl = target;
       found = true;
     }
     if (!found) crisisLabelScanAfter = now + LABEL_SCAN_COOLDOWN_MS;
@@ -362,19 +392,25 @@
       let candidateCount = 0;
 
       if (hideAdsManager) {
-        // O(1) Fast-path: if Ads Manager is already tagged and connected in the DOM, skip querying spans
-        const alreadyTagged = root.querySelector(`.${ADS_MANAGER_NODE_CLASS}`);
-        if (alreadyTagged && alreadyTagged.isConnected !== false) {
+        // Fast-path: check in-memory reference first, then fallback to DOM class query
+        const isTagged = (isConnectedEl(adsManagerTaggedEl) && isDescendantOf(adsManagerTaggedEl, root))
+          || Boolean(root.querySelector(`.${ADS_MANAGER_NODE_CLASS}`));
+        if (isTagged) {
+          if (!adsManagerTaggedEl || !isDescendantOf(adsManagerTaggedEl, root)) {
+            adsManagerTaggedEl = root.querySelector(`.${ADS_MANAGER_NODE_CLASS}`);
+          }
           if (!hideCrisisResponse) {
             return { spansCount: 0, candidateCount: 0, cached: true };
           }
         } else {
+          adsManagerTaggedEl = null;
           const candidates = root.querySelectorAll(
             'a[href*="adsmanager"], a[href*="ads/manager"], a[href*="ad_center"], a[aria-label*="廣告管理員"], a[aria-label*="Ads Manager" i]'
           );
           for (const el of candidates) {
             const row = el.closest('li, div[role="listitem"], div[role="button"], div[data-visualcompletion]') || el;
             row.classList.add(ADS_MANAGER_NODE_CLASS);
+            if (!adsManagerTaggedEl) adsManagerTaggedEl = row;
           }
           candidateCount += candidates.length;
 
@@ -393,6 +429,7 @@
                   if (text === '廣告管理員' || text.toLowerCase() === 'ads manager') {
                     const row = span.closest('li, div[role="listitem"], div[role="button"], div[data-visualcompletion]') || span.closest('a') || span;
                     row.classList.add(ADS_MANAGER_NODE_CLASS);
+                    if (!adsManagerTaggedEl) adsManagerTaggedEl = row;
                     found = true;
                   }
                 }
@@ -1047,15 +1084,15 @@
   function needsDynamicScan(settings) {
     if (!settings || settings.enabled === false) return false;
     const isLeftActive = isLeftSidebarActive(settings);
-    const isAdsManagerActive = isLeftActive && settings.showLeftAdsManager === false;
-    const isCrisisResponseActive = isLeftActive && settings.showLeftCrisisResponse === false;
+    const isAdsManagerActive = isLeftActive && settings.showLeftAdsManager === false && !isConnectedEl(adsManagerTaggedEl);
+    const isCrisisResponseActive = isLeftActive && settings.showLeftCrisisResponse === false && !isConnectedEl(crisisResponseTaggedEl);
     const isFeedMediaActive = isSidebarScopeActive(settings) &&
       settings.trimMainFeed !== false &&
       Boolean(settings.feedMediaHeight) && settings.feedMediaHeight !== 'default';
     const isRightRailDynamicActive = (settings.trimRightRail === 'hover' || settings.trimRightRail === true) && (
-      settings.showRightSponsored === false ||
-      settings.showRightBirthdays === false ||
-      settings.showRightMetaAI === false
+      (settings.showRightSponsored === false && !isConnectedEl(rightSponsoredTaggedEl)) ||
+      (settings.showRightBirthdays === false && !isConnectedEl(rightBirthdaysTaggedEl)) ||
+      (settings.showRightMetaAI === false && !isConnectedEl(rightMetaAiTaggedEl))
     );
     const isShareGroupActive = settings.extendShareToGroupList === true && hasOpenDialog();
     const leftRailNeeded = isLeftRailTaggingNeeded(settings);
