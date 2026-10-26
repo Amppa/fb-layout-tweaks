@@ -532,3 +532,66 @@ test('hasRelevantMutations filters mutation records and only triggers when nodes
   ]), false);
 });
 
+test('isSidebarScopeActive stays active during photo/media overlay states on top of feed', () => {
+  const { isSidebarScopeActive, setIsFeedScopeActive } = require('../src/content/content.js');
+
+  const settings = {
+    enabled: true,
+    sidebarScope: 'homeOnly',
+    trimMainFeed: true
+  };
+
+  const origWindow = globalThis.window;
+  const origDoc = globalThis.document;
+
+  let currentPath = '/';
+  globalThis.window = {
+    location: {
+      get pathname() { return currentPath; }
+    }
+  };
+
+  let mockFeedConnected = true;
+  globalThis.document = {
+    querySelector: (selector) => {
+      if ((selector.includes('[data-pagelet="Feed"]') || selector.includes('div[role="feed"]')) && mockFeedConnected) {
+        return { isConnected: true };
+      }
+      return null;
+    }
+  };
+
+  try {
+    // 1. Initial Home Feed load: scope is active
+    currentPath = '/';
+    assert.strictEqual(isSidebarScopeActive(settings), true);
+
+    // 2. Open photo overlay from feed (/photo/): scope stays active
+    currentPath = '/photo/';
+    assert.strictEqual(isSidebarScopeActive(settings), true);
+
+    // 3. Navigate through photos in album (/photo.php): scope stays active
+    currentPath = '/photo.php';
+    assert.strictEqual(isSidebarScopeActive(settings), true);
+
+    // 4. Return to home feed: scope stays active
+    currentPath = '/';
+    assert.strictEqual(isSidebarScopeActive(settings), true);
+
+    // 5. Navigate to marketplace: feed unmounted, scope turns off
+    mockFeedConnected = false;
+    currentPath = '/marketplace/';
+    assert.strictEqual(isSidebarScopeActive(settings), false);
+
+    // 6. Direct cold load to a photo URL with no home feed: scope is false
+    setIsFeedScopeActive(false);
+    currentPath = '/photo/';
+    assert.strictEqual(isSidebarScopeActive(settings), false);
+  } finally {
+    globalThis.window = origWindow;
+    globalThis.document = origDoc;
+    if (setIsFeedScopeActive) setIsFeedScopeActive(false);
+  }
+});
+
+

@@ -206,8 +206,10 @@
 
     if (feedMediaHeight !== 'default') {
       scanAndScaleFeedMedia(feedMediaHeight);
-    } else {
+      lastAppliedFeedMediaMode = feedMediaHeight;
+    } else if (lastAppliedFeedMediaMode && lastAppliedFeedMediaMode !== 'default') {
       restoreFeedMedia();
+      lastAppliedFeedMediaMode = 'default';
     }
 
     if (!isHoverExpand && isRailExpanded) {
@@ -247,14 +249,63 @@
     return currentSettings.showLeftAdsManager === false;
   }
 
+  let lastAppliedFeedMediaMode = null;
+  let isFeedScopeActive = false;
+
+  function hasConnectedHomeFeed() {
+    if (typeof document === 'undefined') return false;
+    const feed = document.querySelector(
+      '[data-pagelet="Feed"], div[role="feed"], div[data-pagelet^="FeedUnit"], div[role="article"], [role="main"]'
+    );
+    return Boolean(feed && feed.isConnected !== false);
+  }
+
+  function isOverlayState(pathname) {
+    if (typeof document !== 'undefined') {
+      const hasOverlayEl = Boolean(
+        document.querySelector('[role="dialog"], [aria-modal="true"], [data-pagelet="MediaViewer"], [data-pagelet*="Photo"], [data-pagelet*="Media"]')
+      );
+      if (hasOverlayEl) return true;
+    }
+    if (!pathname) return false;
+    const p = pathname.toLowerCase();
+    return p.includes('photo') ||
+      p.includes('/posts/') ||
+      p.includes('permalink') ||
+      p.includes('/media/') ||
+      p.includes('/stories/') ||
+      p.includes('/reel/') ||
+      p.includes('/watch');
+  }
+
   // Sidebar scope gate shared by layout classes, rail tagging, and feed scans.
   function isSidebarScopeActive(settings) {
     if (!settings || settings.enabled === false) return false;
     if (settings.sidebarScope === 'global') return true;
     if (typeof window === 'undefined' || !window.location) return true;
-    return (typeof self !== 'undefined' && self.isFeedPage)
-      ? self.isFeedPage(window.location.pathname)
+    const pathname = window.location.pathname;
+    const isFeed = (typeof self !== 'undefined' && self.isFeedPage)
+      ? self.isFeedPage(pathname)
       : true;
+
+    if (isFeed) {
+      isFeedScopeActive = true;
+      return true;
+    }
+
+    // Modal/overlay state: if already in feed scope, keep active while in overlay state
+    if (isFeedScopeActive && (isOverlayState(pathname) || hasConnectedHomeFeed())) {
+      // Only deactivate if explicitly navigating to a top-level non-feed standalone section
+      const norm = (pathname.length > 1 && pathname.endsWith('/')) ? pathname.slice(0, -1) : pathname;
+      const nonFeedRoutes = ['/marketplace', '/friends', '/gaming', '/messages', '/events', '/saved', '/memories', '/settings', '/groups'];
+      const isExplicitNonFeed = nonFeedRoutes.some(r => norm === r || norm.startsWith(r + '/'));
+      if (!isExplicitNonFeed) {
+        return true;
+      }
+    }
+
+    isFeedScopeActive = false;
+    return false;
   }
 
   // Left sidebar scans only matter when the sidebar master switch is on and the
@@ -865,7 +916,7 @@
       }
 
       // Query media image elements inside main feed column with incremental mode stamp exclusion
-      const feed = (typeof document.querySelector === 'function' && document.querySelector('[role="main"], [data-pagelet="Feed"], div[role="feed"]')) || document;
+      const feed = (typeof document.querySelector === 'function' && document.querySelector('[data-pagelet="Feed"], div[role="feed"], [role="main"]')) || document;
       const mediaElements = feed.querySelectorAll(
         `img:not([data-fb-lt-scaled-mode="${mode}"])`
       );
@@ -877,8 +928,8 @@
         // Incremental stamp cache: if already scaled to current mode, skip
         if (el.dataset.fbLtScaledMode === mode) continue;
 
-        // Skip dialogs, banners, and navigations
-        if (el.closest && el.closest('[role="dialog"], [role="banner"], [role="navigation"]')) continue;
+        // Skip dialogs, overlays, media viewer, banners, and navigations
+        if (el.closest && el.closest('[role="dialog"], [aria-modal="true"], [data-pagelet="MediaViewer"], [data-pagelet*="Photo"], [data-pagelet*="Media"], [role="banner"], [role="navigation"]')) continue;
 
         // Skip small icons, badges, avatars (threshold 140px width or height)
         // Prefer natural metadata first to avoid triggering layout reflow
@@ -1138,7 +1189,7 @@
 
   function hasOpenDialog() {
     return typeof document !== 'undefined' && Boolean(
-      document.querySelector('[role="dialog"], [aria-modal="true"]')
+      document.querySelector('[role="dialog"], [aria-modal="true"], [data-pagelet="MediaViewer"]')
     );
   }
 
@@ -1465,7 +1516,10 @@
       countLayoutAnchors,
       hasRelevantMutations,
       hasOpenDialog,
-      needsDynamicScan
+      needsDynamicScan,
+      hasConnectedHomeFeed,
+      isOverlayState,
+      setIsFeedScopeActive: (val) => { isFeedScopeActive = Boolean(val); }
     };
   }
 })();

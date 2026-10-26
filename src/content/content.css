@@ -597,7 +597,7 @@ html[class*="fb-layout-tweaks-feed-width-"] :is(div[role="feed"], [data-pagelet=
 }
 html[class*="fb-layout-tweaks-feed-width-"] :is(div[role="feed"], [data-pagelet="Feed"], [role="main"]) > div,
 html[class*="fb-layout-tweaks-feed-width-"] div[data-pagelet^="FeedUnit"],
-html[class*="fb-layout-tweaks-feed-width-"] div[role="article"]:not([role="dialog"] *) {
+html[class*="fb-layout-tweaks-feed-width-"] div[role="article"]:not(:is([role="dialog"], [aria-modal="true"], [data-pagelet="MediaViewer"]) *) {
   max-width: var(--fb-lt-feed-width) !important;
   width: 100% !important;
   box-sizing: border-box !important;
@@ -614,7 +614,7 @@ html[class*="fb-layout-tweaks-feed-width-"] [data-focus-target*="tray"] {
   box-sizing: border-box !important;
 }
 /* Ensure images and media inside widened feed fit container naturally */
-html[class*="fb-layout-tweaks-feed-width-"] :is(div[role="feed"], [data-pagelet="Feed"], [role="main"]) :is(img, video):not([role="dialog"] *) {
+html[class*="fb-layout-tweaks-feed-width-"] :is(div[role="feed"], [data-pagelet="Feed"], [role="main"]) :is(img, video):not(:is([role="dialog"], [aria-modal="true"], [data-pagelet="MediaViewer"]) *) {
   max-width: 100% !important;
 }
 /* Release the fixed-width lock on the feed column. Live DOM: [role="main"]
@@ -652,15 +652,15 @@ html.fb-layout-tweaks-feed-width-75 div[role="main"] > div {
    Targets div[dir="auto"] body text; preserves headers, icons, and dialogs.
    Multi-anchor scope: whichever feed container exists in the live DOM wins.
    ========================================================================== */
-html.fb-layout-tweaks-feed-font-150 :is(div[role="feed"], [data-pagelet="Feed"], [role="main"]) div[dir="auto"]:not([role="dialog"] *) {
+html.fb-layout-tweaks-feed-font-150 :is(div[role="feed"], [data-pagelet="Feed"], [role="main"]) div[dir="auto"]:not(:is([role="dialog"], [aria-modal="true"], [data-pagelet="MediaViewer"]) *) {
   font-size: 1.5em !important;
   line-height: 1.6 !important;
 }
-html.fb-layout-tweaks-feed-font-200 :is(div[role="feed"], [data-pagelet="Feed"], [role="main"]) div[dir="auto"]:not([role="dialog"] *) {
+html.fb-layout-tweaks-feed-font-200 :is(div[role="feed"], [data-pagelet="Feed"], [role="main"]) div[dir="auto"]:not(:is([role="dialog"], [aria-modal="true"], [data-pagelet="MediaViewer"]) *) {
   font-size: 2em !important;
   line-height: 1.65 !important;
 }
-html.fb-layout-tweaks-feed-font-300 :is(div[role="feed"], [data-pagelet="Feed"], [role="main"]) div[dir="auto"]:not([role="dialog"] *) {
+html.fb-layout-tweaks-feed-font-300 :is(div[role="feed"], [data-pagelet="Feed"], [role="main"]) div[dir="auto"]:not(:is([role="dialog"], [aria-modal="true"], [data-pagelet="MediaViewer"]) *) {
   font-size: 3em !important;
   line-height: 1.7 !important;
 }
@@ -707,7 +707,7 @@ html.fb-layout-tweaks-feed-media-px200 {
 }
 
 /* Multi-photo collage albums (.x1s85apg has inline height: 500px) */
-html[class*="fb-layout-tweaks-feed-media-"] :is(div[role="feed"], [data-pagelet="Feed"], [role="main"]) div.x1s85apg {
+html[class*="fb-layout-tweaks-feed-media-"] :is(div[role="feed"], [data-pagelet="Feed"], [role="main"]) div.x1s85apg:not(:is([role="dialog"], [aria-modal="true"], [data-pagelet="MediaViewer"]) *) {
   max-width: var(--fb-lt-album-max-width) !important;
   max-height: var(--fb-lt-album-max-height) !important;
   margin-inline: auto !important;
@@ -715,7 +715,7 @@ html[class*="fb-layout-tweaks-feed-media-"] :is(div[role="feed"], [data-pagelet=
 }
 
 /* Background gradient text cards */
-html[class*="fb-layout-tweaks-feed-media-"] :is(div[role="feed"], [data-pagelet="Feed"], [role="main"]) div[style*="background-image"] {
+html[class*="fb-layout-tweaks-feed-media-"] :is(div[role="feed"], [data-pagelet="Feed"], [role="main"]) div[style*="background-image"]:not(:is([role="dialog"], [aria-modal="true"], [data-pagelet="MediaViewer"]) *) {
   max-width: var(--fb-lt-card-max-width) !important;
   max-height: var(--fb-lt-card-height) !important;
   margin-inline: auto !important;
