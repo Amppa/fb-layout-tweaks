@@ -332,6 +332,40 @@
   }
 
   const ADS_MANAGER_NODE_CLASS = 'fb-layout-tweaks-hide-left-ads-manager-node';
+  const ADS_MANAGER_TEXTS = new Set([
+    'ads manager',
+    '廣告管理員',
+    '廣告分析',
+    '廣告中心',
+    'ad center',
+    'ad insights',
+    'meta ads',
+    'meta 廣告'
+  ]);
+
+  function isSafeAdsManagerRow(node, root) {
+    if (!node || node === root || node === document.body) return false;
+    if (node.tagName === 'UL' || node.tagName === 'NAV') return false;
+    // Critical safety guard: a bookmark row must NEVER contain the full sidebar or other primary bookmarks
+    if (typeof node.querySelector === 'function' &&
+        node.querySelector('ul, a[href*="/friends"], a[href*="/saved"], a[href*="/feeds"], a[href*="/marketplace"], a[href*="/groups"], a[href*="/memories"], a[href*="/events"]')) {
+      return false;
+    }
+    return true;
+  }
+
+  function findAdsManagerRow(el, root) {
+    if (!el || el === root) return null;
+    const row = el.closest ? el.closest('li, [role="listitem"]') : null;
+    if (row && row !== root && isSafeAdsManagerRow(row, root)) {
+      return row;
+    }
+    const link = el.closest ? el.closest('a') : null;
+    if (link && isSafeAdsManagerRow(link, root)) {
+      return link;
+    }
+    return isSafeAdsManagerRow(el, root) ? el : null;
+  }
 
   function clearAdsManagerTags() {
     adsManagerTaggedEl = null;
@@ -552,18 +586,21 @@
           if (!adsManagerTaggedEl || !isDescendantOf(adsManagerTaggedEl, root)) {
             adsManagerTaggedEl = root.querySelector(`.${ADS_MANAGER_NODE_CLASS}`);
           }
-          if (!hideCrisisResponse) {
+          if (!hideCrisisResponse && !hideShortcuts) {
             return { spansCount: 0, candidateCount: 0, cached: true };
           }
         } else {
           adsManagerTaggedEl = null;
           const candidates = root.querySelectorAll(
-            'a[href*="adsmanager"], a[href*="ads/manager"], a[href*="ad_center"], a[aria-label*="廣告管理員"], a[aria-label*="Ads Manager" i]'
+            'a[href*="adsmanager"], a[href*="ads/manager"], a[href*="ads/manage"], a[href*="ad_campaign"], a[href*="bkmk_admgr"], a[href*="ad_center"], a[href*="adcenter"], a[href*="ad_insights"], ' +
+            '[aria-label*="廣告管理員"], [aria-label*="廣告分析"], [aria-label*="廣告中心"], [aria-label*="Ads Manager" i], [aria-label*="Ad Center" i]'
           );
           for (const el of candidates) {
-            const row = el.closest('li, div[role="listitem"], div[role="button"], div[data-visualcompletion]') || el;
-            row.classList.add(ADS_MANAGER_NODE_CLASS);
-            if (!adsManagerTaggedEl) adsManagerTaggedEl = row;
+            const row = findAdsManagerRow(el, root);
+            if (row) {
+              row.classList.add(ADS_MANAGER_NODE_CLASS);
+              if (!adsManagerTaggedEl) adsManagerTaggedEl = row;
+            }
           }
           candidateCount += candidates.length;
 
@@ -577,13 +614,16 @@
               spansCount += spans.length;
               let found = false;
               for (const span of spans) {
-                if (span.children.length === 0) {
-                  const text = span.textContent.trim();
-                  if (text === '廣告管理員' || text.toLowerCase() === 'ads manager') {
-                    const row = span.closest('li, div[role="listitem"], div[role="button"], div[data-visualcompletion]') || span.closest('a') || span;
-                    row.classList.add(ADS_MANAGER_NODE_CLASS);
-                    if (!adsManagerTaggedEl) adsManagerTaggedEl = row;
-                    found = true;
+                if (!span.children || span.children.length <= 1) {
+                  const text = (span.textContent || '').trim().toLowerCase();
+                  if (text && ADS_MANAGER_TEXTS.has(text)) {
+                    const row = findAdsManagerRow(span, root);
+                    if (row) {
+                      row.classList.add(ADS_MANAGER_NODE_CLASS);
+                      if (!adsManagerTaggedEl) adsManagerTaggedEl = row;
+                      found = true;
+                      break;
+                    }
                   }
                 }
               }

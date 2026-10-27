@@ -381,18 +381,21 @@ html.fb-layout-tweaks-hide-left-metaai :is(.fb-layout-tweaks-left-rail, [data-pa
   display: none !important;
 }
 
-/* Ads Manager (廣告管理員) */
-html.fb-layout-tweaks-hide-left-ads-manager :is(.fb-layout-tweaks-left-rail, [data-pagelet="LeftRail"], div[role="navigation"]:not(header *):not([role="banner"] *)) :is(
+/* Ads Manager (廣告管理員 / 廣告分析) */
+html.fb-layout-tweaks-hide-left-ads-manager :is(.fb-layout-tweaks-left-rail, [data-pagelet="LeftRail"], div[role="navigation"]:not(header *):not([role="banner"] *)) :is(li, div[role="listitem"]):has(
   a[href*="adsmanager"],
   a[href*="ads/manager"],
   a[href*="ads/manage"],
+  a[href*="ad_campaign"],
+  a[href*="bkmk_admgr"],
   a[href*="ad_center"],
   a[href*="adcenter"],
+  a[href*="ad_insights"],
   a[aria-label*="廣告管理員"],
+  a[aria-label*="廣告分析"],
+  a[aria-label*="廣告中心"],
   a[aria-label*="Ads Manager" i],
-  :is(li, div[role="listitem"], div[role="button"], div[data-visualcompletion]):has(a[href*="adsmanager"], a[href*="ads/manager"], a[href*="ad_center"], a[aria-label*="廣告管理員"]),
-  div:has(> a[href*="adsmanager"]),
-  div:has(> div > a[href*="adsmanager"])
+  a[aria-label*="Ad Center" i]
 ),
 html.fb-layout-tweaks-hide-left-ads-manager .fb-layout-tweaks-hide-left-ads-manager-node {
   display: none !important;

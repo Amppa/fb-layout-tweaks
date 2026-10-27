@@ -767,3 +767,183 @@ test('tagShortcutsSection never tags ancestor container containing primary bookm
   }
 });
 
+test('scanLeftRailDynamicItems tags listitem row for Ads Manager / 廣告分析', () => {
+  const { scanLeftRailDynamicItems, resetLeftRailLabelScanCache } = require('../src/content/content.js');
+  resetLeftRailLabelScanCache();
+
+  const outerRowClasses = [];
+  const mockIcon = { tagName: 'I' };
+
+  const innerSpan = {
+    children: [],
+    textContent: 'Ads Manager'
+  };
+
+  const outerSpan = {
+    children: [innerSpan],
+    textContent: 'Ads Manager'
+  };
+
+  const outerDivRow = {
+    classList: {
+      contains: (cls) => cls === 'html-div',
+      add: (cls) => outerRowClasses.push(cls)
+    },
+    querySelector: (sel) => /\bi\b/.test(sel) ? mockIcon : null,
+    textContent: 'Ads Manager',
+    closest: (sel) => sel.includes('listitem') ? outerDivRow : null
+  };
+
+  innerSpan.parentElement = outerSpan;
+  outerSpan.parentElement = outerDivRow;
+  innerSpan.closest = (sel) => sel.includes('listitem') ? outerDivRow : null;
+  outerSpan.closest = (sel) => sel.includes('listitem') ? outerDivRow : null;
+
+  const mockRail = {
+    isConnected: true,
+    matches: (sel) => sel.includes('LeftRail'),
+    querySelector: () => null,
+    querySelectorAll: (sel) => {
+      if (sel === 'span') return [outerSpan, innerSpan];
+      return [];
+    }
+  };
+  outerDivRow.parentElement = mockRail;
+
+  const origDoc = globalThis.document;
+  globalThis.document = {
+    documentElement: {
+      classList: { contains: () => true }
+    },
+    querySelector: (sel) => {
+      if (sel.includes('fb-layout-tweaks-left-rail') || sel.includes('LeftRail')) return mockRail;
+      return null;
+    }
+  };
+
+  try {
+    scanLeftRailDynamicItems({ enabled: true, showLeftAdsManager: false });
+    assert.ok(outerRowClasses.includes('fb-layout-tweaks-hide-left-ads-manager-node'), 'Listitem row must be tagged with hide class');
+  } finally {
+    globalThis.document = origDoc;
+  }
+});
+
+test('scanLeftRailDynamicItems matches ad_campaign landing bookmark and tags enclosing li', () => {
+  const { scanLeftRailDynamicItems, resetLeftRailLabelScanCache } = require('../src/content/content.js');
+  resetLeftRailLabelScanCache();
+
+  const liClasses = [];
+  const mockAnchor = {
+    href: 'https://www.facebook.com/ad_campaign/landing.php?placement=bkmk_admgr&campaign_id=415838275119884',
+    textContent: 'Ads Manager',
+    closest: (sel) => {
+      if (sel.includes('li')) return mockLi;
+      return null;
+    },
+    classList: { add: () => {} }
+  };
+
+  const mockLi = {
+    classList: {
+      add: (cls) => liClasses.push(cls)
+    },
+    closest: (sel) => sel.includes('li') ? mockLi : null,
+    querySelector: () => null
+  };
+  mockAnchor.parentElement = mockLi;
+
+  const mockRail = {
+    isConnected: true,
+    matches: (sel) => sel.includes('LeftRail'),
+    querySelector: () => null,
+    querySelectorAll: (sel) => {
+      if (sel.includes('ad_campaign') || sel.includes('bkmk_admgr')) return [mockAnchor];
+      return [];
+    }
+  };
+
+  const origDoc = globalThis.document;
+  globalThis.document = {
+    documentElement: {
+      classList: { contains: () => true }
+    },
+    querySelector: (sel) => {
+      if (sel.includes('fb-layout-tweaks-left-rail') || sel.includes('LeftRail')) return mockRail;
+      return null;
+    }
+  };
+
+  try {
+    const result = scanLeftRailDynamicItems({ enabled: true, showLeftAdsManager: false });
+    assert.strictEqual(result.candidateCount, 1);
+    assert.ok(liClasses.includes('fb-layout-tweaks-hide-left-ads-manager-node'), 'Parent li must be tagged as ads manager node');
+  } finally {
+    globalThis.document = origDoc;
+  }
+});
+
+test('scanLeftRailDynamicItems never tags rail container holding primary bookmarks when See More expands', () => {
+  const { scanLeftRailDynamicItems, resetLeftRailLabelScanCache } = require('../src/content/content.js');
+  resetLeftRailLabelScanCache();
+
+  const railClasses = [];
+  const containerClasses = [];
+
+  const mockFriendsLink = { href: '/friends' };
+  const mockAdsAnchor = {
+    href: 'https://www.facebook.com/ad_campaign/landing.php?placement=bkmk_admgr',
+    textContent: 'Ads Manager',
+    closest: () => null,
+    classList: { add: () => {} }
+  };
+
+  const mockContainer = {
+    classList: {
+      add: (cls) => containerClasses.push(cls)
+    },
+    querySelector: (sel) => {
+      if (sel.includes('/friends')) return mockFriendsLink;
+      return null;
+    }
+  };
+
+  const mockRail = {
+    isConnected: true,
+    matches: (sel) => sel.includes('LeftRail'),
+    classList: {
+      add: (cls) => railClasses.push(cls)
+    },
+    querySelector: (sel) => {
+      if (sel.includes('/friends')) return mockFriendsLink;
+      return null;
+    },
+    querySelectorAll: (sel) => {
+      if (sel.includes('ad_campaign')) return [mockAdsAnchor];
+      return [];
+    }
+  };
+
+  const origDoc = globalThis.document;
+  globalThis.document = {
+    documentElement: {
+      classList: { contains: () => true }
+    },
+    querySelector: (sel) => {
+      if (sel.includes('fb-layout-tweaks-left-rail') || sel.includes('LeftRail')) return mockRail;
+      return null;
+    }
+  };
+
+  try {
+    scanLeftRailDynamicItems({ enabled: true, showLeftAdsManager: false });
+    assert.strictEqual(railClasses.includes('fb-layout-tweaks-hide-left-ads-manager-node'), false, 'Rail must never be tagged');
+    assert.strictEqual(containerClasses.includes('fb-layout-tweaks-hide-left-ads-manager-node'), false, 'Container holding primary bookmarks must never be tagged');
+  } finally {
+    globalThis.document = origDoc;
+  }
+});
+
+
+
+
