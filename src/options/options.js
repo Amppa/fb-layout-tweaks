@@ -29,7 +29,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   });
 
   // Hide switches (right sidebar): checkbox checked = hidden, stored show* value negated.
-  const INVERTED_KEYS = (typeof self !== 'undefined' && self.INVERTED_KEYS) || new Set(['showRightSponsored', 'showRightBirthdays', 'showRightMetaAI']);
+  const INVERTED_KEYS = (typeof self !== 'undefined' && self.INVERTED_KEYS) || new Set(['showRightSponsored', 'showRightBirthdays', 'showRightMetaAI', 'showLeftShortcuts']);
   const toUIChecked = (typeof self !== 'undefined' && self.toUIChecked) || ((key, storedValue) => INVERTED_KEYS.has(key) ? !storedValue : storedValue);
   const toStoredValue = (typeof self !== 'undefined' && self.toStoredValue) || ((key, uiChecked) => INVERTED_KEYS.has(key) ? !uiChecked : uiChecked);
 
@@ -148,7 +148,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   }
 
-  const leftKeys = Object.keys(switches).filter(k => k.startsWith('showLeft'));
+  const leftKeys = Object.keys(switches).filter(k => k.startsWith('showLeft') && k !== 'showLeftShortcuts');
 
   // Section-Level Quick Actions (Left Sidebar)
   async function applySectionValues(keys, value) {

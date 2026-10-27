@@ -29,6 +29,7 @@ self.LEFT_SETTINGS = {
   showLeftFeeds: true,
   showLeftMessenger: false,
   showLeftGroups: true,
+  showLeftShortcuts: true,
   showLeftMarketplace: false,
   showLeftReels: false,
   showLeftMemories: false,
@@ -174,7 +175,7 @@ self.updateSettings = function(patchOrUpdater) {
   return updateQueue;
 };
 
-self.INVERTED_KEYS = new Set(['showRightSponsored', 'showRightBirthdays', 'showRightMetaAI']);
+self.INVERTED_KEYS = new Set(['showRightSponsored', 'showRightBirthdays', 'showRightMetaAI', 'showLeftShortcuts']);
 
 self.toUIChecked = function(key, storedValue) {
   return self.INVERTED_KEYS.has(key) ? !storedValue : storedValue;

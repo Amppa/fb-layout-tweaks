@@ -229,7 +229,7 @@
       clearShareGroupPanelTags();
     }
 
-    if (isMasterEnabled && (settings.showLeftAdsManager === false || settings.showLeftCrisisResponse === false)) {
+    if (isMasterEnabled && (settings.showLeftAdsManager === false || settings.showLeftCrisisResponse === false || settings.showLeftShortcuts === false)) {
       triggerThrottledScan();
     }
     if (!isMasterEnabled || settings.showLeftCrisisResponse !== false) {
@@ -237,6 +237,9 @@
     }
     if (!isMasterEnabled || settings.showLeftAdsManager !== false) {
       clearAdsManagerTags();
+    }
+    if (!isMasterEnabled || settings.showLeftShortcuts !== false) {
+      clearShortcutsTags();
     }
 
     if (isHoverRightRail && (settings.showRightSponsored === false || settings.showRightBirthdays === false || settings.showRightMetaAI === false)) {
@@ -318,7 +321,7 @@
   // the trimLeftItems switch.
   function isLeftRailTaggingNeeded(settings) {
     return isSidebarScopeActive(settings)
-      && (settings.trimLeftItems !== false || settings.hoverExpandLeftRail === true);
+      && (settings.trimLeftItems !== false || settings.hoverExpandLeftRail === true || settings.showLeftShortcuts === false);
   }
 
   // Right-rail tagging is needed for both hidden and hover modes; only visible
@@ -421,6 +424,104 @@
     if (!found) crisisLabelScanAfter = now + LABEL_SCAN_COOLDOWN_MS;
   }
 
+  const SHORTCUTS_NODE_CLASS = 'fb-layout-tweaks-hide-left-shortcuts-node';
+  const SHORTCUTS_HEADING_TEXTS = new Set([
+    'your shortcuts',
+    '你的捷徑',
+    '你的快捷方式',
+    'ショートカット',
+    'tus accesos directos',
+    'seus atalhos',
+    'vos raccourcis',
+    'deine shortcuts',
+    'deine verknüpfungen'
+  ]);
+
+  function clearShortcutsTags() {
+    if (typeof document === 'undefined') return;
+    const tagged = document.querySelectorAll('.' + SHORTCUTS_NODE_CLASS);
+    for (const el of tagged) {
+      el.classList.remove(SHORTCUTS_NODE_CLASS);
+    }
+  }
+
+  function isSafeShortcutsNode(el) {
+    if (!el || typeof el !== 'object') return false;
+    if (typeof document !== 'undefined' && (el === document.body || el === document.documentElement)) return false;
+    if (typeof el.matches === 'function' && el.matches('.fb-layout-tweaks-left-rail, [data-pagelet="LeftRail"], div[role="navigation"]')) {
+      return false;
+    }
+    // Critical safety guard: Never tag any element that contains primary bookmarks
+    if (typeof el.querySelector === 'function' && el.querySelector('a[href*="/friends"], a[href*="/saved"], a[href*="/memories"], a[href*="/feeds"], a[href="/"]')) {
+      return false;
+    }
+    return true;
+  }
+
+  function tagShortcutsSection(root) {
+    if (!root) return;
+    const alreadyTagged = root.querySelector('.' + SHORTCUTS_NODE_CLASS);
+    if (alreadyTagged && alreadyTagged.isConnected !== false) return;
+
+    let targetOrigin = null;
+
+    // 1. Search for heading by text content
+    const headings = root.querySelectorAll('[role="heading"], h2, h3, h4, span');
+    for (const h of headings) {
+      if (h.children.length === 0) {
+        const text = h.textContent.trim().toLowerCase();
+        if (SHORTCUTS_HEADING_TEXTS.has(text)) {
+          targetOrigin = h;
+          break;
+        }
+      }
+    }
+
+    // 2. Fallback: Search for "Edit Shortcuts" button
+    if (!targetOrigin) {
+      const editBtn = root.querySelector(
+        'a[href*="edit/shortcuts"], a[href*="shortcuts/edit"], a[href*="bookmarks/edit"], [aria-label*="shortcuts" i], [aria-label*="捷徑"]'
+      );
+      if (editBtn) targetOrigin = editBtn;
+    }
+
+    if (!targetOrigin) return;
+
+    // Climb up to the highest container within the rail that does NOT contain primary bookmarks
+    let targetBlock = targetOrigin;
+    while (targetBlock.parentElement && targetBlock.parentElement !== root && isSafeShortcutsNode(targetBlock.parentElement)) {
+      targetBlock = targetBlock.parentElement;
+    }
+
+    if (!isSafeShortcutsNode(targetBlock)) return;
+
+    // A) Tag preceding separator if present
+    const prev = targetBlock.previousElementSibling;
+    if (prev && isSafeShortcutsNode(prev)) {
+      if ((typeof prev.getAttribute === 'function' && prev.getAttribute('role') === 'separator') ||
+          (typeof prev.querySelector === 'function' && prev.querySelector('[role="separator"]'))) {
+        prev.classList.add(SHORTCUTS_NODE_CLASS);
+      }
+    }
+
+    // B) Tag the shortcuts header/section block
+    targetBlock.classList.add(SHORTCUTS_NODE_CLASS);
+
+    // C) Tag following sibling lists/items (e.g., shortcut links ul/div) until footer is reached
+    let sibling = targetBlock.nextElementSibling;
+    while (sibling && isSafeShortcutsNode(sibling)) {
+      if (typeof sibling.querySelector === 'function' &&
+          sibling.querySelector('a[href*="privacy"], a[href*="policies"], a[href*="cookies"], a[href*="/terms/"]')) {
+        break;
+      }
+      if (typeof sibling.getAttribute === 'function' && sibling.getAttribute('role') === 'contentinfo') {
+        break;
+      }
+      sibling.classList.add(SHORTCUTS_NODE_CLASS);
+      sibling = sibling.nextElementSibling;
+    }
+  }
+
   function scanLeftRailDynamicItems(settings = currentSettings) {
     try {
       if (!settings || settings.enabled === false) return;
@@ -428,7 +529,8 @@
 
       const hideAdsManager = settings.showLeftAdsManager === false;
       const hideCrisisResponse = settings.showLeftCrisisResponse === false;
-      if (!hideAdsManager && !hideCrisisResponse) return;
+      const hideShortcuts = settings.showLeftShortcuts === false;
+      if (!hideAdsManager && !hideCrisisResponse && !hideShortcuts) return;
 
       if (!isConnectedEl(leftRailTaggedEl) && nowMs() < leftRailMissAfter) return;
       const leftRail = isConnectedEl(leftRailTaggedEl)
@@ -493,6 +595,10 @@
 
       if (hideCrisisResponse && document.documentElement.classList.contains('fb-layout-tweaks-hide-left-crisis-response')) {
         tagCrisisResponseRows(root);
+      }
+
+      if (hideShortcuts && document.documentElement.classList.contains('fb-layout-tweaks-hide-left-shortcuts')) {
+        tagShortcutsSection(root);
       }
 
       return { spansCount, candidateCount };
@@ -1199,6 +1305,7 @@
     const isLeftActive = isLeftSidebarActive(settings);
     const isAdsManagerActive = isLeftActive && settings.showLeftAdsManager === false && !isConnectedEl(adsManagerTaggedEl);
     const isCrisisResponseActive = isLeftActive && settings.showLeftCrisisResponse === false && !isConnectedEl(crisisResponseTaggedEl);
+    const isShortcutsActive = isLeftActive && settings.showLeftShortcuts === false && (typeof document !== 'undefined' && !document.querySelector('.' + SHORTCUTS_NODE_CLASS));
     const isFeedMediaActive = isSidebarScopeActive(settings) &&
       settings.trimMainFeed !== false &&
       Boolean(settings.feedMediaHeight) && settings.feedMediaHeight !== 'default';
@@ -1215,7 +1322,7 @@
       (leftRailNeeded && !isConnectedEl(leftRailTaggedEl) && now >= leftRailMissAfter) ||
       (rightRailNeeded && !isConnectedEl(rightRailTaggedEl) && now >= rightRailMissAfter)
     );
-    return isAdsManagerActive || isCrisisResponseActive || isFeedMediaActive || isRightRailDynamicActive || isShareGroupActive || railsNeedTagging;
+    return isAdsManagerActive || isCrisisResponseActive || isShortcutsActive || isFeedMediaActive || isRightRailDynamicActive || isShareGroupActive || railsNeedTagging;
   }
 
   // Load initial settings and set up observers when running in extension environment

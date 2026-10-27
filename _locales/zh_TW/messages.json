@@ -103,6 +103,9 @@
   "itemGroups": {
     "message": "社團"
   },
+  "itemHideLeftShortcuts": {
+    "message": "隱藏 捷徑"
+  },
   "itemGaming": {
     "message": "遊戲"
   },
@@ -180,6 +183,9 @@
   },
   "descHoverExpandLeftRail": {
     "message": "收合為純圖示，滑鼠懸停時展開完整選單"
+  },
+  "descHideLeftShortcuts": {
+    "message": "隱藏左側欄下方的 你的捷徑 區塊"
   },
   "descMinimizeRightRail": {
     "message": "facebook會持續改版網站內容"

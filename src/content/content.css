@@ -306,8 +306,20 @@ html.fb-layout-tweaks-hide-left-friends :is(.fb-layout-tweaks-left-rail, [data-p
   display: none !important;
 }
 
-/* Groups (bookmark only: scoped to main bookmarks list, shortcuts in 2nd list survive) */
-html.fb-layout-tweaks-hide-left-groups :is(.fb-layout-tweaks-left-rail, [data-pagelet="LeftRail"]) :is(ul:first-of-type, [role="list"]:first-of-type) :is(li, div[role="listitem"]):has(a[href*="/groups"]) {
+/* Groups (bookmark only: exact landing page, shortcuts in shortcuts list survive) */
+html.fb-layout-tweaks-hide-left-groups :is(.fb-layout-tweaks-left-rail, [data-pagelet="LeftRail"]) :is(li, div[role="listitem"]):has(
+  a[href$="/groups/"],
+  a[href$="/groups"],
+  a[href*="/groups/?"],
+  a[href*="/groups?"],
+  a[href*="/groups/feed"],
+  a[href*="/groups/#"]
+) {
+  display: none !important;
+}
+
+/* Shortcuts Section (你的捷徑: separator, heading, edit button, and shortcut items) */
+html.fb-layout-tweaks-hide-left-shortcuts .fb-layout-tweaks-hide-left-shortcuts-node {
   display: none !important;
 }
 
@@ -331,8 +343,14 @@ html.fb-layout-tweaks-hide-left-saved :is(.fb-layout-tweaks-left-rail, [data-pag
   display: none !important;
 }
 
-/* Pages (bookmark only: scoped to main bookmarks list, shortcuts in 2nd list survive) */
-html.fb-layout-tweaks-hide-left-pages :is(.fb-layout-tweaks-left-rail, [data-pagelet="LeftRail"]) :is(ul:first-of-type, [role="list"]:first-of-type) :is(li, div[role="listitem"]):has(a[href*="/pages"]) {
+/* Pages (bookmark only: exact landing page, shortcuts in shortcuts list survive) */
+html.fb-layout-tweaks-hide-left-pages :is(.fb-layout-tweaks-left-rail, [data-pagelet="LeftRail"]) :is(li, div[role="listitem"]):has(
+  a[href$="/pages/"],
+  a[href$="/pages"],
+  a[href*="/pages/?"],
+  a[href*="/pages?"],
+  a[href*="/pages/#"]
+) {
   display: none !important;
 }
 

@@ -34,6 +34,7 @@ test('getUiCleanClassName correctly transforms settings keys to CSS hide tokens'
   assert.strictEqual(getUiCleanClassName('showTopGaming'), 'fb-layout-tweaks-hide-top-gaming');
 
   assert.strictEqual(getUiCleanClassName('showLeftFriends'), 'fb-layout-tweaks-hide-left-friends');
+  assert.strictEqual(getUiCleanClassName('showLeftShortcuts'), 'fb-layout-tweaks-hide-left-shortcuts');
   assert.strictEqual(getUiCleanClassName('showLeftGaming'), 'fb-layout-tweaks-hide-left-gaming');
   assert.strictEqual(getUiCleanClassName('showLeftGamingVideo'), 'fb-layout-tweaks-hide-left-gaming-video');
   assert.strictEqual(getUiCleanClassName('showLeftAdsManager'), 'fb-layout-tweaks-hide-left-ads-manager');
@@ -74,6 +75,7 @@ test('toUIChecked and toStoredValue handle inverted switches and standard pills 
   assert.ok(INVERTED_KEYS.has('showRightSponsored'));
   assert.ok(INVERTED_KEYS.has('showRightBirthdays'));
   assert.ok(INVERTED_KEYS.has('showRightMetaAI'));
+  assert.ok(INVERTED_KEYS.has('showLeftShortcuts'));
 
   // Inverted keys: checked in UI means hidden (stored value is false)
   for (const invKey of INVERTED_KEYS) {
@@ -594,4 +596,174 @@ test('isSidebarScopeActive stays active during photo/media overlay states on top
   }
 });
 
+test('left groups hide selector matches only generic Groups hub bookmarks and preserves shortcuts', () => {
+  const cssContent = fs.readFileSync(path.join(ROOT_DIR, 'src', 'content', 'content.css'), 'utf8');
+  assert.ok(cssContent.includes('fb-layout-tweaks-hide-left-groups'));
+
+  const isGenericGroupsHref = (href) => {
+    return href.endsWith('/groups/') ||
+      href.endsWith('/groups') ||
+      href.includes('/groups/?') ||
+      href.includes('/groups?') ||
+      href.includes('/groups/feed') ||
+      href.includes('/groups/#');
+  };
+
+  const genericHubHrefs = [
+    '/groups/',
+    '/groups',
+    'https://www.facebook.com/groups/',
+    'https://www.facebook.com/groups',
+    '/groups/?ref=bookmarks',
+    'https://www.facebook.com/groups/?ref=bookmarks',
+    '/groups?ref=bookmarks',
+    '/groups/feed',
+    '/groups/feed/',
+    'https://www.facebook.com/groups/feed/',
+    '/groups/#'
+  ];
+
+  for (const href of genericHubHrefs) {
+    assert.strictEqual(isGenericGroupsHref(href), true, `Should match generic group hub URL: ${href}`);
+  }
+
+  const shortcutHrefs = [
+    '/groups/123456789/',
+    'https://www.facebook.com/groups/123456789/',
+    '/groups/123456789/?ref=shortcuts',
+    '/groups/react_developers/',
+    'https://www.facebook.com/groups/react_developers/',
+    'https://www.facebook.com/groups/react_developers/?ref=shortcuts',
+    '/groups/taiwan.food.fans/',
+    'https://www.facebook.com/groups/taiwan.food.fans/'
+  ];
+
+  for (const href of shortcutHrefs) {
+    assert.strictEqual(isGenericGroupsHref(href), false, `Should NOT match individual shortcut group URL: ${href}`);
+  }
+});
+
+test('scanLeftRailDynamicItems handles showLeftShortcuts and tags shortcuts container', () => {
+  const { scanLeftRailDynamicItems } = require('../src/content/content.js');
+
+  const mockHeading = {
+    children: [],
+    textContent: '你的捷徑',
+    closest: (sel) => null,
+    parentElement: {
+      classList: {
+        add: (cls) => addedClasses.push(cls)
+      },
+      previousElementSibling: {
+        getAttribute: (attr) => attr === 'role' ? 'separator' : null,
+        querySelector: () => null,
+        classList: { add: (cls) => addedClasses.push(cls) }
+      }
+    }
+  };
+
+  const addedClasses = [];
+  const mockRail = {
+    isConnected: true,
+    querySelector: () => null,
+    querySelectorAll: (sel) => {
+      if (sel.includes('heading')) return [mockHeading];
+      return [];
+    }
+  };
+
+  const origDoc = globalThis.document;
+  globalThis.document = {
+    documentElement: {
+      classList: {
+        contains: (cls) => cls === 'fb-layout-tweaks-hide-left-shortcuts'
+      }
+    },
+    querySelector: (sel) => {
+      if (sel.includes('fb-layout-tweaks-left-rail') || sel.includes('LeftRail')) return mockRail;
+      return null;
+    }
+  };
+
+  try {
+    scanLeftRailDynamicItems({ enabled: true, trimLeftItems: true, showLeftShortcuts: false });
+    assert.ok(addedClasses.includes('fb-layout-tweaks-hide-left-shortcuts-node'), 'Should tag shortcuts node');
+  } finally {
+    globalThis.document = origDoc;
+  }
+});
+
+test('tagShortcutsSection never tags ancestor container containing primary bookmarks', () => {
+  const { scanLeftRailDynamicItems } = require('../src/content/content.js');
+
+  const mainContainerClasses = [];
+  const shortcutsClasses = [];
+
+  const mockHeading = {
+    children: [],
+    textContent: '你的捷徑',
+    parentElement: null
+  };
+
+  const shortcutsRow = {
+    parentElement: null,
+    previousElementSibling: null,
+    nextElementSibling: null,
+    querySelector: (sel) => null,
+    classList: {
+      add: (cls) => shortcutsClasses.push(cls)
+    }
+  };
+  mockHeading.parentElement = shortcutsRow;
+
+  const mockMainBookmark = {
+    tagName: 'A',
+    getAttribute: (attr) => attr === 'href' ? '/friends' : null
+  };
+
+  const commonScrollContainer = {
+    parentElement: null,
+    matches: (sel) => false,
+    querySelector: (sel) => {
+      if (sel.includes('/friends')) return mockMainBookmark;
+      return null;
+    },
+    classList: {
+      add: (cls) => mainContainerClasses.push(cls)
+    }
+  };
+  shortcutsRow.parentElement = commonScrollContainer;
+
+  const mockRail = {
+    isConnected: true,
+    matches: (sel) => sel.includes('LeftRail'),
+    querySelector: () => null,
+    querySelectorAll: (sel) => {
+      if (sel.includes('heading')) return [mockHeading];
+      return [];
+    }
+  };
+  commonScrollContainer.parentElement = mockRail;
+
+  const origDoc = globalThis.document;
+  globalThis.document = {
+    documentElement: {
+      classList: {
+        contains: (cls) => cls === 'fb-layout-tweaks-hide-left-shortcuts'
+      }
+    },
+    querySelector: (sel) => {
+      if (sel.includes('fb-layout-tweaks-left-rail') || sel.includes('LeftRail')) return mockRail;
+      return null;
+    }
+  };
+
+  try {
+    scanLeftRailDynamicItems({ enabled: true, trimLeftItems: true, showLeftShortcuts: false });
+    assert.strictEqual(mainContainerClasses.includes('fb-layout-tweaks-hide-left-shortcuts-node'), false, 'Common container with primary bookmarks must NOT be tagged');
+    assert.ok(shortcutsClasses.includes('fb-layout-tweaks-hide-left-shortcuts-node'), 'Shortcuts row itself should be tagged');
+  } finally {
+    globalThis.document = origDoc;
+  }
+});
 

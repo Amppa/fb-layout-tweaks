@@ -125,7 +125,7 @@ if ((Test-Path $contentCssPath) -and (Test-Path $defaultsPath)) {
 }
 
 # Test 6: Inverted keys transformation round-trip
-$invertedKeys = @('showRightSponsored', 'showRightBirthdays', 'showRightMetaAI')
+$invertedKeys = @('showRightSponsored', 'showRightBirthdays', 'showRightMetaAI', 'showLeftShortcuts')
 $invertValid = $true
 function To-UIChecked($key, $stored) {
     if ($invertedKeys -contains $key) { return (-not $stored) }

@@ -103,6 +103,9 @@
   "itemGroups": {
     "message": "Groups"
   },
+  "itemHideLeftShortcuts": {
+    "message": "Hide Shortcuts"
+  },
   "itemGaming": {
     "message": "Gaming"
   },
@@ -180,6 +183,9 @@
   },
   "descHoverExpandLeftRail": {
     "message": "Shrink to icon rail and expand when hovered"
+  },
+  "descHideLeftShortcuts": {
+    "message": "Hide 'Your Shortcuts' section below the left sidebar"
   },
   "descMinimizeRightRail": {
     "message": "Facebook continually updates its website content"
