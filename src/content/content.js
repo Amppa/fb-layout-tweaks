@@ -343,28 +343,32 @@
     'meta 廣告'
   ]);
 
-  function isSafeAdsManagerRow(node, root) {
-    if (!node || node === root || node === document.body) return false;
-    if (node.tagName === 'UL' || node.tagName === 'NAV') return false;
-    // Critical safety guard: a bookmark row must NEVER contain the full sidebar or other primary bookmarks
-    if (typeof node.querySelector === 'function' &&
-        node.querySelector('ul, a[href*="/friends"], a[href*="/saved"], a[href*="/feeds"], a[href*="/marketplace"], a[href*="/groups"], a[href*="/memories"], a[href*="/events"]')) {
-      return false;
+  const PRIMARY_BOOKMARKS_SELECTOR = 'ul, a[href*="/friends"], a[href*="/saved"], a[href*="/memories"], a[href*="/feeds"], a[href*="/marketplace"], a[href*="/groups"], a[href*="/events"], a[href="/"]';
+
+  function isPrimaryBookmarksContainer(node) {
+    if (!node || typeof node !== 'object') return true;
+    if (typeof document !== 'undefined' && (node === document.body || node === document.documentElement)) return true;
+    if (node.tagName === 'UL' || node.tagName === 'NAV') return true;
+    if (typeof node.matches === 'function' && node.matches('.fb-layout-tweaks-left-rail, [data-pagelet="LeftRail"], div[role="navigation"]')) {
+      return true;
     }
-    return true;
+    if (typeof node.querySelector === 'function' && node.querySelector(PRIMARY_BOOKMARKS_SELECTOR)) {
+      return true;
+    }
+    return false;
   }
 
-  function findAdsManagerRow(el, root) {
+  function findLeftBookmarkRow(el, root) {
     if (!el || el === root) return null;
     const row = el.closest ? el.closest('li, [role="listitem"]') : null;
-    if (row && row !== root && isSafeAdsManagerRow(row, root)) {
+    if (row && row !== root && !isPrimaryBookmarksContainer(row)) {
       return row;
     }
     const link = el.closest ? el.closest('a') : null;
-    if (link && isSafeAdsManagerRow(link, root)) {
+    if (link && !isPrimaryBookmarksContainer(link)) {
       return link;
     }
-    return isSafeAdsManagerRow(el, root) ? el : null;
+    return !isPrimaryBookmarksContainer(el) ? el : null;
   }
 
   function clearAdsManagerTags() {
@@ -390,19 +394,6 @@
     }
   }
 
-  function findCrisisRow(span, root) {
-    // The row is the smallest ancestor that also contains the item icon.
-    let node = span;
-    let depth = 0;
-    while (node && node !== root && depth < 10) {
-      if (node.querySelector('img')) return node;
-      node = node.parentElement;
-      depth++;
-    }
-    return span.closest('li, div[role="listitem"], div[role="button"], div[role="link"], div[data-visualcompletion], a')
-      || span.parentElement;
-  }
-
   function tagCrisisResponseRows(root) {
     if (typeof document === 'undefined' || !root) return;
     const scope = (root === document.body)
@@ -422,9 +413,11 @@
     // Prefer the bookmark href; it is stable and language-independent.
     const links = scope.querySelectorAll('a[href*="crisisresponse"], a[href*="crisis_response"]');
     for (const link of links) {
-      const row = link.closest('li, div[role="listitem"], div[role="button"]') || link;
-      row.classList.add(CRISIS_RESPONSE_NODE_CLASS);
-      if (!crisisResponseTaggedEl) crisisResponseTaggedEl = row;
+      const row = findLeftBookmarkRow(link, scope);
+      if (row) {
+        row.classList.add(CRISIS_RESPONSE_NODE_CLASS);
+        if (!crisisResponseTaggedEl) crisisResponseTaggedEl = row;
+      }
     }
     if (links.length > 0) return;
 
@@ -436,24 +429,17 @@
     const spans = scope.querySelectorAll('span');
     let found = false;
     for (const span of spans) {
-      if (span.children.length !== 0) continue;
-      const label = span.textContent.trim().replace(/\s+/g, ' ').toLowerCase();
+      if (span.children && span.children.length !== 0) continue;
+      const label = (span.textContent || '').trim().replace(/\s+/g, ' ').toLowerCase();
       if (!CRISIS_RESPONSE_LABELS.has(label)) continue;
 
-      const row = findCrisisRow(span, scope);
+      const row = findLeftBookmarkRow(span, scope);
       if (!row) continue;
 
-      // Climb to the outermost wrapper that contains only this label, so the
-      // whole bookmark row (anchor, list item, padding) disappears.
-      let target = row;
-      let parent = target.parentElement;
-      while (parent && parent !== scope && parent.textContent.trim().replace(/\s+/g, ' ').toLowerCase() === label) {
-        target = parent;
-        parent = target.parentElement;
-      }
-      target.classList.add(CRISIS_RESPONSE_NODE_CLASS);
-      crisisResponseTaggedEl = target;
+      row.classList.add(CRISIS_RESPONSE_NODE_CLASS);
+      crisisResponseTaggedEl = row;
       found = true;
+      break;
     }
     if (!found) crisisLabelScanAfter = now + LABEL_SCAN_COOLDOWN_MS;
   }
@@ -480,16 +466,7 @@
   }
 
   function isSafeShortcutsNode(el) {
-    if (!el || typeof el !== 'object') return false;
-    if (typeof document !== 'undefined' && (el === document.body || el === document.documentElement)) return false;
-    if (typeof el.matches === 'function' && el.matches('.fb-layout-tweaks-left-rail, [data-pagelet="LeftRail"], div[role="navigation"]')) {
-      return false;
-    }
-    // Critical safety guard: Never tag any element that contains primary bookmarks
-    if (typeof el.querySelector === 'function' && el.querySelector('a[href*="/friends"], a[href*="/saved"], a[href*="/memories"], a[href*="/feeds"], a[href="/"]')) {
-      return false;
-    }
-    return true;
+    return !isPrimaryBookmarksContainer(el);
   }
 
   function tagShortcutsSection(root) {
@@ -596,7 +573,7 @@
             '[aria-label*="廣告管理員"], [aria-label*="廣告分析"], [aria-label*="廣告中心"], [aria-label*="Ads Manager" i], [aria-label*="Ad Center" i]'
           );
           for (const el of candidates) {
-            const row = findAdsManagerRow(el, root);
+            const row = findLeftBookmarkRow(el, root);
             if (row) {
               row.classList.add(ADS_MANAGER_NODE_CLASS);
               if (!adsManagerTaggedEl) adsManagerTaggedEl = row;
@@ -617,7 +594,7 @@
                 if (!span.children || span.children.length <= 1) {
                   const text = (span.textContent || '').trim().toLowerCase();
                   if (text && ADS_MANAGER_TEXTS.has(text)) {
-                    const row = findAdsManagerRow(span, root);
+                    const row = findLeftBookmarkRow(span, root);
                     if (row) {
                       row.classList.add(ADS_MANAGER_NODE_CLASS);
                       if (!adsManagerTaggedEl) adsManagerTaggedEl = row;
@@ -1457,16 +1434,13 @@
       ':is(.fb-layout-tweaks-left-rail, [data-pagelet="LeftRail"], div[role="navigation"]) :is(a, [role="button"], [role="listitem"], li, [data-visualcompletion])'
     )));
 
-    // Dynamic physical bounding rect check:
-    // Only measure physical bounding rect if cursor is NOT already over a known rail container/item
-    // (avoids calling getBoundingClientRect on every mousemove when user is browsing rail items)
+    // Zero-reflow boundary check:
+    // The left expanded drawer occupies [0, 340px] (320px expanded width + 20px grace buffer)
+    // below the top navigation bar (56px). Pure numeric comparison avoids forced synchronous layout.
     let isInsideDrawerBounds = false;
     if (isRailExpanded && !railContainer && !isOverItem) {
-      const activeRail = document.querySelector('.fb-layout-tweaks-left-rail, [data-pagelet="LeftRail"], div[role="navigation"]:not(header *):not([role="banner"] *)');
-      if (activeRail) {
-        const drawer = activeRail.querySelector(':scope > div') || activeRail;
-        const rect = drawer.getBoundingClientRect();
-        if (typeof e.clientX === 'number' && e.clientX >= 0 && e.clientX <= (rect.right + 6) && e.clientY >= (rect.top - 6) && e.clientY <= (rect.bottom + 6)) {
+      if (typeof e.clientX === 'number' && typeof e.clientY === 'number') {
+        if (e.clientX >= 0 && e.clientX <= 340 && e.clientY >= 50) {
           isInsideDrawerBounds = true;
         }
       }
