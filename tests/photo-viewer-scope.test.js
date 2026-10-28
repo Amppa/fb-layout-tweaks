@@ -131,3 +131,35 @@ test('Photo overlay maintains feed scope and prevents layout shift', () => {
   assert.strictEqual(marketplaceClasses.has('fb-layout-tweaks-feed-font-150'), false, 'Feed font must be stripped on Marketplace');
   assert.strictEqual(marketplaceClasses.has('fb-layout-tweaks-feed-media-h50'), false, 'Feed media must be stripped on Marketplace');
 });
+
+test('Lightbox / photo viewer stage is immune to centerMainFeed X-axis offset', () => {
+  const fs = require('fs');
+  const path = require('path');
+  const cssPath = path.join(__dirname, '..', 'src', 'content', 'content.css');
+  const cssContent = fs.readFileSync(cssPath, 'utf8');
+
+  // 1. Verify CSS rules for centerMainFeed exclude dialogs, modals, and media overlays
+  assert.ok(
+    cssContent.includes(':is([role="main"], [data-pagelet="Feed"]):not(:is([role="dialog"], [aria-modal="true"], [data-pagelet*="Media"], [data-pagelet*="Photo"], [data-pagelet*="Tahoe"]) *)'),
+    'Center feed rules must exclude descendants of dialog, aria-modal, and Media/Photo overlays'
+  );
+
+  // 2. Verify document-level suspension when a lightbox overlay is present
+  assert.ok(
+    cssContent.includes('html.fb-layout-tweaks-center-main-feed:has(:is([role="dialog"], [aria-modal="true"], [data-pagelet*="Media"], [data-pagelet*="Photo"], [data-pagelet*="Tahoe"])) :is([role="main"], [data-pagelet="Feed"])'),
+    'Must suspend feed translateX transform when any lightbox overlay is mounted in DOM'
+  );
+
+  // 3. Verify explicit immunity reset for photo viewer stage
+  assert.ok(
+    cssContent.includes(':is([role="dialog"], [aria-modal="true"], [data-pagelet*="Media"], [data-pagelet*="Photo"], [data-pagelet*="Tahoe"]) :is([role="main"], [data-pagelet="Feed"])'),
+    'Must provide explicit transform: none immunity for photo stage [role="main"] inside dialogs'
+  );
+
+  // 4. Verify feed width depths 1-5 also exclude dialogs
+  assert.ok(
+    cssContent.includes('[role="main"]:not(:is([role="dialog"], [aria-modal="true"], [data-pagelet*="Media"], [data-pagelet*="Photo"], [data-pagelet*="Tahoe"]) *) > div'),
+    'Feed width column release must not constrain depths inside lightbox dialogs'
+  );
+});
+

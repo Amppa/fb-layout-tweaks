@@ -287,7 +287,7 @@ html.fb-layout-tweaks-hover-expand-left-rail:not(.fb-layout-tweaks-rail-expanded
 }
 
 /* Middle Feed Expansion (Allocate freed space to main feed) */
-html.fb-layout-tweaks-hover-expand-left-rail :is([role="main"], [data-pagelet="Feed"]) {
+html.fb-layout-tweaks-hover-expand-left-rail :is([role="main"], [data-pagelet="Feed"]):not(:is([role="dialog"], [aria-modal="true"], [data-pagelet*="Media"], [data-pagelet*="Photo"], [data-pagelet*="Tahoe"]) *) {
   max-width: 100% !important;
 }
 
@@ -558,42 +558,57 @@ html.fb-layout-tweaks-hide-right-rail .fb-layout-tweaks-right-rail-parent:has(> 
    spacer stays 72px), so compensation keys only on the collapsed-spacer
    classes, never on the expanded overlay state. Translate is scoped to
    wide screens where both rails are visible.
+   Strictly excludes photo viewer / lightbox / dialog overlays to prevent X-offset.
    ========================================================================== */
-html.fb-layout-tweaks-center-main-feed :is([role="main"], [data-pagelet="Feed"]) {
+html.fb-layout-tweaks-center-main-feed :is([role="main"], [data-pagelet="Feed"]):not(:is([role="dialog"], [aria-modal="true"], [data-pagelet*="Media"], [data-pagelet*="Photo"], [data-pagelet*="Tahoe"]) *):not(:is([role="dialog"], [aria-modal="true"], [data-pagelet*="Media"], [data-pagelet*="Photo"], [data-pagelet*="Tahoe"])):not(:has(:is([role="dialog"], [aria-modal="true"], [data-pagelet*="Media"], [data-pagelet*="Photo"], [data-pagelet*="Tahoe"]))) {
   margin-inline: auto !important;
   justify-self: center !important;
 }
 
 @media (min-width: 1260px) {
   /* Both rails collapsed (72 / 72): symmetric, no compensation */
-  html.fb-layout-tweaks-center-main-feed.fb-layout-tweaks-hover-expand-left-rail.fb-layout-tweaks-hover-expand-right-rail :is([role="main"], [data-pagelet="Feed"]) {
+  html.fb-layout-tweaks-center-main-feed.fb-layout-tweaks-hover-expand-left-rail.fb-layout-tweaks-hover-expand-right-rail :is([role="main"], [data-pagelet="Feed"]):not(:is([role="dialog"], [aria-modal="true"], [data-pagelet*="Media"], [data-pagelet*="Photo"], [data-pagelet*="Tahoe"]) *):not(:is([role="dialog"], [aria-modal="true"], [data-pagelet*="Media"], [data-pagelet*="Photo"], [data-pagelet*="Tahoe"])):not(:has(:is([role="dialog"], [aria-modal="true"], [data-pagelet*="Media"], [data-pagelet*="Photo"], [data-pagelet*="Tahoe"]))) {
     transform: none !important;
   }
 
   /* Left native + right collapsed: shift left by half the width difference */
-  html.fb-layout-tweaks-center-main-feed:not(.fb-layout-tweaks-hover-expand-left-rail).fb-layout-tweaks-hover-expand-right-rail :is([role="main"], [data-pagelet="Feed"]) {
+  html.fb-layout-tweaks-center-main-feed:not(.fb-layout-tweaks-hover-expand-left-rail).fb-layout-tweaks-hover-expand-right-rail :is([role="main"], [data-pagelet="Feed"]):not(:is([role="dialog"], [aria-modal="true"], [data-pagelet*="Media"], [data-pagelet*="Photo"], [data-pagelet*="Tahoe"]) *):not(:is([role="dialog"], [aria-modal="true"], [data-pagelet*="Media"], [data-pagelet*="Photo"], [data-pagelet*="Tahoe"])):not(:has(:is([role="dialog"], [aria-modal="true"], [data-pagelet*="Media"], [data-pagelet*="Photo"], [data-pagelet*="Tahoe"]))) {
     transform: translateX(calc((var(--fb-lt-rail-collapsed-width) - var(--fb-lt-left-rail-expanded-width)) / 2)) !important;
   }
 
   /* Left collapsed + right native: shift right by half the width difference */
-  html.fb-layout-tweaks-center-main-feed.fb-layout-tweaks-hover-expand-left-rail:not(.fb-layout-tweaks-hover-expand-right-rail):not(.fb-layout-tweaks-hide-right-rail) :is([role="main"], [data-pagelet="Feed"]) {
+  html.fb-layout-tweaks-center-main-feed.fb-layout-tweaks-hover-expand-left-rail:not(.fb-layout-tweaks-hover-expand-right-rail):not(.fb-layout-tweaks-hide-right-rail) :is([role="main"], [data-pagelet="Feed"]):not(:is([role="dialog"], [aria-modal="true"], [data-pagelet*="Media"], [data-pagelet*="Photo"], [data-pagelet*="Tahoe"]) *):not(:is([role="dialog"], [aria-modal="true"], [data-pagelet*="Media"], [data-pagelet*="Photo"], [data-pagelet*="Tahoe"])):not(:has(:is([role="dialog"], [aria-modal="true"], [data-pagelet*="Media"], [data-pagelet*="Photo"], [data-pagelet*="Tahoe"]))) {
     transform: translateX(calc((var(--fb-lt-right-rail-expanded-width) - var(--fb-lt-rail-collapsed-width)) / 2)) !important;
   }
 
   /* Both rails native: shift by half the native width difference */
-  html.fb-layout-tweaks-center-main-feed:not(.fb-layout-tweaks-hover-expand-left-rail):not(.fb-layout-tweaks-hover-expand-right-rail):not(.fb-layout-tweaks-hide-right-rail) :is([role="main"], [data-pagelet="Feed"]) {
+  html.fb-layout-tweaks-center-main-feed:not(.fb-layout-tweaks-hover-expand-left-rail):not(.fb-layout-tweaks-hover-expand-right-rail):not(.fb-layout-tweaks-hide-right-rail) :is([role="main"], [data-pagelet="Feed"]):not(:is([role="dialog"], [aria-modal="true"], [data-pagelet*="Media"], [data-pagelet*="Photo"], [data-pagelet*="Tahoe"]) *):not(:is([role="dialog"], [aria-modal="true"], [data-pagelet*="Media"], [data-pagelet*="Photo"], [data-pagelet*="Tahoe"])):not(:has(:is([role="dialog"], [aria-modal="true"], [data-pagelet*="Media"], [data-pagelet*="Photo"], [data-pagelet*="Tahoe"]))) {
     transform: translateX(calc((var(--fb-lt-right-rail-expanded-width) - var(--fb-lt-left-rail-expanded-width)) / 2)) !important;
   }
 
   /* Left collapsed + right hidden: shift left by half the collapsed width (0 - 72) / 2 = -36px */
-  html.fb-layout-tweaks-center-main-feed.fb-layout-tweaks-hover-expand-left-rail.fb-layout-tweaks-hide-right-rail :is([role="main"], [data-pagelet="Feed"]) {
+  html.fb-layout-tweaks-center-main-feed.fb-layout-tweaks-hover-expand-left-rail.fb-layout-tweaks-hide-right-rail :is([role="main"], [data-pagelet="Feed"]):not(:is([role="dialog"], [aria-modal="true"], [data-pagelet*="Media"], [data-pagelet*="Photo"], [data-pagelet*="Tahoe"]) *):not(:is([role="dialog"], [aria-modal="true"], [data-pagelet*="Media"], [data-pagelet*="Photo"], [data-pagelet*="Tahoe"])):not(:has(:is([role="dialog"], [aria-modal="true"], [data-pagelet*="Media"], [data-pagelet*="Photo"], [data-pagelet*="Tahoe"]))) {
     transform: translateX(calc((0px - var(--fb-lt-rail-collapsed-width)) / 2)) !important;
   }
 
   /* Left native + right hidden: shift left by half the left native width (0 - 360) / 2 = -180px */
-  html.fb-layout-tweaks-center-main-feed:not(.fb-layout-tweaks-hover-expand-left-rail).fb-layout-tweaks-hide-right-rail :is([role="main"], [data-pagelet="Feed"]) {
+  html.fb-layout-tweaks-center-main-feed:not(.fb-layout-tweaks-hover-expand-left-rail).fb-layout-tweaks-hide-right-rail :is([role="main"], [data-pagelet="Feed"]):not(:is([role="dialog"], [aria-modal="true"], [data-pagelet*="Media"], [data-pagelet*="Photo"], [data-pagelet*="Tahoe"]) *):not(:is([role="dialog"], [aria-modal="true"], [data-pagelet*="Media"], [data-pagelet*="Photo"], [data-pagelet*="Tahoe"])):not(:has(:is([role="dialog"], [aria-modal="true"], [data-pagelet*="Media"], [data-pagelet*="Photo"], [data-pagelet*="Tahoe"]))) {
     transform: translateX(calc((0px - var(--fb-lt-left-rail-expanded-width)) / 2)) !important;
   }
+}
+
+/* Lightbox & Dialog Suspension: when an overlay modal exists, cancel main feed translate */
+html.fb-layout-tweaks-center-main-feed:has(:is([role="dialog"], [aria-modal="true"], [data-pagelet*="Media"], [data-pagelet*="Photo"], [data-pagelet*="Tahoe"])) :is([role="main"], [data-pagelet="Feed"]) {
+  transform: none !important;
+}
+
+/* Explicit Lightbox / Media Viewer / Dialog Immunity: never shift or offset modals */
+:is([role="dialog"], [aria-modal="true"], [data-pagelet*="Media"], [data-pagelet*="Photo"], [data-pagelet*="Tahoe"]) :is([role="main"], [data-pagelet="Feed"]),
+:is([role="main"], [data-pagelet="Feed"]):is([role="dialog"], [aria-modal="true"], [data-pagelet*="Media"], [data-pagelet*="Photo"], [data-pagelet*="Tahoe"]),
+:is([role="main"], [data-pagelet="Feed"]):has(:is([role="dialog"], [aria-modal="true"], [data-pagelet*="Media"], [data-pagelet*="Photo"], [data-pagelet*="Tahoe"])) {
+  transform: none !important;
+  margin-inline: 0 !important;
+  justify-self: auto !important;
 }
 
 /* ==========================================================================
@@ -608,17 +623,17 @@ html.fb-layout-tweaks-feed-width-50,
 html.fb-layout-tweaks-feed-width-75,
 html.fb-layout-tweaks-feed-width-100 { --fb-lt-feed-width: none; }
 
-html[class*="fb-layout-tweaks-feed-width-"] :has(> :is([role="main"], [data-pagelet="Feed"])),
-html[class*="fb-layout-tweaks-feed-width-"] :is([role="main"], [data-pagelet="Feed"]) {
+html[class*="fb-layout-tweaks-feed-width-"] :has(> :is([role="main"], [data-pagelet="Feed"])):not(:is([role="dialog"], [aria-modal="true"], [data-pagelet*="Media"], [data-pagelet*="Photo"], [data-pagelet*="Tahoe"]) *),
+html[class*="fb-layout-tweaks-feed-width-"] :is([role="main"], [data-pagelet="Feed"]):not(:is([role="dialog"], [aria-modal="true"], [data-pagelet*="Media"], [data-pagelet*="Photo"], [data-pagelet*="Tahoe"]) *) {
   max-width: 100% !important;
 }
 html[class*="fb-layout-tweaks-feed-width-"] :is(div[role="feed"], [data-pagelet="Feed"]) {
   max-width: var(--fb-lt-feed-width) !important;
   margin-inline: auto !important;
 }
-html[class*="fb-layout-tweaks-feed-width-"] :is(div[role="feed"], [data-pagelet="Feed"], [role="main"]) > div,
+html[class*="fb-layout-tweaks-feed-width-"] :is(div[role="feed"], [data-pagelet="Feed"], [role="main"]):not(:is([role="dialog"], [aria-modal="true"], [data-pagelet*="Media"], [data-pagelet*="Photo"], [data-pagelet*="Tahoe"]) *) > div,
 html[class*="fb-layout-tweaks-feed-width-"] div[data-pagelet^="FeedUnit"],
-html[class*="fb-layout-tweaks-feed-width-"] div[role="article"]:not(:is([role="dialog"], [aria-modal="true"], [data-pagelet="MediaViewer"]) *) {
+html[class*="fb-layout-tweaks-feed-width-"] div[role="article"]:not(:is([role="dialog"], [aria-modal="true"], [data-pagelet*="Media"], [data-pagelet*="Photo"], [data-pagelet*="Tahoe"]) *) {
   max-width: var(--fb-lt-feed-width) !important;
   width: 100% !important;
   box-sizing: border-box !important;
@@ -626,8 +641,8 @@ html[class*="fb-layout-tweaks-feed-width-"] div[role="article"]:not(:is([role="d
 /* Stories & Reels tray: uncap fixed 590px wrapper for hscroll carousels */
 html[class*="fb-layout-tweaks-feed-width-"] :is(div[role="feed"], [data-pagelet="Feed"]) div:has([data-type="hscroll-child"]),
 html[class*="fb-layout-tweaks-feed-width-"] :is(div[role="feed"], [data-pagelet="Feed"]) div:has([data-focus-target*="tray"]),
-html[class*="fb-layout-tweaks-feed-width-"] [role="main"] > div div:has([data-type="hscroll-child"]),
-html[class*="fb-layout-tweaks-feed-width-"] [role="main"] > div div:has([data-focus-target*="tray"]),
+html[class*="fb-layout-tweaks-feed-width-"] [role="main"]:not(:is([role="dialog"], [aria-modal="true"], [data-pagelet*="Media"], [data-pagelet*="Photo"], [data-pagelet*="Tahoe"]) *) > div div:has([data-type="hscroll-child"]),
+html[class*="fb-layout-tweaks-feed-width-"] [role="main"]:not(:is([role="dialog"], [aria-modal="true"], [data-pagelet*="Media"], [data-pagelet*="Photo"], [data-pagelet*="Tahoe"]) *) > div div:has([data-focus-target*="tray"]),
 html[class*="fb-layout-tweaks-feed-width-"] div[data-pagelet^="Stories"],
 html[class*="fb-layout-tweaks-feed-width-"] [data-focus-target*="tray"] {
   max-width: 100% !important;
@@ -635,7 +650,7 @@ html[class*="fb-layout-tweaks-feed-width-"] [data-focus-target*="tray"] {
   box-sizing: border-box !important;
 }
 /* Ensure images and media inside widened feed fit container naturally */
-html[class*="fb-layout-tweaks-feed-width-"] :is(div[role="feed"], [data-pagelet="Feed"], [role="main"]) :is(img, video):not(:is([role="dialog"], [aria-modal="true"], [data-pagelet="MediaViewer"]) *) {
+html[class*="fb-layout-tweaks-feed-width-"] :is(div[role="feed"], [data-pagelet="Feed"], [role="main"]) :is(img, video):not(:is([role="dialog"], [aria-modal="true"], [data-pagelet*="Media"], [data-pagelet*="Photo"], [data-pagelet*="Tahoe"]) *) {
   max-width: 100% !important;
 }
 /* Release the fixed-width lock on the feed column. Live DOM: [role="main"]
@@ -643,26 +658,26 @@ html[class*="fb-layout-tweaks-feed-width-"] :is(div[role="feed"], [data-pagelet=
    semantic hook (hashed classes only, never bound). Widths 1-4 are already
    full-fill sections, so widening depths 1-5 uniformly is a no-op for them
    and releases only the lock. box-sizing keeps padded wrappers safe. */
-html[class*="fb-layout-tweaks-feed-width-"] [role="main"] > div,
-html[class*="fb-layout-tweaks-feed-width-"] [role="main"] > div > div,
-html[class*="fb-layout-tweaks-feed-width-"] [role="main"] > div > div > div,
-html[class*="fb-layout-tweaks-feed-width-"] [role="main"] > div > div > div > div,
-html[class*="fb-layout-tweaks-feed-width-"] [role="main"] > div > div > div > div > div {
+html[class*="fb-layout-tweaks-feed-width-"] [role="main"]:not(:is([role="dialog"], [aria-modal="true"], [data-pagelet*="Media"], [data-pagelet*="Photo"], [data-pagelet*="Tahoe"]) *) > div,
+html[class*="fb-layout-tweaks-feed-width-"] [role="main"]:not(:is([role="dialog"], [aria-modal="true"], [data-pagelet*="Media"], [data-pagelet*="Photo"], [data-pagelet*="Tahoe"]) *) > div > div,
+html[class*="fb-layout-tweaks-feed-width-"] [role="main"]:not(:is([role="dialog"], [aria-modal="true"], [data-pagelet*="Media"], [data-pagelet*="Photo"], [data-pagelet*="Tahoe"]) *) > div > div > div,
+html[class*="fb-layout-tweaks-feed-width-"] [role="main"]:not(:is([role="dialog"], [aria-modal="true"], [data-pagelet*="Media"], [data-pagelet*="Photo"], [data-pagelet*="Tahoe"]) *) > div > div > div > div,
+html[class*="fb-layout-tweaks-feed-width-"] [role="main"]:not(:is([role="dialog"], [aria-modal="true"], [data-pagelet*="Media"], [data-pagelet*="Photo"], [data-pagelet*="Tahoe"]) *) > div > div > div > div > div {
   width: 100% !important;
   max-width: var(--fb-lt-feed-width) !important;
   box-sizing: border-box !important;
   margin-inline: auto !important;
 }
 /* 50%: size only the column child so % does not compound down the chain. */
-html.fb-layout-tweaks-feed-width-50 :is(div[role="feed"], [data-pagelet="Feed"], [role="main"]) > div,
-html.fb-layout-tweaks-feed-width-50 div[role="main"] > div {
+html.fb-layout-tweaks-feed-width-50 :is(div[role="feed"], [data-pagelet="Feed"], [role="main"]):not(:is([role="dialog"], [aria-modal="true"], [data-pagelet*="Media"], [data-pagelet*="Photo"], [data-pagelet*="Tahoe"]) *) > div,
+html.fb-layout-tweaks-feed-width-50 div[role="main"]:not(:is([role="dialog"], [aria-modal="true"], [data-pagelet*="Media"], [data-pagelet*="Photo"], [data-pagelet*="Tahoe"]) *) > div {
   width: 50% !important;
   max-width: 50% !important;
   margin-inline: auto !important;
 }
 /* 75%: size only the column child so % does not compound down the chain. */
-html.fb-layout-tweaks-feed-width-75 :is(div[role="feed"], [data-pagelet="Feed"], [role="main"]) > div,
-html.fb-layout-tweaks-feed-width-75 div[role="main"] > div {
+html.fb-layout-tweaks-feed-width-75 :is(div[role="feed"], [data-pagelet="Feed"], [role="main"]):not(:is([role="dialog"], [aria-modal="true"], [data-pagelet*="Media"], [data-pagelet*="Photo"], [data-pagelet*="Tahoe"]) *) > div,
+html.fb-layout-tweaks-feed-width-75 div[role="main"]:not(:is([role="dialog"], [aria-modal="true"], [data-pagelet*="Media"], [data-pagelet*="Photo"], [data-pagelet*="Tahoe"]) *) > div {
   width: 75% !important;
   max-width: 75% !important;
   margin-inline: auto !important;
