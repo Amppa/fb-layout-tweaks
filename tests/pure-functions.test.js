@@ -68,6 +68,23 @@ test('Every configurable show* key in DEFAULT_SETTINGS maps to a matching CSS ru
   );
 });
 
+test('All top navigation hide rules in content.css support both header/banner landmarks and Facebook navigation role', () => {
+  const cssContent = fs.readFileSync(path.join(ROOT_DIR, 'src', 'content', 'content.css'), 'utf8');
+  const topKeys = ['showTopReels', 'showTopFriends', 'showTopMarketplace', 'showTopGroups', 'showTopFeeds', 'showTopGaming'];
+
+  for (const key of topKeys) {
+    const className = getUiCleanClassName(key);
+    const ruleMatch = cssContent.split(className).slice(1);
+    assert.ok(ruleMatch.length > 0, `Expected rule for ${className} in content.css`);
+
+    const ruleBlock = ruleMatch[0].split('}')[0];
+    assert.ok(
+      ruleBlock.includes('div[role="navigation"][aria-label="Facebook"]'),
+      `Expected ${className} selector to include div[role="navigation"][aria-label="Facebook"]`
+    );
+  }
+});
+
 test('toUIChecked and toStoredValue handle inverted switches and standard pills with round-trip fidelity', () => {
   const { INVERTED_KEYS, toUIChecked, toStoredValue } = self;
 
