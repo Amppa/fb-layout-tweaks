@@ -257,16 +257,28 @@
     "message": "Scale down feed photos, albums, background cards, and videos"
   },
   "optMediaHeightDefault": {
-    "message": "100% (Original)"
+    "message": "Scale with column width"
   },
   "optMediaHeight75": {
     "message": "75%"
   },
   "optMediaHeight50": {
-    "message": "50%"
+    "message": "50% (Proportional)"
   },
   "optMediaHeight25": {
     "message": "25%"
+  },
+  "optMediaHeightPx500": {
+    "message": "Max 500px"
+  },
+  "optMediaHeightPx400": {
+    "message": "Max 400px"
+  },
+  "optMediaHeightPx300": {
+    "message": "Max 300px"
+  },
+  "optMediaHeightPx200": {
+    "message": "Max 200px"
   },
   "itemExtendShareToGroupList": {
     "message": "Extend Share to Group List"

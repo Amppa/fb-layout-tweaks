@@ -24,7 +24,7 @@ test('DEFAULT_SETTINGS contains required core keys and valid types', () => {
   assert.strictEqual(defaults.sidebarScope, 'homeOnly', 'sidebarScope should default to homeOnly');
   assert.strictEqual(defaults.feedWidth, 'default', 'feedWidth should default to default');
   assert.strictEqual(defaults.feedFontSize, 'f150', 'feedFontSize should default to f150');
-  assert.strictEqual(defaults.feedMediaHeight, 'default', 'feedMediaHeight should default to default');
+  assert.strictEqual(defaults.feedMediaHeight, 'px500', 'feedMediaHeight should default to px500');
   assert.strictEqual(defaults.trimRightRail, 'hidden', 'trimRightRail should default to hidden');
   assert.strictEqual(defaults.extendShareToGroupList, true, 'extendShareToGroupList should default to true');
   assert.strictEqual(defaults.stopAutoRefresh, false, 'stopAutoRefresh should default to false');

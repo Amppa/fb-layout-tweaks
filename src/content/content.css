@@ -723,6 +723,12 @@ html.fb-layout-tweaks-feed-media-h25 {
   --fb-lt-album-max-width: 25%;
   --fb-lt-card-max-width: 25%;
 }
+html.fb-layout-tweaks-feed-media-px500 {
+  --fb-lt-album-max-height: 500px;
+  --fb-lt-card-height: 500px;
+  --fb-lt-album-max-width: 500px;
+  --fb-lt-card-max-width: 500px;
+}
 html.fb-layout-tweaks-feed-media-px400 {
   --fb-lt-album-max-height: 400px;
   --fb-lt-card-height: 400px;

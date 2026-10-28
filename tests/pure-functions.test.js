@@ -277,6 +277,10 @@ test('sanitizeSettingValue validates enum values, normalizes legacy booleans, an
   assert.strictEqual(sanitizeSettingValue('trimRightRail', 'hover'), 'hover');
   assert.strictEqual(sanitizeSettingValue('trimRightRail', 'visible'), 'visible');
   assert.strictEqual(sanitizeSettingValue('feedWidth', 'w100'), 'w100');
+  assert.strictEqual(sanitizeSettingValue('feedMediaHeight', 'px500'), 'px500');
+  assert.strictEqual(sanitizeSettingValue('feedMediaHeight', 'px400'), 'px400');
+  assert.strictEqual(sanitizeSettingValue('feedMediaHeight', 'px300'), 'px300');
+  assert.strictEqual(sanitizeSettingValue('feedMediaHeight', 'px200'), 'px200');
   assert.strictEqual(sanitizeSettingValue('sidebarScope', 'global'), 'global');
 
   // Legacy boolean mapping for trimRightRail
@@ -354,6 +358,7 @@ test('deriveLayoutClasses returns complete set of active layout tokens based on 
   assert.ok(defaultClasses.has('fb-layout-tweaks-center-main-feed'));
   assert.strictEqual(defaultClasses.has('fb-layout-tweaks-feed-width-75'), false); // 680px default width uses standard feed layout
   assert.ok(defaultClasses.has('fb-layout-tweaks-feed-font-150'));
+  assert.ok(defaultClasses.has('fb-layout-tweaks-feed-media-px500'));
   assert.ok(defaultClasses.has('fb-layout-tweaks-extend-share-to-group-list'));
   assert.ok(defaultClasses.has('fb-layout-tweaks-hide-left-crisis-response'));
 

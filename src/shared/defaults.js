@@ -69,8 +69,8 @@ self.MAIN_SETTINGS = {
   feedWidth: 'default',
   // Feed font size: 'default' (100%) | 'f150' | 'f200' | 'f300'
   feedFontSize: 'f150',
-  // Feed media height scale: 'default' (100%) | 'h75' (75%) | 'h50' (50%) | 'h25' (25%)
-  feedMediaHeight: 'default'
+  // Feed media height scale: 'px500' (default max 500px) | 'px300' | 'default' (scale with column width)
+  feedMediaHeight: 'px500'
 };
 
 self.OTHER_SETTINGS = {
@@ -97,7 +97,7 @@ self.SETTINGS_ENUMS = {
   trimRightRail: new Set(['hidden', 'hover', 'visible']),
   feedWidth: new Set(['default', 'w50', 'w75', 'w100']),
   feedFontSize: new Set(['default', 'f150', 'f200', 'f300']),
-  feedMediaHeight: new Set(['default', 'h75', 'h50', 'h25'])
+  feedMediaHeight: new Set(['default', 'h75', 'h50', 'h25', 'px500', 'px400', 'px300', 'px200'])
 };
 
 self.sanitizeSettingValue = function(key, rawValue) {

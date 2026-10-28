@@ -190,22 +190,27 @@ test('scanAndScaleFeedMedia correctly scales images for 75%, 50%, 25%, px400, px
   assert.strictEqual(wrapper._styles['padding-top'], '450px', '75% height should scale padding-top from 600px to 450px');
   assert.strictEqual(wrapper._styles['width'], '450px', '75% width should scale from 600px to 450px');
 
-  // 4. Test Fixed 400px (px400)
+  // 4. Test Fixed 500px (px500)
+  scanAndScaleFeedMedia('px500');
+  assert.strictEqual(wrapper._styles['padding-top'], '500px', 'px500 should cap height to 500px');
+  assert.strictEqual(wrapper._styles['width'], '500px', 'px500 should scale width proportionally to 500px');
+
+  // 5. Test Fixed 400px (px400)
   scanAndScaleFeedMedia('px400');
   assert.strictEqual(wrapper._styles['padding-top'], '400px', 'px400 should cap height to 400px');
   assert.strictEqual(wrapper._styles['width'], '400px', 'px400 should scale width proportionally to 400px');
 
-  // 5. Test Fixed 300px (px300)
+  // 6. Test Fixed 300px (px300)
   scanAndScaleFeedMedia('px300');
   assert.strictEqual(wrapper._styles['padding-top'], '300px', 'px300 should cap height to 300px');
   assert.strictEqual(wrapper._styles['width'], '300px', 'px300 should scale width proportionally to 300px');
 
-  // 6. Test Fixed 200px (px200)
+  // 7. Test Fixed 200px (px200)
   scanAndScaleFeedMedia('px200');
   assert.strictEqual(wrapper._styles['padding-top'], '200px', 'px200 should cap height to 200px');
   assert.strictEqual(wrapper._styles['width'], '200px', 'px200 should scale width proportionally to 200px');
 
-  // 7. Test Restore to default
+  // 8. Test Restore to default
   scanAndScaleFeedMedia('default');
   assert.strictEqual(wrapper._styles['padding-top'], '600px', 'Restoring to default must restore original padding-top');
   assert.strictEqual(wrapper._styles['width'], '600px', 'Restoring to default must restore original width');

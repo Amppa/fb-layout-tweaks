@@ -154,6 +154,7 @@
       if (feedMediaHeight === 'h75') classes.add('fb-layout-tweaks-feed-media-h75');
       else if (feedMediaHeight === 'h50') classes.add('fb-layout-tweaks-feed-media-h50');
       else if (feedMediaHeight === 'h25') classes.add('fb-layout-tweaks-feed-media-h25');
+      else if (feedMediaHeight === 'px500') classes.add('fb-layout-tweaks-feed-media-px500');
       else if (feedMediaHeight === 'px400') classes.add('fb-layout-tweaks-feed-media-px400');
       else if (feedMediaHeight === 'px300') classes.add('fb-layout-tweaks-feed-media-px300');
       else if (feedMediaHeight === 'px200') classes.add('fb-layout-tweaks-feed-media-px200');
@@ -1019,6 +1020,7 @@
     h25: 0.25
   };
   const FEED_MEDIA_PIXEL_LIMITS = {
+    px500: 500,
     px400: 400,
     px300: 300,
     px200: 200

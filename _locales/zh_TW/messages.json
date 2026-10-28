@@ -257,16 +257,28 @@
     "message": "依比例降低貼文圖片、相簿、字卡與影片的顯示高度"
   },
   "optMediaHeightDefault": {
-    "message": "100% (原始)"
+    "message": "與欄寬同步縮放"
   },
   "optMediaHeight75": {
     "message": "75%"
   },
   "optMediaHeight50": {
-    "message": "50%"
+    "message": "50% (等比例縮放)"
   },
   "optMediaHeight25": {
     "message": "25%"
+  },
+  "optMediaHeightPx500": {
+    "message": "最大 500px"
+  },
+  "optMediaHeightPx400": {
+    "message": "最大 400px"
+  },
+  "optMediaHeightPx300": {
+    "message": "最大 300px"
+  },
+  "optMediaHeightPx200": {
+    "message": "最大 200px"
   },
   "itemExtendShareToGroupList": {
     "message": "加長「分享到社團」清單"
