@@ -65,7 +65,7 @@ self.MAIN_SETTINGS = {
   trimMainFeed: true,
   // Section: Main Feed (true = keep feed centered when sidebars are asymmetric)
   centerMainFeed: true,
-  // Feed width: 'default' (680px) | 'w50' | 'w75' | 'w100'
+  // Feed width: 'default' (680px) | 'w50' | 'w60' | 'w70' | 'w80' | 'w90' | 'w100'
   feedWidth: 'default',
   // Feed font size: 'default' (100%) | 'f150' | 'f200' | 'f300'
   feedFontSize: 'f150',
@@ -95,7 +95,7 @@ self.SETTINGS_ENUMS = {
   locale: new Set(['auto', 'en', 'zh_TW']),
   sidebarScope: new Set(['homeOnly', 'global']),
   trimRightRail: new Set(['hidden', 'hover', 'visible']),
-  feedWidth: new Set(['default', 'w50', 'w75', 'w100']),
+  feedWidth: new Set(['default', 'w50', 'w60', 'w70', 'w75', 'w80', 'w90', 'w100']),
   feedFontSize: new Set(['default', 'f150', 'f200', 'f300']),
   feedMediaHeight: new Set(['default', 'h75', 'h50', 'h25', 'px500', 'px400', 'px300', 'px200'])
 };

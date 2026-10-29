@@ -277,6 +277,10 @@ test('sanitizeSettingValue validates enum values, normalizes legacy booleans, an
   assert.strictEqual(sanitizeSettingValue('trimRightRail', 'hover'), 'hover');
   assert.strictEqual(sanitizeSettingValue('trimRightRail', 'visible'), 'visible');
   assert.strictEqual(sanitizeSettingValue('feedWidth', 'w100'), 'w100');
+  assert.strictEqual(sanitizeSettingValue('feedWidth', 'w60'), 'w60');
+  assert.strictEqual(sanitizeSettingValue('feedWidth', 'w70'), 'w70');
+  assert.strictEqual(sanitizeSettingValue('feedWidth', 'w80'), 'w80');
+  assert.strictEqual(sanitizeSettingValue('feedWidth', 'w90'), 'w90');
   assert.strictEqual(sanitizeSettingValue('feedMediaHeight', 'px500'), 'px500');
   assert.strictEqual(sanitizeSettingValue('feedMediaHeight', 'px400'), 'px400');
   assert.strictEqual(sanitizeSettingValue('feedMediaHeight', 'px300'), 'px300');

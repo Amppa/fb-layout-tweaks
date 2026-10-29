@@ -224,13 +224,25 @@
     "message": "680px (Original)"
   },
   "optFeedWidth50": {
-    "message": "50%"
+    "message": "Screen 50%"
+  },
+  "optFeedWidth60": {
+    "message": "Screen 60%"
+  },
+  "optFeedWidth70": {
+    "message": "Screen 70%"
   },
   "optFeedWidth75": {
-    "message": "75%"
+    "message": "Screen 75%"
+  },
+  "optFeedWidth80": {
+    "message": "Screen 80%"
+  },
+  "optFeedWidth90": {
+    "message": "Screen 90%"
   },
   "optFeedWidth100": {
-    "message": "100%"
+    "message": "Screen 100%"
   },
   "itemFeedFontSize": {
     "message": "Feed Text Size"

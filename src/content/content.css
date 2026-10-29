@@ -620,7 +620,11 @@ html.fb-layout-tweaks-center-main-feed:has(:is([role="dialog"], [aria-modal="tru
 html.fb-layout-tweaks-feed-width-1000 { --fb-lt-feed-width: 1000px; }
 html.fb-layout-tweaks-feed-width-1600 { --fb-lt-feed-width: 1600px; }
 html.fb-layout-tweaks-feed-width-50,
+html.fb-layout-tweaks-feed-width-60,
+html.fb-layout-tweaks-feed-width-70,
 html.fb-layout-tweaks-feed-width-75,
+html.fb-layout-tweaks-feed-width-80,
+html.fb-layout-tweaks-feed-width-90,
 html.fb-layout-tweaks-feed-width-100 { --fb-lt-feed-width: none; }
 
 html[class*="fb-layout-tweaks-feed-width-"] :has(> :is([role="main"], [data-pagelet="Feed"])):not(:is([role="dialog"], [aria-modal="true"], [data-pagelet*="Media"], [data-pagelet*="Photo"], [data-pagelet*="Tahoe"]) *),
@@ -675,11 +679,39 @@ html.fb-layout-tweaks-feed-width-50 div[role="main"]:not(:is([role="dialog"], [a
   max-width: 50% !important;
   margin-inline: auto !important;
 }
+/* 60%: size only the column child so % does not compound down the chain. */
+html.fb-layout-tweaks-feed-width-60 :is(div[role="feed"], [data-pagelet="Feed"], [role="main"]):not(:is([role="dialog"], [aria-modal="true"], [data-pagelet*="Media"], [data-pagelet*="Photo"], [data-pagelet*="Tahoe"]) *) > div,
+html.fb-layout-tweaks-feed-width-60 div[role="main"]:not(:is([role="dialog"], [aria-modal="true"], [data-pagelet*="Media"], [data-pagelet*="Photo"], [data-pagelet*="Tahoe"]) *) > div {
+  width: 60% !important;
+  max-width: 60% !important;
+  margin-inline: auto !important;
+}
+/* 70%: size only the column child so % does not compound down the chain. */
+html.fb-layout-tweaks-feed-width-70 :is(div[role="feed"], [data-pagelet="Feed"], [role="main"]):not(:is([role="dialog"], [aria-modal="true"], [data-pagelet*="Media"], [data-pagelet*="Photo"], [data-pagelet*="Tahoe"]) *) > div,
+html.fb-layout-tweaks-feed-width-70 div[role="main"]:not(:is([role="dialog"], [aria-modal="true"], [data-pagelet*="Media"], [data-pagelet*="Photo"], [data-pagelet*="Tahoe"]) *) > div {
+  width: 70% !important;
+  max-width: 70% !important;
+  margin-inline: auto !important;
+}
 /* 75%: size only the column child so % does not compound down the chain. */
 html.fb-layout-tweaks-feed-width-75 :is(div[role="feed"], [data-pagelet="Feed"], [role="main"]):not(:is([role="dialog"], [aria-modal="true"], [data-pagelet*="Media"], [data-pagelet*="Photo"], [data-pagelet*="Tahoe"]) *) > div,
 html.fb-layout-tweaks-feed-width-75 div[role="main"]:not(:is([role="dialog"], [aria-modal="true"], [data-pagelet*="Media"], [data-pagelet*="Photo"], [data-pagelet*="Tahoe"]) *) > div {
   width: 75% !important;
   max-width: 75% !important;
+  margin-inline: auto !important;
+}
+/* 80%: size only the column child so % does not compound down the chain. */
+html.fb-layout-tweaks-feed-width-80 :is(div[role="feed"], [data-pagelet="Feed"], [role="main"]):not(:is([role="dialog"], [aria-modal="true"], [data-pagelet*="Media"], [data-pagelet*="Photo"], [data-pagelet*="Tahoe"]) *) > div,
+html.fb-layout-tweaks-feed-width-80 div[role="main"]:not(:is([role="dialog"], [aria-modal="true"], [data-pagelet*="Media"], [data-pagelet*="Photo"], [data-pagelet*="Tahoe"]) *) > div {
+  width: 80% !important;
+  max-width: 80% !important;
+  margin-inline: auto !important;
+}
+/* 90%: size only the column child so % does not compound down the chain. */
+html.fb-layout-tweaks-feed-width-90 :is(div[role="feed"], [data-pagelet="Feed"], [role="main"]):not(:is([role="dialog"], [aria-modal="true"], [data-pagelet*="Media"], [data-pagelet*="Photo"], [data-pagelet*="Tahoe"]) *) > div,
+html.fb-layout-tweaks-feed-width-90 div[role="main"]:not(:is([role="dialog"], [aria-modal="true"], [data-pagelet*="Media"], [data-pagelet*="Photo"], [data-pagelet*="Tahoe"]) *) > div {
+  width: 90% !important;
+  max-width: 90% !important;
   margin-inline: auto !important;
 }
 

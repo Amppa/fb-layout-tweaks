@@ -140,7 +140,11 @@
     if (trimMainFeed) {
       const feedWidth = settings.feedWidth;
       if (feedWidth === 'w50') classes.add('fb-layout-tweaks-feed-width-50');
+      else if (feedWidth === 'w60') classes.add('fb-layout-tweaks-feed-width-60');
+      else if (feedWidth === 'w70') classes.add('fb-layout-tweaks-feed-width-70');
       else if (feedWidth === 'w75') classes.add('fb-layout-tweaks-feed-width-75');
+      else if (feedWidth === 'w80') classes.add('fb-layout-tweaks-feed-width-80');
+      else if (feedWidth === 'w90') classes.add('fb-layout-tweaks-feed-width-90');
       else if (feedWidth === 'w100') classes.add('fb-layout-tweaks-feed-width-100');
       else if (feedWidth === 'w1000') classes.add('fb-layout-tweaks-feed-width-1000');
       else if (feedWidth === 'w1600') classes.add('fb-layout-tweaks-feed-width-1600');
