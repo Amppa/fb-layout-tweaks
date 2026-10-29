@@ -281,13 +281,13 @@
     "message": "25%"
   },
   "optMediaHeightPx500": {
-    "message": "最大 500px"
+    "message": "限制 < 500px"
   },
   "optMediaHeightPx400": {
     "message": "最大 400px"
   },
   "optMediaHeightPx300": {
-    "message": "最大 300px"
+    "message": "限制 < 300px"
   },
   "optMediaHeightPx200": {
     "message": "最大 200px"

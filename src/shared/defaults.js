@@ -69,7 +69,7 @@ self.MAIN_SETTINGS = {
   feedWidth: 'default',
   // Feed font size: 'default' (100%) | 'f150' | 'f200' | 'f300'
   feedFontSize: 'f150',
-  // Feed media height scale: 'px500' (default max 500px) | 'px300' | 'default' (scale with column width)
+  // Feed media height scale: 'px500' (default limit < 500px) | 'px300' | 'default' (scale with column width)
   feedMediaHeight: 'px500'
 };
 

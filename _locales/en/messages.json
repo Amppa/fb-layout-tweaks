@@ -281,13 +281,13 @@
     "message": "25%"
   },
   "optMediaHeightPx500": {
-    "message": "Max 500px"
+    "message": "Limit < 500px"
   },
   "optMediaHeightPx400": {
     "message": "Max 400px"
   },
   "optMediaHeightPx300": {
-    "message": "Max 300px"
+    "message": "Limit < 300px"
   },
   "optMediaHeightPx200": {
     "message": "Max 200px"
