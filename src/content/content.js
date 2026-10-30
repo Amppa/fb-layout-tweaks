@@ -825,6 +825,64 @@
     }
   }
 
+  // Architectural Layout Guard & Negative Invariant Enforcer
+  const CRITICAL_LAYOUT_SELECTORS = [
+    '[role="main"]',
+    '[data-pagelet="Feed"]',
+    'div[role="feed"]',
+    'header',
+    '[role="banner"]',
+    '[role="navigation"]',
+    'div[role="navigation"]'
+  ];
+
+  /**
+   * Evaluates whether a candidate container is safe to tag as an exclusive wrapper for a target element.
+   * Enforces:
+   * 1. Boundary Guard: Candidate cannot be document.body or document.documentElement.
+   * 2. Negative Invariant Guard: Candidate must not enclose any other critical layout sections (e.g. main feed).
+   * 3. Exclusivity Guard: Candidate must not contain substantial visible layout siblings.
+   *
+   * @param {Element|null} candidate
+   * @param {Element|null} targetPayload
+   * @returns {boolean}
+   */
+  function isSafeExclusiveContainer(candidate, targetPayload) {
+    if (!candidate || !targetPayload) return false;
+    if (typeof document !== 'undefined' && (candidate === document.body || candidate === document.documentElement)) {
+      return false;
+    }
+
+    // Invariant 1: Negative Guard - Candidate must not contain critical layout sections outside target
+    for (const selector of CRITICAL_LAYOUT_SELECTORS) {
+      try {
+        const matches = candidate.querySelectorAll ? candidate.querySelectorAll(selector) : [];
+        for (const m of matches) {
+          if (m !== targetPayload && !targetPayload.contains(m)) {
+            return false;
+          }
+        }
+      } catch (_) {}
+    }
+
+    // Invariant 2: Exclusivity Guard - Candidate must not contain substantial sibling content
+    if (candidate.children && candidate.children.length > 1) {
+      for (const child of candidate.children) {
+        if (child === targetPayload || targetPayload.contains(child)) continue;
+        const tag = child.tagName ? child.tagName.toUpperCase() : '';
+        if (tag === 'SCRIPT' || tag === 'STYLE' || tag === 'NOSCRIPT' || tag === 'TEMPLATE') continue;
+        if (child.getAttribute && (child.getAttribute('role') || child.getAttribute('data-pagelet'))) {
+          return false;
+        }
+        if (typeof child.offsetWidth === 'number' && (child.offsetWidth > 0 || child.offsetHeight > 0)) {
+          return false;
+        }
+      }
+    }
+
+    return true;
+  }
+
   function tagRailContainers(force = false) {
     try {
       if (typeof document === 'undefined') return;
@@ -862,7 +920,7 @@
           }
           if (!firstTagged) firstTagged = el;
           let parent = el.parentElement;
-          if (parent && parent !== document.body && !parent.classList.contains('fb-layout-tweaks-left-rail-parent')) {
+          if (isSafeExclusiveContainer(parent, el) && !parent.classList.contains('fb-layout-tweaks-left-rail-parent')) {
             parent.classList.add('fb-layout-tweaks-left-rail-parent');
           }
         }
@@ -895,7 +953,7 @@
           }
           if (!firstTagged) firstTagged = el;
           let parent = el.parentElement;
-          if (parent && parent !== document.body && !parent.classList.contains('fb-layout-tweaks-right-rail-parent')) {
+          if (isSafeExclusiveContainer(parent, el) && !parent.classList.contains('fb-layout-tweaks-right-rail-parent')) {
             parent.classList.add('fb-layout-tweaks-right-rail-parent');
           }
         }
@@ -979,16 +1037,59 @@
     }
   }
 
+  /**
+   * Layout Circuit Breaker: detects catastrophic false-positive hides (e.g. main feed height 0 or display:none)
+   * and automatically rolls back disruptive classes to safe mode.
+   */
+  function tripLayoutCircuitBreaker(reason) {
+    try {
+      if (typeof console !== 'undefined' && console.warn) {
+        console.warn('[FB Layout Tweaks] Circuit breaker triggered: ' + reason);
+      }
+      if (typeof document !== 'undefined') {
+        const docEl = document.documentElement;
+        if (docEl && docEl.classList) {
+          docEl.classList.remove('fb-layout-tweaks-hide-right-rail');
+          docEl.classList.remove('fb-layout-tweaks-hover-expand-right-rail');
+        }
+        const rightRailParents = document.querySelectorAll('.fb-layout-tweaks-right-rail-parent');
+        for (const el of rightRailParents) {
+          el.classList.remove('fb-layout-tweaks-right-rail-parent');
+        }
+      }
+      reportHealth(false);
+    } catch (_) {}
+  }
+
+  function verifyLayoutHealth() {
+    if (typeof document === 'undefined') return true;
+    if (!isHealthCheckApplicable()) return true;
+
+    const main = document.querySelector('[role="main"], [data-pagelet="Feed"], div[role="feed"]');
+    if (main) {
+      const s = typeof window !== 'undefined' && window.getComputedStyle ? window.getComputedStyle(main) : null;
+      const isDead = (s && (s.display === 'none' || s.visibility === 'hidden')) ||
+                     (typeof main.offsetHeight === 'number' && main.offsetHeight === 0 && main.offsetWidth === 0);
+      if (isDead) {
+        tripLayoutCircuitBreaker('Main feed collapsed to zero dimensions or display:none');
+        return false;
+      }
+    }
+    return true;
+  }
+
   function evaluateHealth() {
     if (!isHealthCheckApplicable()) return;
+    const isHealthy = verifyLayoutHealth();
+    if (!isHealthy) return;
     reportHealth(countLayoutAnchors() > 0);
   }
 
   function scheduleHealthChecks() {
     clearHealthCheckTimers();
     if (!isHealthCheckApplicable()) return;
-    // Delayed only: document_start DOM is legitimately empty.
-    for (const delayMs of [4000, 10000]) {
+    // Fast check at 1500ms to immediately trip breaker on catastrophic collision, plus delayed checks
+    for (const delayMs of [1500, 4000, 10000]) {
       try {
         healthCheckTimers.push(setTimeout(evaluateHealth, delayMs));
       } catch (_) {}
@@ -1646,7 +1747,11 @@
       needsDynamicScan,
       hasConnectedHomeFeed,
       isOverlayState,
-      setIsFeedScopeActive: (val) => { isFeedScopeActive = Boolean(val); }
+      setIsFeedScopeActive: (val) => { isFeedScopeActive = Boolean(val); },
+      isSafeExclusiveContainer,
+      verifyLayoutHealth,
+      tripLayoutCircuitBreaker,
+      CRITICAL_LAYOUT_SELECTORS
     };
   }
 })();

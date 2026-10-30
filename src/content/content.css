@@ -627,9 +627,22 @@ html.fb-layout-tweaks-feed-width-80,
 html.fb-layout-tweaks-feed-width-90,
 html.fb-layout-tweaks-feed-width-100 { --fb-lt-feed-width: none; }
 
-html[class*="fb-layout-tweaks-feed-width-"] :has(> :is([role="main"], [data-pagelet="Feed"])):not(:is([role="dialog"], [aria-modal="true"], [data-pagelet*="Media"], [data-pagelet*="Photo"], [data-pagelet*="Tahoe"]) *),
+/* Document & layout viewport containment to prevent horizontal overflow */
+html[class*="fb-layout-tweaks-feed-width-"],
+html[class*="fb-layout-tweaks-feed-width-"] body {
+  overflow-x: hidden !important;
+  max-width: 100vw !important;
+}
+
+html[class*="fb-layout-tweaks-feed-width-"] :has(> :is([role="main"], [data-pagelet="Feed"])):not(:is([role="dialog"], [aria-modal="true"], [data-pagelet*="Media"], [data-pagelet*="Photo"], [data-pagelet*="Tahoe"]) *) {
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+  overflow-x: clip !important;
+}
 html[class*="fb-layout-tweaks-feed-width-"] :is([role="main"], [data-pagelet="Feed"]):not(:is([role="dialog"], [aria-modal="true"], [data-pagelet*="Media"], [data-pagelet*="Photo"], [data-pagelet*="Tahoe"]) *) {
   max-width: 100% !important;
+  min-width: 0 !important;
+  box-sizing: border-box !important;
 }
 html[class*="fb-layout-tweaks-feed-width-"] :is(div[role="feed"], [data-pagelet="Feed"]) {
   max-width: var(--fb-lt-feed-width) !important;
@@ -652,6 +665,7 @@ html[class*="fb-layout-tweaks-feed-width-"] [data-focus-target*="tray"] {
   max-width: 100% !important;
   width: 100% !important;
   box-sizing: border-box !important;
+  overflow-x: clip !important;
 }
 /* Ensure images and media inside widened feed fit container naturally */
 html[class*="fb-layout-tweaks-feed-width-"] :is(div[role="feed"], [data-pagelet="Feed"], [role="main"]) :is(img, video):not(:is([role="dialog"], [aria-modal="true"], [data-pagelet*="Media"], [data-pagelet*="Photo"], [data-pagelet*="Tahoe"]) *) {
@@ -661,16 +675,25 @@ html[class*="fb-layout-tweaks-feed-width-"] :is(div[role="feed"], [data-pagelet=
    holds a single column child; the 680px lock sits 5 divs deep with no
    semantic hook (hashed classes only, never bound). Widths 1-4 are already
    full-fill sections, so widening depths 1-5 uniformly is a no-op for them
-   and releases only the lock. box-sizing keeps padded wrappers safe. */
+   and releases only the lock. Floating pills/anchors (e.g. .xbudbmw "New posts"
+   pill) are explicitly excluded so their zero-width anchor point is preserved.
+   box-sizing keeps padded wrappers safe. */
 html[class*="fb-layout-tweaks-feed-width-"] [role="main"]:not(:is([role="dialog"], [aria-modal="true"], [data-pagelet*="Media"], [data-pagelet*="Photo"], [data-pagelet*="Tahoe"]) *) > div,
 html[class*="fb-layout-tweaks-feed-width-"] [role="main"]:not(:is([role="dialog"], [aria-modal="true"], [data-pagelet*="Media"], [data-pagelet*="Photo"], [data-pagelet*="Tahoe"]) *) > div > div,
 html[class*="fb-layout-tweaks-feed-width-"] [role="main"]:not(:is([role="dialog"], [aria-modal="true"], [data-pagelet*="Media"], [data-pagelet*="Photo"], [data-pagelet*="Tahoe"]) *) > div > div > div,
-html[class*="fb-layout-tweaks-feed-width-"] [role="main"]:not(:is([role="dialog"], [aria-modal="true"], [data-pagelet*="Media"], [data-pagelet*="Photo"], [data-pagelet*="Tahoe"]) *) > div > div > div > div,
-html[class*="fb-layout-tweaks-feed-width-"] [role="main"]:not(:is([role="dialog"], [aria-modal="true"], [data-pagelet*="Media"], [data-pagelet*="Photo"], [data-pagelet*="Tahoe"]) *) > div > div > div > div > div {
+html[class*="fb-layout-tweaks-feed-width-"] [role="main"]:not(:is([role="dialog"], [aria-modal="true"], [data-pagelet*="Media"], [data-pagelet*="Photo"], [data-pagelet*="Tahoe"]) *) > div > div > div > div:not(:has(.xbudbmw)):not(.xbudbmw),
+html[class*="fb-layout-tweaks-feed-width-"] [role="main"]:not(:is([role="dialog"], [aria-modal="true"], [data-pagelet*="Media"], [data-pagelet*="Photo"], [data-pagelet*="Tahoe"]) *) > div > div > div > div:not(:has(.xbudbmw)) > div:not(:has(.xbudbmw)):not(.xbudbmw) {
   width: 100% !important;
   max-width: var(--fb-lt-feed-width) !important;
   box-sizing: border-box !important;
   margin-inline: auto !important;
+}
+
+/* Floating pills / anchors inside feed column (e.g. "New posts" indicator):
+   prevent column width rules from inflating zero-width absolute anchors */
+html[class*="fb-layout-tweaks-feed-width-"] [role="main"]:not(:is([role="dialog"], [aria-modal="true"]) *) :is(.xbudbmw, [class*="xbudbmw"]) {
+  width: 0 !important;
+  max-width: 0 !important;
 }
 /* 50%: size only the column child so % does not compound down the chain. */
 html.fb-layout-tweaks-feed-width-50 :is(div[role="feed"], [data-pagelet="Feed"], [role="main"]):not(:is([role="dialog"], [aria-modal="true"], [data-pagelet*="Media"], [data-pagelet*="Photo"], [data-pagelet*="Tahoe"]) *) > div,
@@ -713,6 +736,13 @@ html.fb-layout-tweaks-feed-width-90 div[role="main"]:not(:is([role="dialog"], [a
   width: 90% !important;
   max-width: 90% !important;
   margin-inline: auto !important;
+}
+
+/* Ensure feed articles and post cards fill 100% of the column width in percentage modes */
+html[class*="fb-layout-tweaks-feed-width-"] :is(div[role="feed"] > div, div[data-pagelet^="FeedUnit"], div[role="article"]):not(:is([role="dialog"], [aria-modal="true"], [data-pagelet*="Media"], [data-pagelet*="Photo"], [data-pagelet*="Tahoe"]) *) {
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
 }
 
 /* ==========================================================================

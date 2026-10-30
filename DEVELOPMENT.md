@@ -80,6 +80,8 @@ node --test tests/*.test.js
 
 # 3. Individual Test Suites
 node tests/pure-functions.test.js      # Key-to-class mapping, inverted logic, isFeedPage
+node tests/layout-guard.test.js        # Layout guard negative invariants & circuit breaker
+node tests/feed-width.test.js          # Feed width options, pill isolation, & overflow containment
 node tests/feed-media-height.test.js   # Feed media scaling ratios & limits
 node tests/defaults.test.js            # Default settings integrity & schema
 node tests/tokens.test.js              # Design tokens CSS consistency
