@@ -10,12 +10,15 @@ const cssPath = path.join(__dirname, '..', 'src', 'content', 'content.css');
 const cssContent = fs.readFileSync(cssPath, 'utf8');
 
 test('Document & layout viewport containment prevents horizontal scrollbars in feed width modes', () => {
-  // 1. Root and body have overflow-x containment
+  // 1. Root has overflow-x containment without trapping body into a second scroll container
   assert.ok(
-    cssContent.includes('html[class*="fb-layout-tweaks-feed-width-"],') &&
-    cssContent.includes('html[class*="fb-layout-tweaks-feed-width-"] body {') &&
+    cssContent.includes('html[class*="fb-layout-tweaks-feed-width-"] {') &&
     cssContent.includes('overflow-x: hidden !important;'),
-    'Root and body must enforce overflow-x: hidden in widened feed width modes'
+    'Root must enforce overflow-x: hidden in widened feed width modes'
+  );
+  assert.ok(
+    !cssContent.includes('html[class*="fb-layout-tweaks-feed-width-"] body'),
+    'Body must not have overflow-x: hidden to prevent secondary vertical scrollbars'
   );
 
   // 2. Three-column flex wrapper has overflow-x containment
@@ -44,6 +47,12 @@ test('Document & layout viewport containment prevents horizontal scrollbars in f
     cssContent.includes(':is(.xbudbmw, [class*="xbudbmw"])') &&
     cssContent.includes('max-width: 0 !important;'),
     'Floating pills like .xbudbmw must be constrained to 0 max-width to prevent horizontal overhang'
+  );
+
+  // 6. Feed column containers must not use :has(.xbudbmw) to avoid collapsing the entire column
+  assert.ok(
+    !cssContent.includes(':has(.xbudbmw)'),
+    'Feed column containers must never use :has(.xbudbmw) to avoid collapsing the entire feed column upon new posts'
   );
 });
 

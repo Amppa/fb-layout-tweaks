@@ -627,9 +627,11 @@ html.fb-layout-tweaks-feed-width-80,
 html.fb-layout-tweaks-feed-width-90,
 html.fb-layout-tweaks-feed-width-100 { --fb-lt-feed-width: none; }
 
-/* Document & layout viewport containment to prevent horizontal overflow */
-html[class*="fb-layout-tweaks-feed-width-"],
-html[class*="fb-layout-tweaks-feed-width-"] body {
+/* Document & layout viewport containment to prevent horizontal overflow.
+   Applied strictly to html root (propagates to viewport canvas in Chromium).
+   Never apply overflow-x: hidden to body, as CSS specs compel body's overflow-y
+   to compute from visible to auto, generating a duplicate vertical scrollbar. */
+html[class*="fb-layout-tweaks-feed-width-"] {
   overflow-x: hidden !important;
   max-width: 100vw !important;
 }
@@ -681,8 +683,8 @@ html[class*="fb-layout-tweaks-feed-width-"] :is(div[role="feed"], [data-pagelet=
 html[class*="fb-layout-tweaks-feed-width-"] [role="main"]:not(:is([role="dialog"], [aria-modal="true"], [data-pagelet*="Media"], [data-pagelet*="Photo"], [data-pagelet*="Tahoe"]) *) > div,
 html[class*="fb-layout-tweaks-feed-width-"] [role="main"]:not(:is([role="dialog"], [aria-modal="true"], [data-pagelet*="Media"], [data-pagelet*="Photo"], [data-pagelet*="Tahoe"]) *) > div > div,
 html[class*="fb-layout-tweaks-feed-width-"] [role="main"]:not(:is([role="dialog"], [aria-modal="true"], [data-pagelet*="Media"], [data-pagelet*="Photo"], [data-pagelet*="Tahoe"]) *) > div > div > div,
-html[class*="fb-layout-tweaks-feed-width-"] [role="main"]:not(:is([role="dialog"], [aria-modal="true"], [data-pagelet*="Media"], [data-pagelet*="Photo"], [data-pagelet*="Tahoe"]) *) > div > div > div > div:not(:has(.xbudbmw)):not(.xbudbmw),
-html[class*="fb-layout-tweaks-feed-width-"] [role="main"]:not(:is([role="dialog"], [aria-modal="true"], [data-pagelet*="Media"], [data-pagelet*="Photo"], [data-pagelet*="Tahoe"]) *) > div > div > div > div:not(:has(.xbudbmw)) > div:not(:has(.xbudbmw)):not(.xbudbmw) {
+html[class*="fb-layout-tweaks-feed-width-"] [role="main"]:not(:is([role="dialog"], [aria-modal="true"], [data-pagelet*="Media"], [data-pagelet*="Photo"], [data-pagelet*="Tahoe"]) *) > div > div > div > div:not([class*="xbudbmw"]),
+html[class*="fb-layout-tweaks-feed-width-"] [role="main"]:not(:is([role="dialog"], [aria-modal="true"], [data-pagelet*="Media"], [data-pagelet*="Photo"], [data-pagelet*="Tahoe"]) *) > div > div > div > div > div:not([class*="xbudbmw"]) {
   width: 100% !important;
   max-width: var(--fb-lt-feed-width) !important;
   box-sizing: border-box !important;
